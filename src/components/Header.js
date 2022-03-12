@@ -432,26 +432,6 @@ class Header extends React.Component {
           />,
         ];
       case 'Book a Doctor':
-        let details = [];
-        let contains = false;
-        const promptSelectDependant = {
-          name: 'Dependant?',
-          id: 0,
-        };
-        if (dependantsDetails) {
-          for (var a = 0; a < dependantsDetails.length; a++) {
-            if (Object.values(dependantsDetails[a]).includes('Dependant?')) {
-              contains = true;
-            }
-          }
-          if (contains) {
-            details = dependantsDetails;
-          } else {
-            details = dependantsDetails;
-            details.unshift(promptSelectDependant);
-          }
-        } else details.unshift(promptSelectDependant);
-
         return [
           <ViewTextDoctorsOnMap
             key="map-open-close"
@@ -464,13 +444,6 @@ class Header extends React.Component {
             isWhite={white}
             viewDoctorsOnMap={viewDoctorsOnMap}
           />,
-          /*<DependantPicker
-            key="map-open-close"
-            dependantsDetails={details}
-            dependantSelection={dependantSelection}
-            selectedDependant={selectedDependant}
-            isWhite={white}
-          />*/
           ,
         ];
       case 'Find a Doctor':
@@ -513,6 +486,36 @@ class Header extends React.Component {
             navigation={navigation}
             isWhite={white}
             wishListItemsCount={wishListItemsCount}
+          />,
+        ];
+      case 'Your Cart Details':
+        let details = [];
+        let contains = false;
+        const promptSelectDependant = {
+          name: 'Dependant?',
+          id: 0,
+        };
+        if (dependantsDetails) {
+          for (var a = 0; a < dependantsDetails.length; a++) {
+            if (Object.values(dependantsDetails[a]).includes('Dependant?')) {
+              contains = true;
+            }
+          }
+          if (contains) {
+            details = dependantsDetails;
+          } else {
+            details = dependantsDetails;
+            details.unshift(promptSelectDependant);
+          }
+        } else details.unshift(promptSelectDependant);
+
+        return [
+          <DependantPicker
+            key="map-open-close"
+            dependantsDetails={details}
+            dependantSelection={dependantSelection}
+            selectedDependant={selectedDependant}
+            isWhite={white}
           />,
         ];
       default:
