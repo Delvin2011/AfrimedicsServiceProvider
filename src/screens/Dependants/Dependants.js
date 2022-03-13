@@ -53,7 +53,7 @@ function Dependants(props) {
                 <DependantsCard
                   key={index}
                   item={item}
-                  items={dependantsDetails}
+                  dependantsDetails={dependantsDetails}
                   horizontal
                   titleStyle={styles.title}
                   imageStyle={{height: '100%', width: '100%'}}

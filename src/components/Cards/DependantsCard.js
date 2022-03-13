@@ -55,60 +55,63 @@ class DependantsCard extends React.Component {
       horizontal ? styles.horizontalStyles : styles.verticalStyles,
       styles.shadow,
     ];
+    const {personal} = item;
 
     return (
       <Block card flex style={cardContainer}>
-        <Block row={horizontal}>
-          <TouchableWithoutFeedback>
-            <Block flex style={styles.cardDescription}>
-              <Block>
-                <Text
-                  style={{fontFamily: 'montserrat-regular'}}
-                  size={14}
-                  style={styles.appointment}
-                  color={nowTheme.COLORS.SECONDARY}>
-                  {item.name}
-                </Text>
-                <Text
-                  style={{fontFamily: 'montserrat-regular'}}
-                  size={14}
-                  style={titleStyles}
-                  color={nowTheme.COLORS.SECONDARY}>
-                  {item.personal.phoneNumber}
-                </Text>
-                <Text
-                  style={{fontFamily: 'montserrat-regular'}}
-                  size={14}
-                  style={titleStyles}
-                  color={nowTheme.COLORS.SECONDARY}>
-                  {item.personal.email}
-                </Text>
+        {typeof personal !== 'undefined' || personal != null ? (
+          <Block row={horizontal}>
+            <TouchableWithoutFeedback>
+              <Block flex style={styles.cardDescription}>
+                <Block>
+                  <Text
+                    style={{fontFamily: 'montserrat-regular'}}
+                    size={14}
+                    style={styles.appointment}
+                    color={nowTheme.COLORS.SECONDARY}>
+                    {item.name}
+                  </Text>
+                  <Text
+                    style={{fontFamily: 'montserrat-regular'}}
+                    size={14}
+                    style={titleStyles}
+                    color={nowTheme.COLORS.SECONDARY}>
+                    {personal.phoneNumber}
+                  </Text>
+                  <Text
+                    style={{fontFamily: 'montserrat-regular'}}
+                    size={14}
+                    style={titleStyles}
+                    color={nowTheme.COLORS.SECONDARY}>
+                    {personal.email}
+                  </Text>
+                </Block>
               </Block>
-            </Block>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback>
-            <Block flex style={styles.cardDescription}>
-              <TouchableOpacity
-                style={[styles.buttonDelete]}
-                onPress={() =>
-                  this.setState({modalVisible: !this.state.modalVisible})
-                }>
-                <Icon
-                  family="NowExtra"
-                  size={16}
-                  name="simple-remove2x"
-                  //color={nowTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
-                />
-              </TouchableOpacity>
-              <Block middle>
-                <Image
-                  source={{uri: item.personal.profileImage}}
-                  style={styles.avatar}
-                />
+            </TouchableWithoutFeedback>
+            <TouchableWithoutFeedback>
+              <Block flex style={styles.cardDescription}>
+                <TouchableOpacity
+                  style={[styles.buttonDelete]}
+                  onPress={() =>
+                    this.setState({modalVisible: !this.state.modalVisible})
+                  }>
+                  <Icon
+                    family="NowExtra"
+                    size={16}
+                    name="simple-remove2x"
+                    //color={nowTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
+                  />
+                </TouchableOpacity>
+                <Block middle>
+                  <Image
+                    source={{uri: personal.profileImage}}
+                    style={styles.avatar}
+                  />
+                </Block>
               </Block>
-            </Block>
-          </TouchableWithoutFeedback>
-        </Block>
+            </TouchableWithoutFeedback>
+          </Block>
+        ) : null}
         <Modal
           animationType="slide"
           transparent={true}
