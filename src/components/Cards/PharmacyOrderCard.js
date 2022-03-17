@@ -45,7 +45,8 @@ class PharmacyOrderCard extends React.Component {
       horizontal ? styles.horizontalStyles : styles.verticalStyles,
       styles.shadow,
     ];
-
+    const DateTime = item.DateTime ? new Date(item.DateTime) : '02 Feb 2022';
+    const dateTime = DateTime.toString();
     return (
       <Block card flex style={cardContainer}>
         <Block row={horizontal} style={styles.cardDescription}>
@@ -85,7 +86,7 @@ class PharmacyOrderCard extends React.Component {
               size={14}
               style={styles.cardTitle}
               color={nowTheme.COLORS.SECONDARY}>
-              Medication for {item.ReceiverName}
+              Medication for {item.ReceiverName.split(' ')[0]}
             </Text>
           </Block>
           <Block flex>
@@ -93,7 +94,7 @@ class PharmacyOrderCard extends React.Component {
               size={14}
               style={styles.cardTitleBold}
               color={nowTheme.COLORS.SECONDARY}>
-              02 Mon Feb 22
+              {dateTime.substring(0, 15)}
             </Text>
           </Block>
         </Block>

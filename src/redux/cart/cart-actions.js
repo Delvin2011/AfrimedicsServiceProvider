@@ -68,3 +68,17 @@ export const removeItemFailure = error => ({
   type: CartActionTypes.REMOVE_ITEM_FAILURE,
   payload: error,
 });
+
+
+export const clearCart = () => {
+  return dispatch => {
+    firestore()
+      .collection('pharmacy-carts')
+      .doc(auth().currentUser.uid)
+      .update({cartItems: []})
+      .then(() => {
+        dispatch({type: CartActionTypes.CLEAR_CART});
+      })
+      .catch(error => dispatch({type: CartActionTypes.CLEAR_CART_ERROR, payload: error}));
+  };
+};

@@ -8,6 +8,8 @@ const CartActionTypes = {
 
   REMOVE_ITEM_SUCCESS: 'REMOVE_ITEM_SUCCESS',
   REMOVE_ITEM_FAILURE: 'REMOVE_ITEM_FAILURE',
+
+  CLEAR_CART_ERROR: 'CLEAR_CART_ERROR',
 };
 
 export default CartActionTypes;

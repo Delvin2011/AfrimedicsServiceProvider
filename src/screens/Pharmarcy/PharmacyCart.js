@@ -8,6 +8,7 @@ import {
   Pressable,
   TouchableOpacity,
   Modal,
+  Alert,
 } from 'react-native';
 // Now UI themed components
 import {Images, nowTheme, articles, tabs} from '../../constants';
@@ -20,20 +21,96 @@ import {
   selectCartItemsCount,
   selectCartItems,
 } from '../../redux/cart/cart-selectors';
+import {
+  selectDependant,
+  selectUserDependants,
+} from '../../redux/user/user-selectors';
 import CartItemCard from '../../components/Cards/CartItemCard';
+import Payfast from '../../components/Payfast';
+import Icon from '../../components/Icon';
+import Switch from '../../components/Switch';
+
+import {fetchUserDependants} from '../../redux/user/user-actions';
+import {clearCart} from '../../redux/cart/cart-actions';
+import {selectPharmacyOrders} from '../../redux/pharmacy/pharmacy-selectors';
+import {addPharmacyOrderItem} from '../../redux/pharmacy/pharmacy-actions';
+
 const {width, height} = Dimensions.get('screen');
 const thumbMeasure = (width - 48 - 32) / 3;
 function PharmacyCart(props) {
   const {cartTotal, cartItemsCount, cartItems, navigation} = props;
+  const [modalVisible, setModalVisible] = useState(false);
+  const [requireDelivery, setRequireDelivery] = useState(false);
 
-  /*useEffect(() => {
-    (async () => {
-      const { fetchUserDependants } = props;
-      fetchUserDependants();
-    })();
-  }, []);*/
+  useEffect(() => {
+    getStatus();
+    renderPayFast();
+  }, []);
+
+  const getStatus = status => {
+    const {
+      navigation,
+      selectedDependant,
+      dependantsDetails,
+      pharmacyOrders,
+      cartItems,
+      cartTotal,
+      addPharmacyOrderItem,
+    } = props;
+    const totalCost = requireDelivery ? cartTotal + 5 : cartTotal;
+    let newOrder = {};
+    if (status) {
+      var dependantDetails = {};
+      for (var x = 0; x < dependantsDetails.length; x++) {
+        if (selectedDependant == dependantsDetails[x].id) {
+          dependantDetails = dependantsDetails[x];
+          break;
+        }
+      }
+
+      const {} = (newOrder.items = cartItems);
+      newOrder.PaymentOption = 'Online';
+      newOrder.Address =
+        dependantDetails.personal.addressLine1 +
+        ' , ' +
+        dependantDetails.personal.addressLine2 +
+        ' , ' +
+        dependantDetails.personal.addressLine3;
+      newOrder.MedicationStatus = 'OffTheShelf';
+      newOrder.Total = totalCost;
+      newOrder.ReceiverName = dependantDetails.name;
+      newOrder.InvoiceNumber = 'INV' + Math.floor(Math.random() * 10000) + 1;
+      newOrder.Delivery = requireDelivery;
+      newOrder.DeliveryStatus = requireDelivery ? 'Dispatching' : 'NaN';
+      newOrder.DateTime = Date.now();
+      addPharmacyOrderItem(newOrder, pharmacyOrders);
+      clearCart();
+      navigation.navigate('PharmacyOrders');
+    }
+  };
+
+  const createTwoButtonAlert = () => {
+    Alert.alert('Alert!!!', 'Please select dependant', [{text: 'OK'}]);
+  };
+  const renderpayment = () => {
+    const {selectedDependant} = props;
+    if (selectedDependant == 0) {
+      createTwoButtonAlert();
+    } else {
+      setModalVisible(true);
+    }
+  };
+  const renderPayFast = () => {
+    return (
+      <Block style={styles.container}>
+        <Payfast setSuccess={getStatus} />
+      </Block>
+    );
+  };
 
   const renderDependantsAdding = () => {
+    const totalCost = requireDelivery ? cartTotal + 5 : cartTotal;
+
     return (
       <Block style={styles.container}>
         <Block flex row space="between">
@@ -89,17 +166,34 @@ function PharmacyCart(props) {
               fontSize: 18,
               opacity: 0.8,
             }}>
-            $ {cartTotal}
+            $ {totalCost}
           </Text>
+        </Block>
+        <Block row middle space="between">
+          <Text
+            size={16}
+            color="#9A9A9A"
+            style={{
+              marginTop: 10,
+              fontFamily: 'montserrat-bold',
+              lineHeight: 20,
+              fontWeight: 'bold',
+              fontSize: 18,
+              opacity: 0.8,
+            }}>
+            Require Delivery?
+          </Text>
+          <Switch
+            onValueChange={() => setRequireDelivery(!requireDelivery)}
+            value={requireDelivery}
+          />
         </Block>
         <Block center>
           <Button
             textStyle={{fontFamily: 'montserrat-regular', fontSize: 12}}
             color="primary"
             style={styles.button}
-            onPress={() => {
-              navigation.navigate('PhamarcyOrderRecipient');
-            }}>
+            onPress={() => renderpayment()}>
             CHECKOUT
           </Button>
         </Block>
@@ -121,6 +215,23 @@ function PharmacyCart(props) {
             );
           })
         )}
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => setModalVisible(false)}>
+          <TouchableOpacity activeOpacity={1} style={[styles.modal]}>
+            <Pressable
+              style={[styles.buttonClose]}
+              onPress={() => {
+                setModalVisible(!modalVisible);
+              }}>
+              <Icon family="NowExtra" size={16} name="simple-remove2x" />
+            </Pressable>
+            {renderPayFast()}
+          </TouchableOpacity>
+        </Modal>
       </Block>
     );
   };
@@ -251,13 +362,22 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 22,
+    marginTop: 300,
+    marginBottom: 300,
+    marginLeft: 30,
+    marginRight: 30,
   },
   modal: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 300,
+    marginBottom: 320,
+    marginLeft: 40,
+    marginRight: 40,
     backgroundColor: 'white',
     borderRadius: 20,
     padding: 35,
-    alignItems: 'center',
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -267,23 +387,39 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5,
   },
+  modalButton: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginBottom: 5,
+  },
   buttonOpen: {
     backgroundColor: '#F194FF',
   },
   buttonClose: {
-    backgroundColor: '#2196F3',
+    //paddingRight: 12,
+    marginLeft: 200,
+    marginTop: 0,
   },
 });
-/*const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   fetchUserDependants: () => dispatch(fetchUserDependants()),
+  clearCart: () => dispatch(clearCart()),
+  addPharmacyOrderItem: (newOrder, Orders) =>
+    dispatch(addPharmacyOrderItem(newOrder, Orders)),
   addUserDependant: (option, dependantDetailsToAdd, dependantsRecords) =>
-    dispatch(addUserDependant(option, dependantDetailsToAdd, dependantsRecords)),
-});*/
+    dispatch(
+      addUserDependant(option, dependantDetailsToAdd, dependantsRecords),
+    ),
+});
 
 const mapStateToProps = createStructuredSelector({
   cartTotal: selectCartTotal,
   cartItemsCount: selectCartItemsCount,
   cartItems: selectCartItems,
+  selectedDependant: selectDependant,
+  dependantsDetails: selectUserDependants,
+  pharmacyOrders: selectPharmacyOrders,
 });
 
-export default connect(mapStateToProps, null)(PharmacyCart);
+export default connect(mapStateToProps, mapDispatchToProps)(PharmacyCart);

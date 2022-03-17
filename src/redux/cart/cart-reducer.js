@@ -33,6 +33,16 @@ const cartReducer = (state = INITIAL_STATE, action) => {
         ...state,
         error: action.payload, //addItemToCart(state.cartItems, action.payload), //add new items to the existing list
       };
+    case CartActionTypes.CLEAR_CART:
+      return {
+        ...state,
+        cartItems: [],
+      };
+    case CartActionTypes.CLEAR_CART_ERROR:
+      return {
+        ...state,
+        error: action.payload,
+      };
     default:
       return state;
   }
