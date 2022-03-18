@@ -8,14 +8,85 @@ import {connect} from 'react-redux';
 import {createStructuredSelector} from 'reselect';
 
 function MapScreen(props) {
-  const {phamarciesSelected, navigation} = props;
+  const {phamarciesSelected, selectedPhamarcyLocation, navigation} = props;
   const [modalVisible, setModalVisible] = useState(false);
   const [mapReady, setMapReady] = useState(false);
-  const lat = -17.84658433;
-  const lng = 31.04918867;
+  let region = {
+    latitude: -18.774364,
+    longitude: 29.978059,
+    latitudeDelta: 1,
+    longitudeDelta: 0.5,
+  };
+  const [initialRegion, setInitialRegion] = useState(region);
+  const [newRegion, setNewRegion] = useState(region);
   const name = 'Test';
   const isFocused = useIsFocused();
   const mapHeight = '50%';
+  let provinces = [
+    {
+      id: 0,
+      name: 'Location?',
+      value: 'Location?',
+      geometry: {
+        lat: -18.774364,
+        lng: 29.978059,
+      },
+    },
+    {
+      id: 1,
+      name: 'Harare',
+      value: 'Harare',
+      geometry: {
+        lat: -17.823875,
+        lng: 31.035886,
+      },
+    },
+    {
+      id: 2,
+      name: 'Masvingo',
+      value: 'Masvingo',
+      geometry: {
+        lat: -20.072217,
+        lng: 30.829824,
+      },
+    },
+    {
+      id: 3,
+      name: 'Gweru',
+      value: 'Gweru',
+      geometry: {
+        lat: -19.456382,
+        lng: 29.811787,
+      },
+    },
+    {
+      id: 4,
+      name: 'Bulawayo',
+      value: 'Bulawayo',
+      geometry: {
+        lat: -20.148393,
+        lng: 28.575895,
+      },
+    },
+    {
+      id: 5,
+      name: 'Mutare',
+      value: 'Mutare',
+      geometry: {
+        lat: -18.975795,
+        lng: 32.652897,
+      },
+    },
+    {
+      id: 6,
+      name: 'Chinhoyi',
+      value: 'Chinhoyi',
+      geometry: {
+        lat: -17.368725,
+        lng: 30.187309,
+      },
+    },
+  ];
 
   useEffect(() => {
     setModalVisible(modalVisible);
@@ -25,10 +96,9 @@ function MapScreen(props) {
     setModalVisible(modalVisible);
   }, [isFocused]);
 
-  /*useEffect(() => {
-    const {fetchMedicalAppointments} = props;
-    fetchMedicalAppointments();
-  }, []);*/
+  useEffect(() => {
+    handleRegionChange();
+  }, [selectedPhamarcyLocation]);
 
   /*const handleClick = specialistName => {
     const {searchSpecialist, viewMap, viewDoctorsOnMap} = props;
@@ -40,6 +110,29 @@ function MapScreen(props) {
   };*/
   const handleMapReady = () => {
     setMapReady(true);
+  };
+
+  const handleRegionChange = () => {
+    let newRegion = {};
+    for (var x = 0; x < provinces.length; x++) {
+      if (selectedPhamarcyLocation === provinces[x].name) {
+        newRegion = {
+          latitude: provinces[x].geometry.lat,
+          longitude: provinces[x].geometry.lng,
+          latitudeDelta: 0.5,
+          longitudeDelta: 0.25,
+        };
+        if (selectedPhamarcyLocation === 'Location?') {
+          newRegion = {
+            latitude: provinces[x].geometry.lat,
+            longitude: provinces[x].geometry.lng,
+            latitudeDelta: 6,
+            longitudeDelta: 6,
+          };
+        }
+        setNewRegion(newRegion);
+      }
+    }
   };
   return (
     <>
@@ -53,12 +146,8 @@ function MapScreen(props) {
         showsUserLocation={true}
         showsCompass={true}
         showsPointsOfInterest={false}
-        initialRegion={{
-          latitude: lat,
-          longitude: lng,
-          latitudeDelta: 1,
-          longitudeDelta: 0.5,
-        }}>
+        initialRegion={initialRegion}
+        region={newRegion}>
         {mapReady === true
           ? phamarciesSelected.map(phamarcy => {
               return (

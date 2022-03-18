@@ -78,7 +78,7 @@ class NewPhamarcy extends React.Component {
   };
 
   renderPharmacy = () => {
-    const {navigation} = this.props;
+    const {navigation, selectedPhamarcyLocation} = this.props;
     var phamarciesSelected = this.phamarciesByProvince();
 
     return (
@@ -86,6 +86,7 @@ class NewPhamarcy extends React.Component {
         <MapScreen
           phamarciesSelected={phamarciesSelected}
           navigation={navigation}
+          selectedPhamarcyLocation={selectedPhamarcyLocation}
         />
         {this.renderCarousel(phamarciesSelected)}
       </>
