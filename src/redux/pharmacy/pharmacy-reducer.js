@@ -5,7 +5,7 @@ const INITIAL_STATE = {
   isFetching: false, //whether or not we are fetching data for our collections property
   erroMessage: undefined,
   pharmacyOrders: null,
-  //prescriptionOrders: null,
+  location: 'Location?',
 };
 
 const pharmacyReducer = (state = INITIAL_STATE, action) => {
@@ -54,6 +54,11 @@ const pharmacyReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         orderErrorMessage: action.payload, //reducer waiting for the backend update
+      };
+    case PhamarcyActionTypes.PHAMARCY_LOCATION:
+      return {
+        ...state,
+        location: action.payload, //reducer waiting for the backend update
       };
     default:
       return state;

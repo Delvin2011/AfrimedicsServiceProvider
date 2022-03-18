@@ -1,0 +1,4 @@
+Dummy API
+https://www.mockaroo.com/
+https://jsonplaceholder.typicode.com/
+https://fakestoreapi.com/docs#user

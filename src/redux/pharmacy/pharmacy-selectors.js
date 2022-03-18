@@ -1,27 +1,32 @@
-import { createSelector } from 'reselect';
+import {createSelector} from 'reselect';
 
-const selectShop = (state) => state.pharmacy;
+const selectShop = state => state.pharmacy;
 
 export const selectCollections = createSelector(
   [selectShop], //input (takes in)
-  (pharmacy) => pharmacy.collections //output
+  pharmacy => pharmacy.collections, //output
 );
 
 export const selectPharmacyOrders = createSelector(
   [selectShop], //input (takes in)
-  (pharmacy) => pharmacy.pharmacyOrders //output
+  pharmacy => pharmacy.pharmacyOrders, //output
+);
+
+export const selectedPhamarcyLocation = createSelector(
+  [selectShop], //array of input selectors
+  pharmacy => pharmacy.location, //outputs of the input selectors
 );
 
 export const selectCollectionsForPreview = createSelector(
   [selectCollections],
-  (pharmacy) => (pharmacy ? Object.keys(pharmacy).map((key) => pharmacy[key]) : []) //returning mens, womes, hats etc if the collections is not empty
+  pharmacy => (pharmacy ? Object.keys(pharmacy).map(key => pharmacy[key]) : []), //returning mens, womes, hats etc if the collections is not empty
   //const test = {a:1, b:2, c:3} => Object.keys(test) => ["a", "b", "c"]
 );
-export const selectCollection = (collectionUrlParam) =>
+export const selectCollection = collectionUrlParam =>
   createSelector(
     [selectCollections],
     //find collection.id matching the url parameter of our collection id map
-    (collections) => (collections ? collections[collectionUrlParam] : null) //passing URL into our selector and our selector goes into the new collections objects and gets the correspondning value
+    collections => (collections ? collections[collectionUrlParam] : null), //passing URL into our selector and our selector goes into the new collections objects and gets the correspondning value
   );
 
 //bcoz e are using an object, and we are using the object bcoz the URL parameter is a string and the id we want to match is a number
@@ -31,12 +36,12 @@ export const selectCollection = (collectionUrlParam) =>
 
 export const selectIsCollectionFetching = createSelector(
   [selectShop],
-  (pharmacy) => pharmacy.isFetching
+  pharmacy => pharmacy.isFetching,
 );
 
 //checks to see if collections are loaded
 //if no collections, cillectionsLoaded is false
 export const selectIsCollectionsLoaded = createSelector(
   [selectShop],
-  (pharmacy) => !!pharmacy.collections //if our collections is loaded we get tru, otherwise false
+  pharmacy => !!pharmacy.collections, //if our collections is loaded we get tru, otherwise false
 );

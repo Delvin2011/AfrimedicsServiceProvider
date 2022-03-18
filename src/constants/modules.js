@@ -22,6 +22,6 @@ export default [
     title: 'Home Care',
     image: require('../assets/imgs/project13.jpg'),
     cta: 'Book Home Care',
-    navigate: 'FindDoctor',
+    navigate: 'NewPhamarcy',
   },
 ];

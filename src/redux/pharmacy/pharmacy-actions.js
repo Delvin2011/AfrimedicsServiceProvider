@@ -18,6 +18,15 @@ export const fetchCollectionsFailure = erroMessage => ({
   payload: erroMessage,
 });
 
+export const phamarcyLocation = location => {
+  return dispatch => {
+    dispatch({
+      type: PhamarcyActionTypes.PHAMARCY_LOCATION,
+      payload: location,
+    });
+  };
+};
+
 export const fetchCollectionsStartAsync = () => {
   return dispatch => {
     //dispatching the moment the function is called

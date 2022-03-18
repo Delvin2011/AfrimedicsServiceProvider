@@ -43,6 +43,10 @@ import {
   dependantSelection,
 } from '../redux/user/user-actions';
 
+//Phamarcy
+import {selectedPhamarcyLocation} from '../redux/pharmacy/pharmacy-selectors';
+import {phamarcyLocation} from '../redux/pharmacy/pharmacy-actions';
+
 const {height, width} = Dimensions.get('window');
 const iPhoneX = () =>
   Platform.OS === 'ios' &&
@@ -191,7 +195,7 @@ const Wishlist = ({isWhite, style, navigation, wishListItemsCount}) => (
 
 let items = [
   {
-    id: 1,
+    id: 0,
     name: 'Location?',
     value: 'Location?',
   },
@@ -233,8 +237,8 @@ let items = [
   },
   {
     id: 5,
-    name: 'Norton',
-    value: 'Norton',
+    name: 'Mutare',
+    value: 'Mutare',
     geometry: {
       lat: -17.885514,
       lng: 30.675703,
@@ -242,29 +246,11 @@ let items = [
   },
   {
     id: 6,
-    name: 'Chivhu',
-    value: 'Chivhu',
+    name: 'Chinhoyi',
+    value: 'Chinhoyi',
     geometry: {
       lat: -19.011037,
       lng: 30.897197,
-    },
-  },
-  {
-    id: 7,
-    name: 'Marondera',
-    value: 'Marondera',
-    geometry: {
-      lat: -18.190432,
-      lng: 31.5378,
-    },
-  },
-  {
-    id: 8,
-    name: 'Kwekwe',
-    value: 'Kwekwe',
-    geometry: {
-      lat: -18.920995,
-      lng: 29.82316,
     },
   },
 ];
@@ -272,6 +258,20 @@ const LocationPicker = ({specialistLocation, selectedLocation}) => (
   <Picker
     selectedValue={selectedLocation}
     onValueChange={(value, index) => specialistLocation(value)}
+    mode="dropdown" // Android only
+    style={styles.picker}>
+    {items.map((item, index) => {
+      return <Picker.Item label={item.name} value={item.value} key={index} />;
+    })}
+  </Picker>
+);
+const PhamarcyLocationPicker = ({
+  phamarcyLocation,
+  selectedPhamarcyLocation,
+}) => (
+  <Picker
+    selectedValue={selectedPhamarcyLocation}
+    onValueChange={(value, index) => phamarcyLocation(value)}
     mode="dropdown" // Android only
     style={styles.picker}>
     {items.map((item, index) => {
@@ -335,6 +335,8 @@ class Header extends React.Component {
       dependantsDetails,
       dependantSelection,
       selectedDependant,
+      phamarcyLocation,
+      selectedPhamarcyLocation,
     } = this.props;
     if (title === 'Title') {
       return [
@@ -455,6 +457,15 @@ class Header extends React.Component {
             isWhite={white}
           />,
         ];
+      case 'New Phamarcy':
+        return [
+          <PhamarcyLocationPicker
+            key="map-open-close"
+            phamarcyLocation={phamarcyLocation}
+            selectedPhamarcyLocation={selectedPhamarcyLocation}
+            isWhite={white}
+          />,
+        ];
       case 'Medical Records':
         return [
           <AddRecordButton
@@ -529,6 +540,7 @@ class Header extends React.Component {
     else if (title === 'Book a Doctor')
       searchOption = 'Search favourites or Dr';
     else if (title === 'Pharmacy') searchOption = 'What are you looking for?';
+    else if (title === 'New Phamarcy') searchOption = 'Search Phamarcy?';
     else searchOption = 'What is your Location?';
 
     return (
@@ -802,6 +814,7 @@ const mapDispatchToProps = dispatch => ({
   viewDoctorsOnMap: () => dispatch(viewDoctorsOnMap()),
   searchSpecialist: specialist => dispatch(searchSpecialist(specialist)),
   specialistLocation: location => dispatch(specialistLocation(location)),
+  phamarcyLocation: location => dispatch(phamarcyLocation(location)),
   dependantSelection: dependant => dispatch(dependantSelection(dependant)),
   headerTabOptionChange: tabOption =>
     dispatch(headerTabOptionChange(tabOption)),
@@ -816,6 +829,7 @@ const mapStateToProps = createStructuredSelector({
   selectedLocation: selectSpecialistLocation,
   dependantsDetails: selectUserDependants,
   selectedDependant: selectDependant,
+  selectedPhamarcyLocation: selectedPhamarcyLocation,
 });
 
 //export default withNavigation(Header);

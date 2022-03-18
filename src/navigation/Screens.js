@@ -20,6 +20,7 @@ import PharmacyOrders from '../screens/Pharmarcy/PharmacyOrders';
 import Pharmacy from '../screens/Pharmarcy/Landing';
 import Category from '../screens/Pharmarcy/CategoryLanding';
 import PharmacyCart from '../screens/Pharmarcy/PharmacyCart';
+import NewPhamarcy from '../screens/Pharmarcy/NewPhamarcy';
 
 //Medical Records
 import MedicalRecords from '../screens/MedicalRecords';
@@ -168,6 +169,32 @@ function PharmacyCartStack(props) {
           backgroundColor: '#FFFFFF',
         }}
         children={() => <PharmacyCart navigation={props.navigation} />}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function NewPhamarcyStack(props) {
+  return (
+    <Stack.Navigator
+      initialRouteName="Components"
+      mode="card"
+      headerMode="screen">
+      <Stack.Screen
+        name="New Phamarcy"
+        component={NewPhamarcy}
+        options={{
+          header: ({navigation, scene}) => (
+            <Header
+              title="New Phamarcy"
+              search
+              navigation={navigation}
+              scene={scene}
+              back={true}
+            />
+          ),
+          backgroundColor: '#FFFFFF',
+        }}
       />
     </Stack.Navigator>
   );
@@ -503,6 +530,8 @@ function AppStack(props) {
       <Drawer.Screen name="Account" component={AccountStack} />
       <Drawer.Screen name="PharmacyOrders" component={PharmacyOrdersStack} />
       <Drawer.Screen name="Pharmacy" component={PharmacyStack} />
+      <Drawer.Screen name="NewPhamarcy" component={NewPhamarcyStack} />
+
       <Drawer.Screen
         name="PharmacyCategory"
         component={PhamarcyCategoryStack}
