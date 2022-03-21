@@ -50,16 +50,28 @@ const isAndroid = Platform.OS === 'android';
 
 function MapCalloutInfo(props) {
   const Image = isAndroid ? CompactWebview : CompactImage;
-  const {specialist, modalVisible, setModalVisible, searchedSpecialists} =
-    props;
+  const {
+    specialist,
+    phamarcy,
+    phamarcyView,
+    modalVisible,
+    setModalVisible,
+    searchedSpecialists,
+  } = props;
+
   const avatarPhoto =
     'https://firebasestorage.googleapis.com/v0/b/donewithit-db.appspot.com/o/post%2FnGsEHWbO84fHdNFFNCHSUGxANT62%2F0.eyfs5uxles5?alt=media&token=3a0d62a4-5f4b-4e26-b993-6bf2bc755807';
 
+  const name = phamarcyView
+    ? phamarcy.name.split(' ')[0] + '...'
+    : specialist.title;
+
+  const photo = phamarcyView ? phamarcy.logo : avatarPhoto;
   return (
     <Item>
-      <Image source={{uri: avatarPhoto}} />
-      <Text center numberOfLines={4}>
-        {specialist.title}
+      <Image source={{uri: photo}} />
+      <Text center numberOfLines={4} ellipsizeMode="tail">
+        {name}
       </Text>
       <Block flex={0.5} row middle space="between">
         <Button

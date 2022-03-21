@@ -141,6 +141,7 @@ class BookDoctor extends React.Component {
     //searched specialist
     const {name, screen} = searchedSpecialists.specialist;
     const searchedSpecialist = name ? name : '';
+    console.log(searchedSpecialist);
     const searchedScreen = screen ? screen : '';
     const specialistListsByCity = this.siphonFilteredListByCity(
       specialistLists,

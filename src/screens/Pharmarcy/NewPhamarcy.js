@@ -1,5 +1,11 @@
 import React, {useState, useEffect} from 'react';
-import {ScrollView, StyleSheet, Dimensions, View} from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Dimensions,
+  View,
+  TouchableWithoutFeedback,
+} from 'react-native';
 import {Block, Text, Button as GaButton, theme} from 'galio-framework';
 
 // Now UI themed components
@@ -7,7 +13,13 @@ import {nowTheme} from '../../constants';
 import phamarcies from '../../constants/phamarcies';
 import {connect} from 'react-redux';
 import {createStructuredSelector} from 'reselect';
-import {selectedPhamarcyLocation} from '../../redux/pharmacy/pharmacy-selectors';
+import {
+  selectedPhamarcyLocation,
+  selectSearchedPhamarcy,
+} from '../../redux/pharmacy/pharmacy-selectors';
+import {searchPhamarcy} from '../../redux/pharmacy/pharmacy-actions';
+import {fetchMedicalrecords} from '../../redux/user/user-actions';
+
 import MapScreen from './Maps';
 import PhamarcyCard from '../../components/Cards/PhamarcyCard';
 import Carousel from 'react-native-snap-carousel';
@@ -31,24 +43,48 @@ class NewPhamarcy extends React.Component {
     this._renderItem = this._renderItem.bind(this);
   }
 
-  phamarciesByProvince() {
-    const {selectedPhamarcyLocation} = this.props;
+  componentDidMount() {
+    this.props.fetchMedicalrecords();
+  }
+  componentWillUnmount() {}
+
+  phamarciesByProvinceAndSearch(name) {
+    const {selectedPhamarcyLocation, searchedPhamarcy} = this.props;
     const {phamarcyData} = this.state;
     var phamarcies = [];
+    var newName = name.toString().toLowerCase().replace(/ /g, '~');
     for (var x = 0; x < phamarcyData.length; x++) {
       if (selectedPhamarcyLocation == phamarcyData[x].province) {
+        const phamarcyName = phamarcyData[x].name
+          .toLowerCase()
+          .replace(/ /g, '~');
+        if (phamarcyName.includes(newName)) {
+          phamarcies.push(phamarcyData[x]);
+        } else if (newName === '') {
+          phamarcies.push(phamarcyData[x]);
+        }
+      }
+      if (selectedPhamarcyLocation === 'Location?' && name === '') {
+        phamarcies = phamarcyData;
+        break;
+      } else if (
+        selectedPhamarcyLocation === 'Location?' &&
+        phamarcyData[x].name
+          .toLowerCase()
+          .replace(/ /g, '~')
+          .includes(name.toString().toLowerCase().replace(/ /g, '~'))
+      ) {
         phamarcies.push(phamarcyData[x]);
       }
     }
-    if (phamarcies.length == 0) {
-      phamarcies = phamarcyData;
-    }
+
     return phamarcies;
   }
   _renderItem({item}) {
+    const {navigation} = this.props;
     return (
       <Block flex row>
-        <PhamarcyCard item={item} full />
+        <PhamarcyCard item={item} full navigation={navigation} />
       </Block>
     );
   }
@@ -78,8 +114,20 @@ class NewPhamarcy extends React.Component {
   };
 
   renderPharmacy = () => {
-    const {navigation, selectedPhamarcyLocation} = this.props;
-    var phamarciesSelected = this.phamarciesByProvince();
+    const {
+      navigation,
+      selectedPhamarcyLocation,
+      searchedPhamarcy,
+      searchPhamarcy,
+    } = this.props;
+    //const {name} = searchedPhamarcy;
+    //const phamarcyName = name ? name : '';
+    //const searchedScreen = screen ? screen : '';
+    const name =
+      typeof searchedPhamarcy.phamarcy !== 'undefined'
+        ? searchedPhamarcy.phamarcy.name
+        : '';
+    const phamarciesSelected = this.phamarciesByProvinceAndSearch(name);
 
     return (
       <>
@@ -88,6 +136,23 @@ class NewPhamarcy extends React.Component {
           navigation={navigation}
           selectedPhamarcyLocation={selectedPhamarcyLocation}
         />
+        {typeof searchedPhamarcy.phamarcy !== 'undefined' ? (
+          searchedPhamarcy.phamarcy.name != '' ? (
+            <TouchableWithoutFeedback
+              onPress={() => searchPhamarcy({name: '', screen: 'ph'})}>
+              <Text
+                style={{
+                  fontWeight: 'bold',
+                  fontStyle: 'italic',
+                  textDecorationLine: 'underline',
+                  marginTop: 10,
+                  marginLeft: 10,
+                }}>
+                View all Phamarcies
+              </Text>
+            </TouchableWithoutFeedback>
+          ) : null
+        ) : null}
         {this.renderCarousel(phamarciesSelected)}
       </>
     );
@@ -145,9 +210,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 });
+const mapDispatchToProps = dispatch => ({
+  searchPhamarcy: phamarcy => dispatch(searchPhamarcy(phamarcy)),
+  fetchMedicalrecords: () => dispatch(fetchMedicalrecords()),
+});
 
 const mapStateToProps = createStructuredSelector({
   selectedPhamarcyLocation: selectedPhamarcyLocation,
+  searchedPhamarcy: selectSearchedPhamarcy,
 });
 
-export default connect(mapStateToProps, null)(NewPhamarcy);
+export default connect(mapStateToProps, mapDispatchToProps)(NewPhamarcy);

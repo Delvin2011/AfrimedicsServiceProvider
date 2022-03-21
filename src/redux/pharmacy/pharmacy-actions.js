@@ -27,6 +27,15 @@ export const phamarcyLocation = location => {
   };
 };
 
+export const searchPhamarcy = phamarcy => {
+  return dispatch => {
+    dispatch({
+      type: PhamarcyActionTypes.SEARCH_PHAMARCY,
+      payload: {phamarcy},
+    });
+  };
+};
+
 export const fetchCollectionsStartAsync = () => {
   return dispatch => {
     //dispatching the moment the function is called

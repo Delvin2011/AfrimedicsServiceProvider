@@ -1,5 +1,5 @@
 import React from 'react';
-import { withNavigation } from '@react-navigation/compat';
+import {withNavigation} from '@react-navigation/compat';
 import PropTypes from 'prop-types';
 import {
   StyleSheet,
@@ -8,18 +8,18 @@ import {
   Dimensions,
   TouchableOpacity,
 } from 'react-native';
-import { createStructuredSelector } from 'reselect';
-import { connect } from 'react-redux';
-import { selectCartItems } from '../../redux/cart/cart-selectors';
-import { addItem } from '../../redux/cart/cart-actions';
-import { selectWishListItems } from '../../redux/wishList/wishList-selectors';
-import { addWishListItem } from '../../redux/wishList/wishList-actions';
-import { Block, Text, theme } from 'galio-framework';
-import { nowTheme } from '../../constants';
+import {createStructuredSelector} from 'reselect';
+import {connect} from 'react-redux';
+import {selectCartItems} from '../../redux/cart/cart-selectors';
+import {addItem} from '../../redux/cart/cart-actions';
+import {selectWishListItems} from '../../redux/wishList/wishList-selectors';
+import {addWishListItem} from '../../redux/wishList/wishList-actions';
+import {Block, Text, theme} from 'galio-framework';
+import {nowTheme} from '../../constants';
 import Button from '../Button';
 import Icon from '../Icon';
 import Input from '../Input';
-const { width, height } = Dimensions.get('screen');
+const {width, height} = Dimensions.get('screen');
 class PharmacyProductCard extends React.Component {
   state = {
     paymentStatus: false,
@@ -46,9 +46,16 @@ class PharmacyProductCard extends React.Component {
       addWishListItem,
     } = this.props;
 
-    const imageStyles = [full ? styles.fullImage : styles.horizontalImage, imageStyle];
+    const imageStyles = [
+      full ? styles.fullImage : styles.horizontalImage,
+      imageStyle,
+    ];
     const titleStyles = [styles.cardTitle, titleStyle];
-    const cardContainer = [popular ? styles.cardPopular : styles.card, styles.shadow, style];
+    const cardContainer = [
+      popular ? styles.cardPopular : styles.card,
+      styles.shadow,
+      style,
+    ];
     const imgContainer = [
       styles.imageContainer,
       horizontal ? styles.horizontalStyles : styles.verticalStyles,
@@ -60,23 +67,24 @@ class PharmacyProductCard extends React.Component {
         <TouchableWithoutFeedback
           onPress={() => {
             navigation.navigate(item.navigate);
-          }}
-        >
-          <Image resizeMode="cover" source={{ uri: item.imageUrl }} style={imageStyles} />
+          }}>
+          <Image
+            resizeMode="cover"
+            source={{uri: item.imageUrl}}
+            style={imageStyles}
+          />
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback
           onPress={() => {
-            navigation.navigate('DigitalRecord', { digitalRecord: item });
-          }}
-        >
+            navigation.navigate('DigitalRecord', {digitalRecord: item});
+          }}>
           <Block flex space="between" style={styles.cardDescription}>
             <Block flex>
               <Text
-                style={{ fontFamily: 'montserrat-regular' }}
+                style={{fontFamily: 'montserrat-regular'}}
                 size={14}
                 style={titleStyles}
-                color={nowTheme.COLORS.PRIMARY}
-              >
+                color={nowTheme.COLORS.PRIMARY}>
                 {'$ ' + item.price}
               </Text>
             </Block>
@@ -84,15 +92,13 @@ class PharmacyProductCard extends React.Component {
         </TouchableWithoutFeedback>
         <TouchableWithoutFeedback
           onPress={() => {
-            navigation.navigate('DigitalRecord', { digitalRecord: item });
-          }}
-        >
+            navigation.navigate('DigitalRecord', {digitalRecord: item});
+          }}>
           <Text
-            style={{ fontFamily: 'montserrat-regular' }}
+            style={{fontFamily: 'montserrat-regular'}}
             size={14}
             //style={titleStyles}
-            color={nowTheme.COLORS.SECONDARY}
-          >
+            color={nowTheme.COLORS.SECONDARY}>
             {item.name.split(' ')[0] + ' ' + item.name.split(' ')[1]}
           </Text>
         </TouchableWithoutFeedback>
@@ -106,8 +112,7 @@ class PharmacyProductCard extends React.Component {
             }}
             onPress={() => {
               addItem(item, cart);
-            }}
-          >
+            }}>
             <Block flex={0.5} row middle space="between">
               <Icon
                 family="NowExtra"
@@ -147,8 +152,7 @@ class PharmacyProductCard extends React.Component {
             }}
             onPress={() => {
               addWishListItem(item, wishList);
-            }}
-          >
+            }}>
             <Block flex={0.5} row middle space="between">
               <Icon
                 family="NowExtra"
@@ -156,7 +160,12 @@ class PharmacyProductCard extends React.Component {
                 name="simple-add2x"
                 color={nowTheme.COLORS['WHITE']}
               />
-              <Icon family="NowExtra" size={16} name="like-22x" color={nowTheme.COLORS['WHITE']} />
+              <Icon
+                family="NowExtra"
+                size={16}
+                name="like-22x"
+                color={nowTheme.COLORS['WHITE']}
+              />
             </Block>
           </Button>
         </Block>
@@ -228,7 +237,7 @@ const styles = StyleSheet.create({
   },
   shadow: {
     shadowColor: '#8898AA',
-    shadowOffset: { width: 0, height: 1 },
+    shadowOffset: {width: 0, height: 1},
     shadowRadius: 6,
     shadowOpacity: 0.1,
     elevation: 2,
@@ -258,9 +267,10 @@ const styles = StyleSheet.create({
 
 //export default withNavigation(PharmacyProductCard);
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   addItem: (itemToAdd, cart) => dispatch(addItem(itemToAdd, cart)),
-  addWishListItem: (itemToAdd, wishList) => dispatch(addWishListItem(itemToAdd, wishList)),
+  addWishListItem: (itemToAdd, wishList) =>
+    dispatch(addWishListItem(itemToAdd, wishList)),
 });
 
 const mapStateToProps = createStructuredSelector({
@@ -268,4 +278,7 @@ const mapStateToProps = createStructuredSelector({
   wishList: selectWishListItems,
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(withNavigation(PharmacyProductCard));
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withNavigation(PharmacyProductCard));

@@ -9,6 +9,9 @@ import {
   TouchableOpacity,
   Modal,
   Pressable,
+  ImageBackground,
+  View,
+  ScrollView,
 } from 'react-native';
 import {Block, Text, theme, Button} from 'galio-framework';
 import {nowTheme} from '../../constants';
@@ -16,6 +19,12 @@ import Icon from '../Icon';
 import {connect} from 'react-redux';
 import {createStructuredSelector} from 'reselect';
 import {Images} from '../../constants';
+import {
+  selectRecords,
+  selectCurrentUser,
+} from '../../redux/user/user-selectors';
+import MedicalRecordsCard from './MedicalRecordsCard';
+
 const {width, height} = Dimensions.get('screen');
 const thumbMeasure = (width - 48 - 32) / 3.75;
 
@@ -41,6 +50,7 @@ class PhamarcyCard extends React.Component {
       titleStyle,
       horizontal,
       removeMedicalRecord,
+      records,
     } = this.props;
 
     const imageStyles = [
@@ -56,7 +66,6 @@ class PhamarcyCard extends React.Component {
     ];
 
     const buttonColors = 'primary';
-
     return (
       <Block card flex style={cardContainer}>
         <TouchableWithoutFeedback
@@ -116,7 +125,7 @@ class PhamarcyCard extends React.Component {
           }}>
           <Button
             shadowless
-            //onPress={showDatePicker}
+            onPress={() => this.setState({modalVisible: true})}
             style={{
               width: 100,
               height: 44,
@@ -157,7 +166,9 @@ class PhamarcyCard extends React.Component {
           }>
           <Button
             shadowless
-            //onPress={showDatePicker}
+            onPress={() => {
+              navigation.navigate('Pharmacy');
+            }}
             style={{
               width: 180,
               height: 44,
@@ -175,24 +186,36 @@ class PhamarcyCard extends React.Component {
           animationType="slide"
           transparent={true}
           visible={this.state.modalVisible}
-          onRequestClose={() => this.setModalVisible(false)}>
+          //onRequestClose={() => this.setState({modalVisible: false})}
+        >
           <TouchableOpacity
+            style={styles.modalContainer}
             activeOpacity={1}
-            //onPress={() => this.setModalVisible(false)}
+            onPress={() => this.setState({modalVisible: false})}
             style={[styles.modal]}>
-            <Pressable
-              style={[styles.buttonClose]}
-              onPress={() => {
-                this.setModalVisible(!this.state.modalVisible);
-              }}>
-              <Icon
-                family="NowExtra"
-                size={16}
-                name="simple-remove2x"
-                //color={nowTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
-              />
-            </Pressable>
-            Test
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {records.map((item, index) => {
+                return (
+                  <MedicalRecordsCard
+                    key={index}
+                    item={item}
+                    items={records}
+                    //horizontal
+                    titleStyle={styles.title}
+                    //imageStyle={{height: '100%', width: '100%'}}
+                    remove
+                    physical
+                  />
+                );
+              })}
+              <Pressable
+                style={[styles.modalButton]}
+                onPress={() => {
+                  this.setState({modalVisible: false});
+                }}>
+                <Text>Test</Text>
+              </Pressable>
+            </ScrollView>
           </TouchableOpacity>
         </Modal>
       </Block>
@@ -248,6 +271,7 @@ const styles = StyleSheet.create({
   horizontalImage: {
     height: 122,
     width: 'auto',
+    zIndex: 50,
   },
   horizontalStyles: {
     borderTopRightRadius: 0,
@@ -260,6 +284,7 @@ const styles = StyleSheet.create({
   fullImage: {
     height: 300,
     width: 'auto',
+    zIndex: 50,
   },
   shadow: {
     shadowColor: '#8898AA',
@@ -296,6 +321,13 @@ const styles = StyleSheet.create({
     shadowRadius: 0,
     shadowOpacity: 0,
   },
+  modalButton: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+    marginBottom: 5,
+    backgroundColor: '#2196F3',
+  },
   modalText: {
     marginBottom: 15,
     textAlign: 'center',
@@ -313,13 +345,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 300,
-    marginBottom: 320,
-    marginLeft: 40,
-    marginRight: 40,
+    marginTop: 200,
+    marginBottom: 200,
+    marginLeft: 20,
+    marginRight: 20,
     backgroundColor: 'white',
     borderRadius: 20,
-    padding: 35,
+    //padding: 35,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -354,9 +386,19 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     borderWidth: 0,
   },
+  modalImage: {
+    width: thumbMeasure * 2,
+    height: thumbMeasure * 2,
+    marginBottom: 2,
+  },
 });
 
-export default PhamarcyCard;
+//export default PhamarcyCard;
+const mapStateToProps = createStructuredSelector({
+  records: selectRecords,
+  currentUser: selectCurrentUser,
+});
+export default connect(mapStateToProps, null)(PhamarcyCard);
 
 /*      <Block row={true} middle flex>
 <Block middle flex space="between">

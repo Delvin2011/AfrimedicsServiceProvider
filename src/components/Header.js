@@ -44,8 +44,14 @@ import {
 } from '../redux/user/user-actions';
 
 //Phamarcy
-import {selectedPhamarcyLocation} from '../redux/pharmacy/pharmacy-selectors';
-import {phamarcyLocation} from '../redux/pharmacy/pharmacy-actions';
+import {
+  selectedPhamarcyLocation,
+  selectSearchedPhamarcy,
+} from '../redux/pharmacy/pharmacy-selectors';
+import {
+  phamarcyLocation,
+  searchPhamarcy,
+} from '../redux/pharmacy/pharmacy-actions';
 
 const {height, width} = Dimensions.get('window');
 const iPhoneX = () =>
@@ -302,6 +308,7 @@ class Header extends React.Component {
 
     this.state = {
       specialistSearch: '',
+      phamarcySearch: '',
       region: 'unknown',
     };
   }
@@ -311,12 +318,27 @@ class Header extends React.Component {
   };
 
   handleSearchInput = searchInput => {
-    const {searchSpecialist, title} = this.props;
+    const {searchSpecialist, searchPhamarcy, title} = this.props;
     const specialist = {};
     specialist.name = searchInput;
     specialist.screen =
-      title == 'Book a Doctor' ? 'bd' : 'Find a Doctor' ? 'fd' : '';
-    searchSpecialist(specialist);
+      title == 'Book a Doctor'
+        ? 'bd'
+        : 'Find a Doctor'
+        ? 'fd'
+        : 'New Phamarcy'
+        ? 'ph'
+        : '';
+    if (title == 'Book a Doctor') {
+      specialist.screen = 'bd';
+      searchSpecialist(specialist);
+      this.setState({specialistSearch: searchInput});
+    } else if (title == 'New Phamarcy') {
+      specialist.screen = 'ph';
+      searchPhamarcy(specialist);
+      this.setState({phamarcySearch: searchInput});
+    }
+    //else
   };
 
   renderRight = () => {
@@ -536,12 +558,19 @@ class Header extends React.Component {
   renderSearch = () => {
     const {navigation, title} = this.props;
     var searchOption = '';
+    var name = '';
+    var value = '';
     if (title === 'Find a Doctor') searchOption = 'Search for specialist';
-    else if (title === 'Book a Doctor')
+    else if (title === 'Book a Doctor') {
       searchOption = 'Search favourites or Dr';
-    else if (title === 'Pharmacy') searchOption = 'What are you looking for?';
-    else if (title === 'New Phamarcy') searchOption = 'Search Phamarcy?';
-    else searchOption = 'What is your Location?';
+      name = 'specialistSearch';
+      value = this.state.specialistSearch;
+    } else if (title === 'Pharmacy') searchOption = 'What are you looking for?';
+    else if (title === 'New Phamarcy') {
+      searchOption = 'Search Phamarcy?';
+      name = 'phamarcySearch';
+      value = this.state.phamarcySearch;
+    } else searchOption = 'What is your Location?';
 
     return (
       <Input
@@ -549,8 +578,8 @@ class Header extends React.Component {
         color="black"
         style={styles.search}
         placeholder={searchOption}
-        name="specialistSearch"
-        value={this.state.specialistSearch}
+        name={name}
+        value={value}
         placeholderTextColor={'#8898AA'}
         iconContent={
           <Icon
@@ -560,9 +589,8 @@ class Header extends React.Component {
             family="NowExtra"
           />
         }
-        onChangeText={specialistSearch => {
-          this.setState({specialistSearch});
-          this.handleSearchInput(specialistSearch);
+        onChangeText={searchInput => {
+          this.handleSearchInput(searchInput);
         }}
       />
     );
@@ -813,6 +841,7 @@ const mapDispatchToProps = dispatch => ({
   toggleAddRecord: () => dispatch(toggleAddRecord()),
   viewDoctorsOnMap: () => dispatch(viewDoctorsOnMap()),
   searchSpecialist: specialist => dispatch(searchSpecialist(specialist)),
+  searchPhamarcy: phamarcy => dispatch(searchPhamarcy(phamarcy)),
   specialistLocation: location => dispatch(specialistLocation(location)),
   phamarcyLocation: location => dispatch(phamarcyLocation(location)),
   dependantSelection: dependant => dispatch(dependantSelection(dependant)),
@@ -830,6 +859,7 @@ const mapStateToProps = createStructuredSelector({
   dependantsDetails: selectUserDependants,
   selectedDependant: selectDependant,
   selectedPhamarcyLocation: selectedPhamarcyLocation,
+  searchedPhamarcy: selectSearchedPhamarcy,
 });
 
 //export default withNavigation(Header);

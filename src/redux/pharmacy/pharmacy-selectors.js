@@ -1,19 +1,19 @@
 import {createSelector} from 'reselect';
 
-const selectShop = state => state.pharmacy;
+const selectPhamarcy = state => state.pharmacy;
 
 export const selectCollections = createSelector(
-  [selectShop], //input (takes in)
+  [selectPhamarcy], //input (takes in)
   pharmacy => pharmacy.collections, //output
 );
 
 export const selectPharmacyOrders = createSelector(
-  [selectShop], //input (takes in)
+  [selectPhamarcy], //input (takes in)
   pharmacy => pharmacy.pharmacyOrders, //output
 );
 
 export const selectedPhamarcyLocation = createSelector(
-  [selectShop], //array of input selectors
+  [selectPhamarcy], //array of input selectors
   pharmacy => pharmacy.location, //outputs of the input selectors
 );
 
@@ -22,6 +22,12 @@ export const selectCollectionsForPreview = createSelector(
   pharmacy => (pharmacy ? Object.keys(pharmacy).map(key => pharmacy[key]) : []), //returning mens, womes, hats etc if the collections is not empty
   //const test = {a:1, b:2, c:3} => Object.keys(test) => ["a", "b", "c"]
 );
+
+export const selectSearchedPhamarcy = createSelector(
+  [selectPhamarcy], //array of input selectors
+  pharmacy => pharmacy.searchPhamarcyInput, //outputs of the input selectors
+);
+
 export const selectCollection = collectionUrlParam =>
   createSelector(
     [selectCollections],
@@ -35,13 +41,13 @@ export const selectCollection = collectionUrlParam =>
 //Which in return, createSelector (curryed function) which is a function that returns another function
 
 export const selectIsCollectionFetching = createSelector(
-  [selectShop],
+  [selectPhamarcy],
   pharmacy => pharmacy.isFetching,
 );
 
 //checks to see if collections are loaded
 //if no collections, cillectionsLoaded is false
 export const selectIsCollectionsLoaded = createSelector(
-  [selectShop],
+  [selectPhamarcy],
   pharmacy => !!pharmacy.collections, //if our collections is loaded we get tru, otherwise false
 );

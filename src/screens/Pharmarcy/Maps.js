@@ -3,7 +3,7 @@ import MapView from 'react-native-maps';
 import {Block, Text, theme, View, Button as GaButton} from 'galio-framework';
 import MapCalloutInfo from '../../components/MapCalloutInfo';
 import {useIsFocused} from '@react-navigation/native';
-
+import {searchPhamarcy} from '../../redux/pharmacy/pharmacy-actions';
 import {connect} from 'react-redux';
 import {createStructuredSelector} from 'reselect';
 
@@ -100,14 +100,12 @@ function MapScreen(props) {
     handleRegionChange();
   }, [selectedPhamarcyLocation]);
 
-  /*const handleClick = specialistName => {
-    const {searchSpecialist, viewMap, viewDoctorsOnMap} = props;
-    const x = {name: specialistName.split(' ')[1], screen: 'bd'};
-    if (!viewMap) {
-      viewDoctorsOnMap();
-    }
-    searchSpecialist(x);
-  };*/
+  const handleClick = phamarcyName => {
+    const {searchPhamarcy} = props;
+    const x = {name: phamarcyName, screen: 'ph'};
+
+    searchPhamarcy(x);
+  };
   const handleMapReady = () => {
     setMapReady(true);
   };
@@ -158,8 +156,8 @@ function MapScreen(props) {
                     latitude: phamarcy.latitude,
                     longitude: phamarcy.longitude,
                   }}>
-                  <MapView.Callout>
-                    <MapCalloutInfo specialist={phamarcy} />
+                  <MapView.Callout onPress={() => handleClick(phamarcy.name)}>
+                    <MapCalloutInfo phamarcy={phamarcy} phamarcyView />
                   </MapView.Callout>
                 </MapView.Marker>
               );
@@ -170,21 +168,13 @@ function MapScreen(props) {
   );
 }
 
-/*const mapDispatchToProps = dispatch => ({
-  fetchMedicalAppointments: () => dispatch(fetchMedicalAppointments()),
-  viewDoctorsOnMap: () => dispatch(viewDoctorsOnMap()),
-  searchSpecialist: specialist => dispatch(searchSpecialist(specialist)),
-  addAppointmentRecord: (appointmenToAdd, appointmentRecords) =>
-    dispatch(addAppointmentRecord(appointmenToAdd, appointmentRecords)),
+const mapDispatchToProps = dispatch => ({
+  searchPhamarcy: phamarcy => dispatch(searchPhamarcy(phamarcy)),
 });
 
-const mapStateToProps = createStructuredSelector({
-  viewMap: selectViewDoctorsOnMap,
-});
+export default connect(null, mapDispatchToProps)(MapScreen);
 
-export default connect(mapStateToProps, mapDispatchToProps)(MapScreen);*/
-
-export default MapScreen;
+//export default MapScreen;
 //import MapCalloutInfo from '../components/MapCalloutInfo';
 
 //https://blog.logrocket.com/react-native-maps-introduction/

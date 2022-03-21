@@ -6,6 +6,7 @@ const INITIAL_STATE = {
   erroMessage: undefined,
   pharmacyOrders: null,
   location: 'Location?',
+  searchPhamarcyInput: '',
 };
 
 const pharmacyReducer = (state = INITIAL_STATE, action) => {
@@ -23,7 +24,11 @@ const pharmacyReducer = (state = INITIAL_STATE, action) => {
         isFetching: false,
         collections: action.payload,
       };
-
+    case PhamarcyActionTypes.SEARCH_PHAMARCY: //option can be open or closed hence toggle
+      return {
+        ...state,
+        searchPhamarcyInput: action.payload,
+      };
     case PhamarcyActionTypes.FETCH_COLLECTIONS_FAILURE:
       return {
         ...state,
@@ -58,6 +63,7 @@ const pharmacyReducer = (state = INITIAL_STATE, action) => {
     case PhamarcyActionTypes.PHAMARCY_LOCATION:
       return {
         ...state,
+        // searchPhamarcyInput: {phamarcy: {name: '', screen: ''}},
         location: action.payload, //reducer waiting for the backend update
       };
     default:
