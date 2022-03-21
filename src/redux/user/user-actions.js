@@ -159,6 +159,48 @@ export function addMedicalRecord(itemToAdd, records) {
   };
 }
 
+export function addQuotationRequest(itemToAdd, quotations) {
+  quotations.push(itemToAdd);
+  return dispatch => {
+    firestore()
+      .collection('records')
+      .doc(auth().currentUser.uid)
+      .collection('userQuotationsRequest')
+      .add(itemToAdd)
+      .then(() => {
+        dispatch({
+          type: UserActionTypes.ADD_QUOTATION_REQUEST,
+          payload: quotations,
+        });
+      })
+      .catch(err => {
+        dispatch({type: UserActionTypes.ADD_QUOTATION_REQUEST_FAILER, err});
+      });
+  };
+}
+
+export function fetchQuotationsRequest() {
+  return dispatch => {
+    firestore()
+      .collection('records')
+      .doc(auth().currentUser.uid)
+      .collection('userQuotationsRequest')
+      //.orderBy('Date', 'asc')
+      .get()
+      .then(snapshot => {
+        let quotations = snapshot.docs.map(doc => {
+          const data = doc.data();
+          const id = doc.id;
+          return {id, ...data};
+        });
+        dispatch({
+          type: UserActionTypes.USER_QUOTATION_REQUEST_STATE_CHANGE,
+          payload: quotations,
+        });
+      });
+  };
+}
+
 export function removeMedicalRecord(itemToRemove, items) {
   const updatedItems = items.filter(item => item.id !== itemToRemove.id);
   return dispatch => {

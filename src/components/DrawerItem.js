@@ -4,7 +4,7 @@ import {Block, Text, theme} from 'galio-framework';
 
 import Icon from '../components/Icon';
 import nowTheme from '../constants/Theme';
-
+import Ionicons from 'react-native-vector-icons/Ionicons';
 class DrawerItem extends React.Component {
   renderIcon = () => {
     const {title, focused} = this.props;
@@ -12,58 +12,56 @@ class DrawerItem extends React.Component {
     switch (title) {
       case 'Home':
         return (
-          <Icon
-            name="pin-3"
-            family="Galio"
-            //color={rgb(100, 120, 40)}
-            size={14}
+          <Ionicons
+            name="home"
+            color="rgba(255, 255, 255, .9)"
+            size={18}
+            style={{backgroundColor: 'transparent'}}
           />
         );
       case 'AppointmentRecords':
         return (
-          <Icon
-            name="pin-3"
-            family="Galio"
-            //color={rgb(100, 120, 40)}
-            size={14}
+          <Ionicons
+            name="ios-calendar-sharp"
+            color="rgba(255, 255, 255, .9)"
+            size={18}
+            style={{backgroundColor: 'transparent'}}
           />
         );
       case 'Account':
         return (
-          <Icon
-            name="pin-3"
-            family="Galio"
-            //color={rgb(100, 120, 40)}
-            size={14}
+          <Ionicons
+            name="person"
+            color="rgba(255, 255, 255, .9)"
+            size={18}
+            style={{backgroundColor: 'transparent'}}
           />
         );
       case 'PharmacyOrders':
         return (
-          <Icon
-            name="pin-3"
-            family="Galio"
-            //color={rgb(100, 120, 40)}
-            size={14}
+          <Ionicons
+            name="ios-receipt-sharp"
+            color="rgba(255, 255, 255, .9)"
+            size={18}
+            style={{backgroundColor: 'transparent'}}
           />
         );
       case 'Dependants':
         return (
-          <Icon
-            name="user-run2x"
-            family="NowExtra"
+          <Ionicons
+            name="ios-people-sharp"
+            color="rgba(255, 255, 255, .9)"
             size={18}
-            color={focused ? nowTheme.COLORS.PRIMARY : 'white'}
-            style={{opacity: 0.5}}
+            style={{backgroundColor: 'transparent'}}
           />
         );
       case 'MedicalRecords':
         return (
-          <Icon
-            name="user-run2x"
-            family="NowExtra"
+          <Ionicons
+            name="ios-medkit"
+            color="rgba(255, 255, 255, .9)"
             size={18}
-            color={focused ? nowTheme.COLORS.PRIMARY : 'white'}
-            style={{opacity: 0.5}}
+            style={{backgroundColor: 'transparent'}}
           />
         );
       default:
@@ -73,7 +71,6 @@ class DrawerItem extends React.Component {
 
   render() {
     const {focused, title, navigation} = this.props;
-
     const containerStyles = [
       styles.defaultStyle,
       focused ? [styles.activeStyle, styles.shadow] : null,

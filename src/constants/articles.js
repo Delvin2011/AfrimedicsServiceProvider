@@ -55,39 +55,4 @@ export default [
     cta: 'View More...',
     navigate: 'FindDoctor',
   },
-
-  {
-    title: 'The time is now for it to be okay to be',
-    image: require('../assets/imgs/project15.jpg'),
-    cta: 'View article',
-    horizontal: true,
-  },
-  {
-    title: '$377',
-    image: require('../assets/imgs/saint-laurent.jpg'),
-    subtitle: 'Black Jacket',
-    description:
-      'The structured shoulders and sleek detailing ensure a sharp silhouette. Team it with a silk pocket.',
-  },
-  {
-    title: '$299',
-    image: require('../assets/imgs/bg28.jpg'),
-    subtitle: 'Saint Laurent',
-    description:
-      'The smooth woven-wool is water resistant to ensure you stay pristine after a long-haul flight.',
-  },
-  {
-    title: '$377',
-    image: require('../assets/imgs/saint-laurent.jpg'),
-    subtitle: 'Black Jacket',
-    description:
-      'The structured shoulders and sleek detailing ensure a sharp silhouette. Team it with a silk pocket.',
-  },
-  {
-    title: '$299',
-    image: require('../assets/imgs/project13.jpg'),
-    subtitle: 'Saint Laurent',
-    description:
-      'The smooth woven-wool is water resistant to ensure you stay pristine after a long-haul flight.',
-  },
 ];

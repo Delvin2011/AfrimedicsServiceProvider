@@ -26,6 +26,7 @@ import {
   selectTabOptionChange,
   selectDigitalRecords,
   selectDigitalRecords2,
+  selectUserQuotations,
 } from '../redux/user/user-selectors';
 import {
   toggleAddRecord,
@@ -33,6 +34,7 @@ import {
   addMedicalRecord,
   fetchDigitalMedicalrecords,
   fetchDigitalMedicalrecords2,
+  fetchQuotationsRequest,
 } from '../redux/user/user-actions';
 //import { fetchCollectionsStartAsync } from '../redux/pharmacy/pharmacy-actions';
 
@@ -85,10 +87,12 @@ function MedicalRecords(props) {
         fetchDigitalMedicalrecords,
         fetchDigitalMedicalrecords2,
         fetchMedicalrecords,
+        fetchQuotationsRequest,
       } = props;
       fetchDigitalMedicalrecords();
       fetchDigitalMedicalrecords2();
       fetchMedicalrecords();
+      fetchQuotationsRequest();
     })();
   }, []);
 
@@ -98,10 +102,12 @@ function MedicalRecords(props) {
         fetchMedicalrecords,
         fetchDigitalMedicalrecords,
         fetchDigitalMedicalrecords2,
+        fetchQuotationsRequest,
       } = props;
       fetchMedicalrecords();
       fetchDigitalMedicalrecords();
       fetchDigitalMedicalrecords2();
+      fetchQuotationsRequest();
       //fetchCollectionsStartAsync();
     })();
   }, [isFocused]);
@@ -178,7 +184,10 @@ function MedicalRecords(props) {
       tabOption,
       digitalRecords,
       digitalRecords2,
+      details,
+      quotations,
     } = props;
+
     return (
       <Block>
         <Block style={styles.container}>
@@ -194,10 +203,12 @@ function MedicalRecords(props) {
                     imageStyle={{height: '100%', width: '100%'}}
                     remove
                     physical
+                    details={details}
                   />
                 );
               })
-            : digitalRecords2.map((item, index) => (
+            : tabOption.tabOption == 'digital'
+            ? digitalRecords2.map((item, index) => (
                 <>
                   {item.digitalRecords.map((record, index) => {
                     return (
@@ -208,11 +219,27 @@ function MedicalRecords(props) {
                         titleStyle={styles.title}
                         imageStyle={{height: '100%', width: '100%'}}
                         digital
+                        details={details}
                       />
                     );
                   })}
                 </>
-              ))}
+              ))
+            : quotations.map((item, index) => {
+                return (
+                  <MedicalRecordsCard
+                    key={index}
+                    item={item}
+                    items={quotations}
+                    horizontal
+                    titleStyle={styles.title}
+                    imageStyle={{height: '100%', width: '100%'}}
+                    remove
+                    quotations
+                    details={details}
+                  />
+                );
+              })}
         </Block>
         <Modal
           animationType="slide"
@@ -504,6 +531,8 @@ const mapDispatchToProps = dispatch => ({
   fetchMedicalrecords: () => dispatch(fetchMedicalrecords()),
   fetchDigitalMedicalrecords: () => dispatch(fetchDigitalMedicalrecords()),
   fetchDigitalMedicalrecords2: () => dispatch(fetchDigitalMedicalrecords2()),
+  fetchQuotationsRequest: () => dispatch(fetchQuotationsRequest()),
+
   addMedicalRecord: (itemToAdd, records) =>
     dispatch(addMedicalRecord(itemToAdd, records)),
   //fetchCollectionsStartAsync: () => dispatch(fetchCollectionsStartAsync()),
@@ -516,6 +545,7 @@ const mapStateToProps = createStructuredSelector({
   tabOption: selectTabOptionChange,
   digitalRecords: selectDigitalRecords,
   digitalRecords2: selectDigitalRecords2,
+  quotations: selectUserQuotations,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(MedicalRecords);

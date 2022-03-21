@@ -20,6 +20,7 @@ import Icon from './Icon';
 import Input from './Input';
 import Tabs from './Tabs';
 import nowTheme from '../constants/Theme';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 import {connect} from 'react-redux';
 import {createStructuredSelector} from 'reselect';
@@ -82,11 +83,11 @@ const AddRecordButton = ({isWhite, style, navigation, toggleAddRecord}) => (
   <TouchableOpacity
     style={[styles.button, style]}
     onPress={() => toggleAddRecord()}>
-    <Icon
-      family="NowExtra"
-      size={16}
-      name="simple-add2x"
-      //color={nowTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
+    <Ionicons
+      name="md-add"
+      color="rgb(0,0,0)"
+      size={24}
+      style={{backgroundColor: 'transparent'}}
     />
     <Block
       middle
@@ -102,11 +103,11 @@ const ViewDoctorsOnMap = ({isWhite, style, viewDoctorsOnMap}) => (
   <TouchableOpacity
     style={[styles.button, style]}
     onPress={() => viewDoctorsOnMap()}>
-    <Icon
-      family="NowExtra"
-      size={16}
-      name="world2x"
-      //color={nowTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
+    <Ionicons
+      name="md-map-sharp"
+      color="rgba(255, 255, 255, .9)"
+      size={18}
+      style={{backgroundColor: 'transparent'}}
     />
     <Block
       middle
@@ -122,11 +123,11 @@ const AddDependantButton = ({isWhite, style, navigation, toggleAddRecord}) => (
   <TouchableOpacity
     style={[styles.button, style]}
     onPress={() => navigation.navigate('AddDependants')}>
-    <Icon
-      family="NowExtra"
-      size={16}
-      name="simple-add2x"
-      //color={nowTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
+    <Ionicons
+      name="md-person-add-sharp"
+      color="rgb(0,0,0)"
+      size={18}
+      style={{backgroundColor: 'transparent'}}
     />
     <Block
       middle
@@ -161,11 +162,11 @@ const Cart = ({isWhite, style, navigation, cartItemsCount}) => (
   <TouchableOpacity
     style={[styles.button, style]}
     onPress={() => navigation.navigate('PharmacyCart')}>
-    <Icon
-      family="NowExtra"
-      size={16}
-      name="cart-simple2x"
-      //color={nowTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
+    <Ionicons
+      name="md-cart-outline"
+      color="rgb(0,0,0)"
+      size={18}
+      style={{backgroundColor: 'transparent'}}
     />
     <Block
       middle
@@ -182,11 +183,11 @@ const Wishlist = ({isWhite, style, navigation, wishListItemsCount}) => (
   <TouchableOpacity
     style={[styles.button, style]}
     onPress={() => navigation.navigate('Pro')}>
-    <Icon
-      family="NowExtra"
-      size={16}
-      name="like-22x"
-      //color={nowTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
+    <Ionicons
+      name="md-heart-outline"
+      color="rgb(0,0,0)"
+      size={18}
+      style={{backgroundColor: 'transparent'}}
     />
     <Block
       middle
@@ -714,10 +715,10 @@ class Header extends React.Component {
           right={this.renderRight()}
           rightStyle={{alignItems: 'center'}}
           left={
-            <Icon
-              name={back ? 'minimal-left2x' : 'align-left-22x'}
-              family="NowExtra"
-              size={16}
+            <Ionicons
+              name={back ? 'md-chevron-back-outline' : 'md-reorder-four'}
+              //family="NowExtra"
+              size={18}
               onPress={this.handleLeftPress}
               color={
                 iconColor ||

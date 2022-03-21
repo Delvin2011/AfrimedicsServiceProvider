@@ -16,5 +16,5 @@ module.exports = {
       },
     }),
   },
-  assets: ['./assets/font'],
+  assets: ['./src/assets/font'],
 };

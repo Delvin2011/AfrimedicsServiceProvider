@@ -14,6 +14,7 @@ const INITIAL_STATE = {
   userDependants: null,
   location: 'Location?',
   dependant: 'Dependant?',
+  quotations: '',
 };
 
 const userReducer = (state = INITIAL_STATE, action) => {
@@ -154,6 +155,23 @@ const userReducer = (state = INITIAL_STATE, action) => {
         userDependants: action.payload,
       };
     case UserActionTypes.REMOVE_DEPENDANT_FAILER: //option can be open or closed hence toggle
+      return {
+        ...state,
+        error: action.payload,
+      };
+    case UserActionTypes.USER_QUOTATION_REQUEST_STATE_CHANGE: //option can be open or closed hence toggle
+      return {
+        ...state,
+        quotations: action.payload,
+      };
+    case UserActionTypes.ADD_QUOTATION_REQUEST: //option can be open or closed hence toggle
+      console.log('Heeerso...............');
+      console.log(action.payload);
+      return {
+        ...state,
+        quotations: action.payload,
+      };
+    case UserActionTypes.ADD_QUOTATION_REQUEST_FAILER: //option can be open or closed hence toggle
       return {
         ...state,
         error: action.payload,

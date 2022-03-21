@@ -31,6 +31,7 @@ export default tabs = {
   medicalRecords: [
     {id: 'physical', title: 'Physical'},
     {id: 'digital', title: 'Digital'},
+    {id: 'quotations', title: 'Quotations'},
   ],
   pharmacy: [
     {id: 'health', title: 'Health'},

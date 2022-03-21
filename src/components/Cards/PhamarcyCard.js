@@ -109,7 +109,7 @@ class PhamarcyCard extends React.Component {
             size={14}
             style={styles.cardTitleBold}
             color={nowTheme.COLORS.SECONDARY}>
-            Get Quotations
+            Get Quotations, Submit Record
           </Text>
         </Block>
 
@@ -125,7 +125,13 @@ class PhamarcyCard extends React.Component {
           }}>
           <Button
             shadowless
-            onPress={() => this.setState({modalVisible: true})}
+            //onPress={() => this.setState({modalVisible: true})}
+
+            onPress={() => {
+              navigation.navigate('MedicalRecords', {
+                details: {phamarcyDetails: item, option: 'saved'},
+              });
+            }}
             style={{
               width: 100,
               height: 44,
@@ -135,7 +141,7 @@ class PhamarcyCard extends React.Component {
             }}
             textStyle={{fontSize: 14}}
             color={buttonColors}>
-            Physical Copy
+            Saved Record
           </Button>
           <Button
             shadowless
@@ -149,7 +155,7 @@ class PhamarcyCard extends React.Component {
             }}
             textStyle={{fontSize: 14}}
             color={buttonColors}>
-            Digital Copy
+            New Record
           </Button>
         </Block>
         <Block
@@ -181,43 +187,6 @@ class PhamarcyCard extends React.Component {
             View Online Pharmarcy
           </Button>
         </Block>
-
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={this.state.modalVisible}
-          //onRequestClose={() => this.setState({modalVisible: false})}
-        >
-          <TouchableOpacity
-            style={styles.modalContainer}
-            activeOpacity={1}
-            onPress={() => this.setState({modalVisible: false})}
-            style={[styles.modal]}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              {records.map((item, index) => {
-                return (
-                  <MedicalRecordsCard
-                    key={index}
-                    item={item}
-                    items={records}
-                    //horizontal
-                    titleStyle={styles.title}
-                    //imageStyle={{height: '100%', width: '100%'}}
-                    remove
-                    physical
-                  />
-                );
-              })}
-              <Pressable
-                style={[styles.modalButton]}
-                onPress={() => {
-                  this.setState({modalVisible: false});
-                }}>
-                <Text>Test</Text>
-              </Pressable>
-            </ScrollView>
-          </TouchableOpacity>
-        </Modal>
       </Block>
     );
   }
@@ -407,4 +376,55 @@ export default connect(mapStateToProps, null)(PhamarcyCard);
 <Block middle flex space="between">
   <Text>Select</Text>
 </Block>
-</Block>*/
+</Block>
+
+
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={this.state.modalVisible}
+          //onRequestClose={() => this.setState({modalVisible: false})}
+        >
+          <TouchableOpacity
+            style={styles.modalContainer}
+            activeOpacity={1}
+            onPress={() => this.setState({modalVisible: false})}
+            style={[styles.modal]}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              {records.map((item, index) => {
+                return (
+                  <MedicalRecordsCard
+                    key={index}
+                    item={item}
+                    items={records}
+                    //horizontal
+                    titleStyle={styles.title}
+                    //imageStyle={{height: '100%', width: '100%'}}
+                    remove
+                    physical
+                  />
+                );
+              })}
+              <Pressable
+                style={[styles.modalButton]}
+                onPress={() => {
+                  this.setState({modalVisible: false});
+                }}>
+                <Text>Test</Text>
+              </Pressable>
+            </ScrollView>
+          </TouchableOpacity>
+        </Modal>
+      
+
+
+
+
+
+
+
+
+
+
+
+*/

@@ -18,7 +18,10 @@ import {
   selectSearchedPhamarcy,
 } from '../../redux/pharmacy/pharmacy-selectors';
 import {searchPhamarcy} from '../../redux/pharmacy/pharmacy-actions';
-import {fetchMedicalrecords} from '../../redux/user/user-actions';
+import {
+  fetchMedicalrecords,
+  fetchQuotationsRequest,
+} from '../../redux/user/user-actions';
 
 import MapScreen from './Maps';
 import PhamarcyCard from '../../components/Cards/PhamarcyCard';
@@ -45,6 +48,7 @@ class NewPhamarcy extends React.Component {
 
   componentDidMount() {
     this.props.fetchMedicalrecords();
+    this.props.fetchQuotationsRequest();
   }
   componentWillUnmount() {}
 
@@ -213,6 +217,7 @@ const styles = StyleSheet.create({
 const mapDispatchToProps = dispatch => ({
   searchPhamarcy: phamarcy => dispatch(searchPhamarcy(phamarcy)),
   fetchMedicalrecords: () => dispatch(fetchMedicalrecords()),
+  fetchQuotationsRequest: () => dispatch(fetchQuotationsRequest()),
 });
 
 const mapStateToProps = createStructuredSelector({

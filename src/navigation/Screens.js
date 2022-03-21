@@ -335,7 +335,7 @@ function MedicalRecordsStack(props) {
       headerMode="screen">
       <Stack.Screen
         name="MedicalRecords"
-        component={MedicalRecords}
+        //component={MedicalRecords}
         options={{
           header: ({navigation, scene}) => (
             <Header
@@ -347,6 +347,19 @@ function MedicalRecordsStack(props) {
           ),
           backgroundColor: '#FFFFFF',
         }}
+        children={() =>
+          typeof props.route.params !== 'undefined' ? (
+            <MedicalRecords
+              details={props.route.params.details}
+              navigation={props.navigation}
+            />
+          ) : (
+            <MedicalRecords
+              //details={}
+              navigation={props.navigation}
+            />
+          )
+        }
       />
     </Stack.Navigator>
   );
