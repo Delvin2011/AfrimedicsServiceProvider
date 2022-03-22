@@ -50,7 +50,12 @@ class MedicalRecordsCard extends React.Component {
           onPress: () => console.log('Cancel Pressed'),
           style: 'cancel',
         },
-        {text: 'Submit', onPress: () => addQuotationRequest(item, quotations)},
+        {
+          text: 'Submit',
+          onPress: () => {
+            addQuotationRequest(item, quotations);
+          },
+        },
       ]);
     }
   };
@@ -186,7 +191,7 @@ class MedicalRecordsCard extends React.Component {
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback>
               <Block flex style={styles.cardDescription}>
-                {checkbox === 'saved' ? (
+                {checkbox === 'saved' || checkbox === 'new' ? (
                   <TouchableOpacity style={[styles.buttonRemove]}>
                     <Checkbox
                       checkboxStyle={{

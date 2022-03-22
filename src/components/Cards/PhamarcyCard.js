@@ -23,6 +23,7 @@ import {
   selectRecords,
   selectCurrentUser,
 } from '../../redux/user/user-selectors';
+import {toggleAddRecord} from '../../redux/user/user-actions';
 import MedicalRecordsCard from './MedicalRecordsCard';
 
 const {width, height} = Dimensions.get('screen');
@@ -51,6 +52,7 @@ class PhamarcyCard extends React.Component {
       horizontal,
       removeMedicalRecord,
       records,
+      toggleAddRecord,
     } = this.props;
 
     const imageStyles = [
@@ -145,7 +147,12 @@ class PhamarcyCard extends React.Component {
           </Button>
           <Button
             shadowless
-            //onPress={showDatePicker}
+            onPress={() => {
+              toggleAddRecord();
+              navigation.navigate('MedicalRecords', {
+                details: {phamarcyDetails: item, option: 'new'},
+              });
+            }}
             style={{
               width: 100,
               height: 44,
@@ -362,12 +369,14 @@ const styles = StyleSheet.create({
   },
 });
 
-//export default PhamarcyCard;
+const mapDispatchToProps = dispatch => ({
+  toggleAddRecord: () => dispatch(toggleAddRecord()),
+});
 const mapStateToProps = createStructuredSelector({
   records: selectRecords,
   currentUser: selectCurrentUser,
 });
-export default connect(mapStateToProps, null)(PhamarcyCard);
+export default connect(mapStateToProps, mapDispatchToProps)(PhamarcyCard);
 
 /*      <Block row={true} middle flex>
 <Block middle flex space="between">

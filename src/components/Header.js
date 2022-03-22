@@ -311,6 +311,7 @@ class Header extends React.Component {
       specialistSearch: '',
       phamarcySearch: '',
       region: 'unknown',
+      ambulanceRequest: '',
     };
   }
   handleLeftPress = () => {
@@ -571,7 +572,40 @@ class Header extends React.Component {
       searchOption = 'Search Phamarcy?';
       name = 'phamarcySearch';
       value = this.state.phamarcySearch;
+    } else if (title === 'Request Ambulance') {
+      searchOption = 'Enter pick-up location';
+      name = 'ambulanceRequest';
+      value = this.state.ambulanceRequest;
     } else searchOption = 'What is your Location?';
+
+    return (
+      <Input
+        right
+        color="black"
+        style={styles.search}
+        placeholder={searchOption}
+        name={name}
+        value={value}
+        placeholderTextColor={'#8898AA'}
+        iconContent={
+          <Icon
+            size={16}
+            color={theme.COLORS.MUTED}
+            name="zoom-bold2x"
+            family="NowExtra"
+          />
+        }
+        onChangeText={searchInput => {
+          this.handleSearchInput(searchInput);
+        }}
+      />
+    );
+  };
+  renderDestinationSearch = () => {
+    const {navigation, title} = this.props;
+    var searchOption = 'Enter destination clinic/hospital';
+    var name = 'ambulanceRequestDestination';
+    var value = this.state.ambulanceRequestDestination;
 
     return (
       <Input
@@ -665,12 +699,15 @@ class Header extends React.Component {
     );
   };
   renderHeader = () => {
-    const {search, options, tabs, searchedSpecialist} = this.props;
+    const {search, options, tabs, searchedSpecialist, searchDestination} =
+      this.props;
     //console.log(searchedSpecialist);
     if (search || tabs || options) {
       return (
         <Block center>
           {search ? this.renderSearch() : null}
+          {searchDestination ? this.renderDestinationSearch() : null}
+
           {options ? this.renderOptions() : null}
           {tabs ? this.renderTabs() : null}
         </Block>
@@ -798,12 +835,13 @@ const styles = StyleSheet.create({
     borderRightColor: theme.COLORS.ICON,
   },
   search: {
-    height: 48,
+    height: 40,
     width: width - 32,
     marginHorizontal: 16,
     borderWidth: 1,
     borderRadius: 30,
     borderColor: nowTheme.COLORS.BORDER,
+    marginTop: -5,
   },
   options: {
     marginBottom: 24,

@@ -187,7 +187,6 @@ function MedicalRecords(props) {
       details,
       quotations,
     } = props;
-
     return (
       <Block>
         <Block style={styles.container}>

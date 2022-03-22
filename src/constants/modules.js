@@ -15,8 +15,8 @@ export default [
   {
     title: 'Ambulances',
     image: require('../assets/imgs/bg28.jpg'),
-    cta: 'Book an Ambulance',
-    navigate: 'FindDoctor',
+    cta: 'Request an Ambulance',
+    navigate: 'RequestAmbulance',
   },
   {
     title: 'Home Care',

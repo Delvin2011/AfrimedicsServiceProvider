@@ -22,6 +22,9 @@ import Category from '../screens/Pharmarcy/CategoryLanding';
 import PharmacyCart from '../screens/Pharmarcy/PharmacyCart';
 import NewPhamarcy from '../screens/Pharmarcy/NewPhamarcy';
 
+//Ambulance
+import RequestAmbulance from '../screens/Ambulance/RequestAmbulance';
+
 //Medical Records
 import MedicalRecords from '../screens/MedicalRecords';
 
@@ -393,6 +396,32 @@ function FindDoctorStack(props) {
   );
 }
 
+function RequestAmbulanceStack(props) {
+  return (
+    <Stack.Navigator
+      initialRouteName="Components"
+      mode="card"
+      headerMode="screen">
+      <Stack.Screen
+        name="Request Ambulance"
+        component={RequestAmbulance}
+        options={{
+          header: ({navigation, scene}) => (
+            <Header
+              title="Request Ambulance"
+              search
+              searchDestination
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          backgroundColor: '#FFFFFF',
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
 function BookDoctorStack(props) {
   return (
     <Stack.Navigator
@@ -559,6 +588,10 @@ function AppStack(props) {
       <Drawer.Screen name="BookDoctor" component={BookDoctorStack} />
       <Drawer.Screen name="SelectLocation" component={SelectLocationStack} />
       <Drawer.Screen name="Profile" component={ProfileStack} />
+      <Drawer.Screen
+        name="RequestAmbulance"
+        component={RequestAmbulanceStack}
+      />
     </Drawer.Navigator>
   );
 }
