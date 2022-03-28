@@ -27,7 +27,8 @@ import {
   Modal,
   Pressable,
 } from 'react-native';
-
+const {width, height} = Dimensions.get('screen');
+const thumbMeasure = (width - 48 - 32) / 3.75;
 const CompactImage = styled.Image`
   border-radius: 10px;
   width: 120px;
@@ -66,10 +67,12 @@ function MapCalloutInfo(props) {
     ? phamarcy.name.split(' ')[0] + '...'
     : specialist.title;
 
-  const photo = phamarcyView ? phamarcy.logo : avatarPhoto;
+  const photo = phamarcyView ? phamarcy.logo : specialist.image;
+
   return (
     <Item>
       <Image source={{uri: photo}} />
+
       <Text center numberOfLines={4} ellipsizeMode="tail">
         {name}
       </Text>
@@ -141,6 +144,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
     textAlign: 'center',
+  },
+  avatar: {
+    width: thumbMeasure * 1.25,
+    height: thumbMeasure * 1.25,
+    borderRadius: 50,
+    borderWidth: 0,
   },
 });
 

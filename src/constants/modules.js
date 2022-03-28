@@ -10,7 +10,7 @@ export default [
     title: 'Phamarceuticals',
     image: require('../assets/imgs/bg40.jpg'),
     cta: 'Off the Shelf | Prescribed',
-    navigate: 'Pharmacy',
+    navigate: 'NewPhamarcy',
   },
   {
     title: 'Ambulances',

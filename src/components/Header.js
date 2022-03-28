@@ -298,7 +298,7 @@ const DependantPicker = ({
     mode="dropdown" // Android only
     style={styles.picker}>
     {dependantsDetails.map((item, index) => {
-      return <Picker.Item label={item.name} value={item.id} key={index} />;
+      return <Picker.Item label={item.name} value={item} key={index} />;
     })}
   </Picker>
 );
@@ -546,8 +546,38 @@ class Header extends React.Component {
 
         return [
           <DependantPicker
-            key="map-open-close"
+            key="cartDetails"
             dependantsDetails={details}
+            dependantSelection={dependantSelection}
+            selectedDependant={selectedDependant}
+            isWhite={white}
+          />,
+        ];
+      case 'Request Ambulance':
+        let details2 = [];
+        let contains2 = false;
+        const promptSelectDependant2 = {
+          name: 'Dependant?',
+          id: 0,
+        };
+        if (dependantsDetails) {
+          for (var a = 0; a < dependantsDetails.length; a++) {
+            if (Object.values(dependantsDetails[a]).includes('Dependant?')) {
+              contains2 = true;
+            }
+          }
+          if (contains2) {
+            details2 = dependantsDetails;
+          } else {
+            details2 = dependantsDetails;
+            details2.unshift(promptSelectDependant2);
+          }
+        } else details2.unshift(promptSelectDependant2);
+
+        return [
+          <DependantPicker
+            key="requestAmbulance"
+            dependantsDetails={details2}
             dependantSelection={dependantSelection}
             selectedDependant={selectedDependant}
             isWhite={white}
@@ -558,7 +588,7 @@ class Header extends React.Component {
     }
   };
   renderSearch = () => {
-    const {navigation, title} = this.props;
+    const {navigation, title, selectedDependant} = this.props;
     var searchOption = '';
     var name = '';
     var value = '';
@@ -573,9 +603,20 @@ class Header extends React.Component {
       name = 'phamarcySearch';
       value = this.state.phamarcySearch;
     } else if (title === 'Request Ambulance') {
-      searchOption = 'Enter pick-up location';
-      name = 'ambulanceRequest';
-      value = this.state.ambulanceRequest;
+      if (selectedDependant.id !== 0) {
+        searchOption =
+          selectedDependant.personal.addressLine1 +
+          ' ' +
+          selectedDependant.personal.addressLine2 +
+          ' ' +
+          selectedDependant.personal.addressLine3;
+        name = 'ambulanceRequest';
+        value = this.state.ambulanceRequest;
+      } else {
+        searchOption = 'Enter pick-up location';
+        name = 'ambulanceRequest';
+        value = this.state.ambulanceRequest;
+      }
     } else searchOption = 'What is your Location?';
 
     return (

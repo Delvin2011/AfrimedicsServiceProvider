@@ -62,7 +62,7 @@ function PharmacyCart(props) {
     if (status) {
       var dependantDetails = {};
       for (var x = 0; x < dependantsDetails.length; x++) {
-        if (selectedDependant == dependantsDetails[x].id) {
+        if (selectedDependant.id == dependantsDetails[x].id) {
           dependantDetails = dependantsDetails[x];
           break;
         }
@@ -94,7 +94,7 @@ function PharmacyCart(props) {
   };
   const renderpayment = () => {
     const {selectedDependant} = props;
-    if (selectedDependant == 0) {
+    if (selectedDependant.id == 0) {
       createTwoButtonAlert();
     } else {
       setModalVisible(true);

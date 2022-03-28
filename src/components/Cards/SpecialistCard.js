@@ -147,9 +147,9 @@ class SpecialistCard extends React.Component {
             row={true}
             style={{borderBottomColor: 'grey', borderBottomWidth: 0.35}}>
             <Block middle flex style={styles.cardDescription}>
-              <Image source={Images.ProfilePicture} style={styles.avatar} />
+              <Image source={{uri: item.image}} style={styles.avatar} />
             </Block>
-            <Block flex style={styles.cardDescription}>
+            <Block flex style={(styles.cardDescription, styles.margin)}>
               <Text
                 style={{fontFamily: 'montserrat-regular'}}
                 size={14}
@@ -391,6 +391,10 @@ const styles = StyleSheet.create({
     height: thumbMeasure * 1.25,
     borderRadius: 50,
     borderWidth: 0,
+  },
+  margin: {
+    padding: theme.SIZES.BASE / 2,
+    marginLeft: -30,
   },
 });
 
