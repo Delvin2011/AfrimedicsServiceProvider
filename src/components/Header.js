@@ -6,6 +6,7 @@ import {
   Platform,
   Dimensions,
   Keyboard,
+  PermissionsAndroid,
 } from 'react-native';
 import {
   Button,
@@ -53,6 +54,16 @@ import {
   phamarcyLocation,
   searchPhamarcy,
 } from '../redux/pharmacy/pharmacy-actions';
+
+import {
+  setPickupLocation,
+  setDestinationLocation,
+} from '../redux/ambulance/ambulance-actions';
+
+import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
+import Geolocation from 'react-native-geolocation-service';
+
+navigator.geolocation = require('react-native-geolocation-service');
 
 const {height, width} = Dimensions.get('window');
 const iPhoneX = () =>
@@ -312,8 +323,32 @@ class Header extends React.Component {
       phamarcySearch: '',
       region: 'unknown',
       ambulanceRequest: '',
+      showDestinationSearch: true,
+      currentLocationEnable: false,
     };
+    this.showOff = this.showOff.bind(this);
+    this.show = this.show.bind(this);
   }
+
+  async requestGPSPermissions() {
+    /*if (Platform.OS === 'ios') {
+    Geolocation.requestAuthorization();
+    Geolocation.setRNConfiguration({
+      skipPermissionRequests: false,
+     authorizationLevel: 'whenInUse',
+   });
+  }*/
+
+    if (Platform.OS === 'android') {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        return;
+      }
+    }
+  }
+
   handleLeftPress = () => {
     const {back, navigation} = this.props;
     return back ? navigation.goBack() : navigation.openDrawer();
@@ -341,6 +376,14 @@ class Header extends React.Component {
       this.setState({phamarcySearch: searchInput});
     }
     //else
+  };
+
+  showOff = () => {
+    this.setState({showDestinationSearch: false});
+  };
+
+  show = () => {
+    this.setState({showDestinationSearch: true});
   };
 
   renderRight = () => {
@@ -642,35 +685,128 @@ class Header extends React.Component {
       />
     );
   };
-  renderDestinationSearch = () => {
-    const {navigation, title} = this.props;
-    var searchOption = 'Enter destination clinic/hospital';
-    var name = 'ambulanceRequestDestination';
-    var value = this.state.ambulanceRequestDestination;
 
+  renderPickupLocation = () => {
+    const {dependantsDetails, setPickupLocation} = this.props;
+    var details = [];
+    for (var a = 0; a < dependantsDetails.length; a++) {
+      if (Object.values(dependantsDetails[a]).includes('Dependant?')) {
+        continue;
+      } else {
+        var obj = {
+          description: dependantsDetails[a].description,
+          geometry: dependantsDetails[a].geometry,
+        };
+        details.unshift(obj);
+      }
+    }
+    //this.requestGPSPermissions();
     return (
-      <Input
-        right
-        color="black"
-        style={styles.search}
-        placeholder={searchOption}
-        name={name}
-        value={value}
-        placeholderTextColor={'#8898AA'}
-        iconContent={
-          <Icon
-            size={16}
-            color={theme.COLORS.MUTED}
-            name="zoom-bold2x"
-            family="NowExtra"
-          />
-        }
-        onChangeText={searchInput => {
-          this.handleSearchInput(searchInput);
+      <GooglePlacesAutocomplete
+        placeholder="Search pickup location"
+        onFail={error => console.error(error)}
+        textInputProps={{
+          onChangeText: this.showOff,
         }}
+        onPress={(data, details = null) => {
+          this.show();
+          setPickupLocation({
+            location: details.geometry.location,
+            description: data.description,
+          });
+        }}
+        fetchDetails={true}
+        styles={{
+          container: {
+            flex: 0,
+            width: width - 36,
+            marginHorizontal: 16,
+            marginBottom: 5,
+          },
+
+          textInputContainer: {
+            borderWidth: 1,
+            borderColor: nowTheme.COLORS.BORDER,
+          },
+          textInput: {
+            marginLeft: 0,
+            marginRight: 0,
+            height: 36,
+            color: '#5d5d5d',
+            fontSize: 14,
+            //borderRadius: 30,
+          },
+          predefinedPlacesDescription: {
+            color: '#1faadb',
+          },
+        }}
+        enablePoweredByContainer={false}
+        minLength={2}
+        debounce={400}
+        returnKeyType={'search'}
+        currentLocation={true}
+        currentLocationLabel="Current location"
+        query={{
+          key: 'AIzaSyAHWKeSs8x2QSp9E8OE88X34G1XtvpZZfk',
+          language: 'en',
+        }}
+        nearbyPlacesAPI="GooglePlacesSearch"
+        predefinedPlaces={details}
       />
     );
   };
+
+  renderDestinationSearch = () => {
+    const {setDestinationLocation} = this.props;
+    return (
+      <GooglePlacesAutocomplete
+        placeholder="Search destination clinic/hospital"
+        onFail={error => console.error(error)}
+        onPress={(data, details = null) => {
+          setDestinationLocation({
+            location: details.geometry.location,
+            description: data.description,
+          });
+        }}
+        fetchDetails={true}
+        styles={{
+          container: {
+            flex: 0,
+            width: width - 36,
+            marginHorizontal: 16,
+            marginTop: 5,
+            marginBottom: 10,
+          },
+
+          textInputContainer: {
+            borderWidth: 1,
+            borderColor: nowTheme.COLORS.BORDER,
+          },
+          textInput: {
+            marginLeft: 0,
+            marginRight: 0,
+            height: 36,
+            color: '#5d5d5d',
+            fontSize: 14,
+            //borderRadius: 30,
+          },
+          predefinedPlacesDescription: {
+            color: '#1faadb',
+          },
+        }}
+        enablePoweredByContainer={false}
+        minLength={2}
+        debounce={400}
+        returnKeyType={'search'}
+        query={{
+          key: 'AIzaSyAHWKeSs8x2QSp9E8OE88X34G1XtvpZZfk',
+          language: 'en',
+        }}
+        nearbyPlacesAPI="GooglePlacesSearch"
+      />
+    );
+  };
+
   renderOptions = () => {
     const {navigation, optionLeft, optionRight} = this.props;
 
@@ -740,14 +876,30 @@ class Header extends React.Component {
     );
   };
   renderHeader = () => {
-    const {search, options, tabs, searchedSpecialist, searchDestination} =
-      this.props;
-    //console.log(searchedSpecialist);
-    if (search || tabs || options) {
+    const {
+      search,
+      options,
+      tabs,
+      searchedSpecialist,
+      searchDestination,
+      searchPickupLocation,
+    } = this.props;
+    if (
+      search ||
+      tabs ||
+      options ||
+      searchPickupLocation ||
+      searchDestination
+    ) {
       return (
         <Block center>
           {search ? this.renderSearch() : null}
-          {searchDestination ? this.renderDestinationSearch() : null}
+          {searchPickupLocation
+            ? this.renderPickupLocation(searchPickupLocation)
+            : null}
+          {searchDestination && this.state.showDestinationSearch
+            ? this.renderDestinationSearch()
+            : null}
 
           {options ? this.renderOptions() : null}
           {tabs ? this.renderTabs() : null}
@@ -927,6 +1079,9 @@ const mapDispatchToProps = dispatch => ({
   dependantSelection: dependant => dispatch(dependantSelection(dependant)),
   headerTabOptionChange: tabOption =>
     dispatch(headerTabOptionChange(tabOption)),
+  setPickupLocation: location => dispatch(setPickupLocation(location)),
+  setDestinationLocation: location =>
+    dispatch(setDestinationLocation(location)),
 });
 
 const mapStateToProps = createStructuredSelector({

@@ -17,42 +17,103 @@ import {
   selectUserDependants,
   selectCurrentUser,
 } from '../../redux/user/user-selectors';
-import {fetchUserDependants} from '../../redux/user/user-actions';
+import {
+  selectPickup,
+  selectDestination,
+  selectTravelTimeInfo,
+} from '../../redux/ambulance/ambulance-selectors';
 
+import {fetchUserDependants} from '../../redux/user/user-actions';
+import MapScreen from './Maps';
+import Ambulancies from './AmbulanceSelection';
+
+import {
+  setPickupLocation,
+  setDestinationLocation,
+  setTravelTimeInfo,
+} from '../../redux/ambulance/ambulance-actions';
 const {width} = Dimensions.get('screen');
 
 const thumbMeasure = (width - 48 - 32) / 3;
 
 function RequestAmbulance(props) {
   const isFocused = useIsFocused();
+  const {
+    origin,
+    destination,
+    setPickupLocation,
+    setDestinationLocation,
+    setTravelTimeInfo,
+    travelInfo,
+  } = props;
   useEffect(() => {
-    (async () => {
-      const {fetchUserDependants} = props;
-      fetchUserDependants();
-    })();
+    if (!origin || !destination) return;
+    setPickupLocation(null);
+    setDestinationLocation(null);
+    setTravelTimeInfo(null);
   }, [isFocused]);
 
-  const renderDependants = () => {
-    const {navigation, route, hidden, dependantsDetails} = props;
+  const renderTravelInfo = () => {
     return (
-      <Block>
-        <Block style={styles.container}>
-          <Text>Select Dependant's Address</Text>
-        </Block>
+      <Block
+        row={true}
+        middle
+        flex
+        space="between"
+        style={{
+          marginHorizontal: 40,
+        }}>
+        <Text
+          style={{
+            fontWeight: 'bold',
+            fontSize: 14,
+            marginTop: 10,
+          }}>
+          Distance : {travelInfo?.distance.text}
+        </Text>
+        <Text
+          style={{
+            fontWeight: 'bold',
+            fontSize: 14,
+            marginTop: 10,
+          }}>
+          Travel Time : {travelInfo?.duration.text}
+        </Text>
       </Block>
     );
   };
 
-  return (
-    <Block flex center>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: 30, width}}>
-        {renderDependants()}
-      </ScrollView>
-    </Block>
-  );
+  const renderAmbulanceServices = () => {
+    return (
+      <>
+        {origin ? <MapScreen /> : null}
+        {origin && destination && travelInfo ? renderTravelInfo() : null}
+        {origin && destination && travelInfo ? <Ambulancies /> : null}
+      </>
+    );
+  };
+
+  return <>{renderAmbulanceServices()}</>;
 }
+
+const mapDispatchToProps = dispatch => ({
+  fetchUserDependants: () => dispatch(fetchUserDependants()),
+  setPickupLocation: location => dispatch(setPickupLocation(location)),
+  setDestinationLocation: location =>
+    dispatch(setDestinationLocation(location)),
+  setTravelTimeInfo: travelInfo => dispatch(setTravelTimeInfo(travelInfo)),
+});
+
+const mapStateToProps = createStructuredSelector({
+  dependantsDetails: selectUserDependants,
+  currentUser: selectCurrentUser,
+  origin: selectPickup,
+  destination: selectDestination,
+  travelInfo: selectTravelTimeInfo,
+});
+
+//export default withNavigation(Header);
+export default connect(mapStateToProps, mapDispatchToProps)(RequestAmbulance);
 
 const styles = StyleSheet.create({
   container: {
@@ -263,15 +324,3 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
-
-const mapDispatchToProps = dispatch => ({
-  fetchUserDependants: () => dispatch(fetchUserDependants()),
-});
-
-const mapStateToProps = createStructuredSelector({
-  dependantsDetails: selectUserDependants,
-  currentUser: selectCurrentUser,
-});
-
-//export default withNavigation(Header);
-export default connect(mapStateToProps, mapDispatchToProps)(RequestAmbulance);

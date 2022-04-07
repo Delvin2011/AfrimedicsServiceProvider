@@ -409,7 +409,7 @@ function RequestAmbulanceStack(props) {
           header: ({navigation, scene}) => (
             <Header
               title="Request Ambulance"
-              search
+              searchPickupLocation
               searchDestination
               navigation={navigation}
               scene={scene}
@@ -452,7 +452,7 @@ function BookDoctorStack(props) {
     </Stack.Navigator>
   );
 }
-
+//to remove
 function SelectLocationStack(props) {
   return (
     <Stack.Navigator
