@@ -29,6 +29,7 @@ export default class LoginScreen extends React.Component {
   constructor(props) {
     super(props);
     this.password = this.props.route.params.password;
+    this.username = this.props.route.params.username;
     this.state = {
       username: this.props.route.params.username,
       isModalOpen: false,
@@ -94,7 +95,7 @@ export default class LoginScreen extends React.Component {
 
   onLoggedIn(displayName) {
     (async () => {
-      await AsyncStorage.setItem('usernameValue', this.state.username);
+      await AsyncStorage.setItem('usernameValue', this.username);
     })();
     this.setState({loading: false});
     this.props.navigation.navigate('Main', {
@@ -110,9 +111,12 @@ export default class LoginScreen extends React.Component {
   }
 
   loginClicked() {
+    //console.log(this.props.route.params.password);
+    //console.log(this.props.route.params.username);
     this.setState({loading: true});
     LoginManager.getInstance().loginWithPassword(
-      this.state.username + '.voximplant.com',
+      //this.state.username + '.voximplant.com',
+      this.username + '.voximplant.com',
       this.password,
     );
   }
@@ -129,7 +133,6 @@ export default class LoginScreen extends React.Component {
   }
 
   render() {
-    console.log(this.props.route.params);
     return (
       <SafeAreaView style={styles.safearea}>
         <StatusBar

@@ -13,7 +13,7 @@ import {connect} from 'react-redux';
 import {createStructuredSelector} from 'reselect';
 import {selectTravelTimeInfo} from '../../redux/ambulance/ambulance-selectors';
 
-const Intl = require('react-native-intl');
+//const Intl = require('react-native-intl');
 
 const {width, height} = Dimensions.get('screen');
 const thumbMeasure = (width - 48 - 32) / 3.75;

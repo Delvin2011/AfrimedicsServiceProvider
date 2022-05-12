@@ -121,8 +121,8 @@ class AppointmentCard extends React.Component {
                     color={nowTheme.COLORS.PRIMARY}
                     onPress={() =>
                       navigation.navigate('Login', {
-                        username: 'user2@call-test.tkaydelvin',
-                        password: '!234User2',
+                        username: 'user1@call-test.tkaydelvin',
+                        password: '!234User1',
                         specialistName: item.SpecialistsName,
                       })
                     }>

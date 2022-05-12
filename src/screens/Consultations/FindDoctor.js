@@ -66,10 +66,15 @@ class FindDoctor extends React.Component {
 
   renderAlbums = () => {
     const {navigation, specialist, selectedLocation} = this.props;
-    const x =
-      typeof specialist != 'undefined' ? specialist.specialist.name : 'X';
+    /*const x =
+      typeof specialist != 'undefined' &&
+      typeof specialist.specialist != 'undefined'
+        ? specialist.specialist.name
+        : 'X';
     const prevScreen =
-      typeof specialist != 'undefined' ? specialist.specialist.screen : 'M';
+      typeof specialist != 'undefined' && typeof specialist.specialist
+        ? specialist.specialist.screen
+        : 'M';*/
 
     return (
       <Block flex style={[styles.group, {paddingBottom: theme.SIZES.BASE * 5}]}>

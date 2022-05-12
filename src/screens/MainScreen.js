@@ -145,6 +145,11 @@ export default class MainScreen extends React.Component {
               height: 90,
             }}>
             <CallButton
+              icon_name="message"
+              color={COLOR.ACCENT}
+              buttonPressed={() => this.props.navigation.navigate('Messaging')}
+            />
+            <CallButton
               icon_name="call"
               color={COLOR.ACCENT}
               buttonPressed={() => this.makeCall(false)}

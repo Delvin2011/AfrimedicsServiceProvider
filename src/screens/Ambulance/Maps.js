@@ -12,7 +12,8 @@ import {
   selectDestination,
 } from '../../redux/ambulance/ambulance-selectors';
 import {setTravelTimeInfo} from '../../redux/ambulance/ambulance-actions';
-import {GOOGLE_MAPS_APIKEY} from '@env';
+//import {GOOGLE_MAPS_APIKEY} from '@env';
+const GOOGLE_MAPS_APIKEY = 'AIzaSyAHWKeSs8x2QSp9E8OE88X34G1XtvpZZfk';
 
 function MapScreen(props) {
   const {origin, destination, setTravelTimeInfo} = props;

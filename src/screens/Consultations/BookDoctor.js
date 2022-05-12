@@ -139,9 +139,20 @@ class BookDoctor extends React.Component {
     //All the specialists with same specialty, e.g cardilogists.
     const specialistLists = this.siphonListBySpecialty(code);
     //searched specialist
-    const {name, screen} = searchedSpecialists.specialist;
+
+    const {name} = typeof searchedSpecialists.specialist
+      ? searchedSpecialists.specialist
+      : '';
+    const {screen} = typeof searchedSpecialists.specialist
+      ? searchedSpecialists.specialist
+      : '';
+
+    console.log('I am here');
+    console.log(name + ' xxxxx');
+    console.log(screen + ' yyyyy');
     const searchedSpecialist = name ? name : '';
     const searchedScreen = screen ? screen : '';
+
     const specialistListsByCity = this.siphonFilteredListByCity(
       specialistLists,
       selectedLocation,

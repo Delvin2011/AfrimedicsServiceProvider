@@ -28,6 +28,9 @@ import RequestAmbulance from '../screens/Ambulance/RequestAmbulance';
 //Medical Records
 import MedicalRecords from '../screens/MedicalRecords';
 
+//Messaging
+import Messaging from '../screens/Messaging/Messaging';
+
 //import Camera from '../screens/Camera';
 import IncomingCallScreen from '../screens/IncomingCallScreen';
 import {nowTheme} from '../constants';
@@ -534,6 +537,14 @@ function SelectLocationStack(props) {
   );
 }*/
 
+function MessagingStack(props) {
+  return (
+    <Stack.Navigator mode="card" headerMode="screen">
+      <Stack.Screen name="Messaging" component={Messaging} />
+    </Stack.Navigator>
+  );
+}
+
 function AppStack(props) {
   return (
     <Drawer.Navigator
@@ -588,6 +599,7 @@ function AppStack(props) {
       <Drawer.Screen name="BookDoctor" component={BookDoctorStack} />
       <Drawer.Screen name="SelectLocation" component={SelectLocationStack} />
       <Drawer.Screen name="Profile" component={ProfileStack} />
+      <Drawer.Screen name="Messaging" component={MessagingStack} />
       <Drawer.Screen
         name="RequestAmbulance"
         component={RequestAmbulanceStack}
