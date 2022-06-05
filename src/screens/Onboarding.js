@@ -13,9 +13,13 @@ const {height, width} = Dimensions.get('screen');
 import {Images, nowTheme} from '../constants/';
 import {HeaderHeight} from '../constants/utils';
 
-export default class Onboarding extends React.Component {
+import {connect} from 'react-redux';
+import {createStructuredSelector} from 'reselect';
+import {selectCurrentUser} from '../redux/user/user-selectors';
+
+class Onboarding extends React.Component {
   render() {
-    const {navigation} = this.props;
+    const {navigation, currentUser} = this.props;
 
     return (
       <Block flex style={styles.container}>
@@ -94,17 +98,31 @@ export default class Onboarding extends React.Component {
                   marginTop: theme.SIZES.BASE * 2.5,
                   marginBottom: theme.SIZES.BASE * 2,
                 }}>
-                <Button
-                  shadowless
-                  style={styles.button}
-                  color={nowTheme.COLORS.PRIMARY}
-                  onPress={() => navigation.navigate('App')}>
-                  <Text
-                    style={{fontFamily: 'montserrat-bold', fontSize: 14}}
-                    color={theme.COLORS.WHITE}>
-                    GET STARTED
-                  </Text>
-                </Button>
+                {currentUser ? (
+                  <Button
+                    shadowless
+                    style={styles.button}
+                    color={nowTheme.COLORS.PRIMARY}
+                    onPress={() => navigation.navigate('App')}>
+                    <Text
+                      style={{fontFamily: 'montserrat-bold', fontSize: 14}}
+                      color={theme.COLORS.WHITE}>
+                      GET STARTED
+                    </Text>
+                  </Button>
+                ) : (
+                  <Button
+                    shadowless
+                    style={styles.button}
+                    color={nowTheme.COLORS.PRIMARY}
+                    onPress={() => navigation.navigate('LoginAuth')}>
+                    <Text
+                      style={{fontFamily: 'montserrat-bold', fontSize: 14}}
+                      color={theme.COLORS.WHITE}>
+                      GET STARTED
+                    </Text>
+                  </Button>
+                )}
               </Block>
             </Block>
           </Block>
@@ -113,6 +131,12 @@ export default class Onboarding extends React.Component {
     );
   }
 }
+
+const mapStateToProps = createStructuredSelector({
+  currentUser: selectCurrentUser,
+});
+
+export default connect(mapStateToProps, null)(Onboarding);
 
 const styles = StyleSheet.create({
   container: {

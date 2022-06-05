@@ -75,7 +75,7 @@ class Register extends React.Component {
           password,
         );
         try {
-          await createUserProfileDocument(user, {displayName});
+          await createUserProfileDocument(user, displayName);
           this.setState({
             displayName: '',
             email: '',
@@ -113,7 +113,9 @@ class Register extends React.Component {
   render() {
     const {isShowError, errorMessage, spinner, isRegistered, error} =
       this.state;
-    console.log(error);
+
+    const {navigation} = this.props;
+
     return (
       <DismissKeyboard>
         <Block flex middle>
@@ -358,12 +360,15 @@ class Register extends React.Component {
                         )
                       ) : isRegistered ? (
                         <Block center>
-                          <Button color="success" style={styles.createButton}>
+                          <Button
+                            color="success"
+                            style={styles.createButton}
+                            onPress={() => navigation.navigate('App')}>
                             <Text
                               style={{fontFamily: 'montserrat-bold'}}
                               size={14}
                               color={nowTheme.COLORS.WHITE}>
-                              Registered : Thank you!!
+                              Registered : Proceed!!!
                             </Text>
                           </Button>
                         </Block>

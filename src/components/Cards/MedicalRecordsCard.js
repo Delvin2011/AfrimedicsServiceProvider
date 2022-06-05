@@ -21,6 +21,7 @@ import {
 } from '../../redux/user/user-actions';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {createStructuredSelector} from 'reselect';
+import ImageView from 'react-native-image-viewing';
 
 import {selectUserQuotations} from '../../redux/user/user-selectors';
 
@@ -31,34 +32,11 @@ class MedicalRecordsCard extends React.Component {
     paymentStatus: false,
     modalVisible: false,
     alertStatus: true,
+    showImage: false,
   };
   constructor(props) {
     super(props);
   }
-
-  createTwoButtonAlert = (name, item) => {
-    item.creation = Date.now();
-    item.phamarcyRequest = name;
-    item.caption = 'Quote Request';
-    item.quoteStatus = 'Pending';
-    const {quotations, addQuotationRequest} = this.props;
-
-    if (this.state.alertStatus) {
-      Alert.alert('Request Quotation from :- ', name, [
-        {
-          text: 'Cancel',
-          onPress: () => console.log('Cancel Pressed'),
-          style: 'cancel',
-        },
-        {
-          text: 'Submit',
-          onPress: () => {
-            addQuotationRequest(item, quotations);
-          },
-        },
-      ]);
-    }
-  };
 
   paramsOptionCheck(details) {
     var checkbox = '';
@@ -77,6 +55,10 @@ class MedicalRecordsCard extends React.Component {
       }
     }
     return phamarcyName;
+  }
+
+  handleShowImage(status) {
+    this.setState({showImage: !status});
   }
 
   render() {
@@ -112,6 +94,9 @@ class MedicalRecordsCard extends React.Component {
 
     const checkbox = this.paramsOptionCheck(details);
     const phamarcyName = this.paramsPhamarcyCheck(details);
+
+    const images = [{uri: item.downLoadURL}];
+    console.log(item.downLoadURL);
     return (
       <Block card flex style={cardContainer}>
         {digital ? (
@@ -137,7 +122,7 @@ class MedicalRecordsCard extends React.Component {
                   </Text>
                 </Block>
               </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback>
+              <TouchableOpacity>
                 <Block flex space="between" style={styles.cardDescription}>
                   <Block middle>
                     <Image
@@ -146,7 +131,7 @@ class MedicalRecordsCard extends React.Component {
                     />
                   </Block>
                 </Block>
-              </TouchableWithoutFeedback>
+              </TouchableOpacity>
             </Block>
             <Block row={horizontal}>
               <TouchableWithoutFeedback>
@@ -181,57 +166,38 @@ class MedicalRecordsCard extends React.Component {
             <TouchableWithoutFeedback>
               <Block flex style={styles.cardDescription}>
                 <Block style={imgContainer}>
-                  <Image
-                    resizeMode="cover"
-                    source={{uri: item.downLoadURL}}
-                    style={imageStyles}
-                  />
+                  <TouchableOpacity
+                    onPress={() => this.setState({showImage: true})}>
+                    <Image
+                      resizeMode="cover"
+                      source={{uri: item.downLoadURL}}
+                      style={imageStyles}
+                    />
+                  </TouchableOpacity>
                 </Block>
               </Block>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback>
               <Block flex style={styles.cardDescription}>
-                {checkbox === 'saved' || checkbox === 'new' ? (
-                  <TouchableOpacity style={[styles.buttonRemove]}>
-                    <Checkbox
-                      checkboxStyle={{
-                        borderWidth: 1,
-                        borderRadius: 2,
-                        borderColor: nowTheme.COLORS.PRIMARY,
-                        zIndex: 100,
-                      }}
-                      color={nowTheme.COLORS.PRIMARY}
-                      label=""
-                      labelStyle={{
-                        color: nowTheme.COLORS.HEADER,
-                        fontFamily: 'montserrat-regular',
-                      }}
-                      onChange={() => {
-                        this.createTwoButtonAlert(phamarcyName, item);
-                        this.setState({alertStatus: !this.state.alertStatus});
-                      }}
-                    />
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity
-                    style={[styles.buttonRemove]}
-                    onPress={() =>
-                      this.setState({modalVisible: !this.state.modalVisible})
-                    }>
-                    <Ionicons
-                      name="md-close-outline"
-                      color="rgb(0,0,0)"
-                      size={18}
-                      style={{backgroundColor: 'transparent'}}
-                    />
-                  </TouchableOpacity>
-                )}
+                <TouchableOpacity
+                  style={[styles.buttonRemove]}
+                  onPress={() =>
+                    this.setState({modalVisible: !this.state.modalVisible})
+                  }>
+                  <Ionicons
+                    name="md-close-outline"
+                    color="rgb(0,0,0)"
+                    size={18}
+                    style={{backgroundColor: 'transparent'}}
+                  />
+                </TouchableOpacity>
+
                 <Text
                   //style={{fontFamily: 'montserrat-regular'}}
                   size={14}
                   style={styles.cardTitle}
                   color={nowTheme.COLORS.SECONDARY}>
-                  Dependant Name
+                  {item.Name}
                 </Text>
                 <Text
                   //style={{fontFamily: 'montserrat-regular'}}
@@ -245,9 +211,7 @@ class MedicalRecordsCard extends React.Component {
                   size={14}
                   style={styles.cardCaptions}
                   color={nowTheme.COLORS.SECONDARY}>
-                  {new Date(item.creation)
-                    .toString()
-                    .replace('GMT+0200 (SAST)', '')}
+                  {new Date(item.creation).toString().replace('GMT+0200', '')}
                 </Text>
               </Block>
             </TouchableWithoutFeedback>
@@ -313,6 +277,12 @@ class MedicalRecordsCard extends React.Component {
             </TouchableWithoutFeedback>
           </Block>
         )}
+        <ImageView
+          images={images}
+          imageIndex={0}
+          visible={this.state.showImage}
+          onRequestClose={() => this.handleShowImage(this.state.showImage)}
+        />
 
         <Modal
           animationType="slide"

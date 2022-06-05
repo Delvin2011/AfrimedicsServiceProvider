@@ -15,6 +15,7 @@ const INITIAL_STATE = {
   location: 'Location?',
   dependant: 'Dependant?',
   quotations: '',
+  connectionDetails: null,
 };
 
 const userReducer = (state = INITIAL_STATE, action) => {
@@ -23,6 +24,7 @@ const userReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         currentUser: action.payload,
+        viewMap: action.payload.available,
       };
     case UserActionTypes.SIGN_OUT_SUCCESS:
       return {
@@ -71,7 +73,7 @@ const userReducer = (state = INITIAL_STATE, action) => {
     case UserActionTypes.USER_VIEW_MAP: //option can be open or closed hence toggle
       return {
         ...state,
-        viewMap: !state.viewMap,
+        viewMap: action.payload,
       };
 
     case UserActionTypes.ADD_MEDICAL_RECORD: //option can be open or closed hence toggle
@@ -165,8 +167,6 @@ const userReducer = (state = INITIAL_STATE, action) => {
         quotations: action.payload,
       };
     case UserActionTypes.ADD_QUOTATION_REQUEST: //option can be open or closed hence toggle
-      console.log('Heeerso...............');
-      console.log(action.payload);
       return {
         ...state,
         quotations: action.payload,
@@ -175,6 +175,12 @@ const userReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         error: action.payload,
+      };
+
+    case UserActionTypes.SET_APPOINTMENT_CONNECTION_DETAILS: //option can be open or closed hence toggle
+      return {
+        ...state,
+        connectionDetails: action.payload,
       };
     default:
       return state;

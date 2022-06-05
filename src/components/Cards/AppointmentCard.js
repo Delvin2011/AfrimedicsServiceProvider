@@ -12,6 +12,14 @@ import {Block, Text, theme, Button} from 'galio-framework';
 import {nowTheme} from '../../constants';
 import {Images} from '../../constants';
 
+//redux
+import {connect} from 'react-redux';
+import {createStructuredSelector} from 'reselect';
+import {
+  appointmentConnect,
+  updateAppointmentRecord,
+} from '../../redux/user/user-actions';
+import {selectAppointmentRecords} from '../../redux/user/user-selectors';
 const {width, height} = Dimensions.get('screen');
 const thumbMeasure = (width - 48 - 32) / 3.75;
 class AppointmentCard extends React.Component {
@@ -22,6 +30,17 @@ class AppointmentCard extends React.Component {
     super(props);
   }
 
+  _appointmentConnect = item => {
+    const {appointmentConnect} = this.props;
+    const connectDetails = {
+      loginCredentials: {
+        username: 'user2@call-test.tkaydelvin',
+        password: '!234User2',
+      },
+      patientDetails: item,
+    };
+    appointmentConnect(connectDetails);
+  };
   render() {
     const {
       navigation,
@@ -33,6 +52,8 @@ class AppointmentCard extends React.Component {
       ctaRight,
       titleStyle,
       horizontal,
+      appointmentRecords,
+      updateAppointmentRecord,
     } = this.props;
 
     const imageStyles = [
@@ -47,114 +68,298 @@ class AppointmentCard extends React.Component {
       styles.shadow,
     ];
 
+    const Start = {
+      StartTime: Date.now(),
+      Status: 'In Progress',
+    };
+    const End = {
+      EndTime: Date.now(),
+      Status: 'Complete',
+    };
     return (
-      <Block card flex style={cardContainer}>
-        <Block row={horizontal}>
-          <TouchableWithoutFeedback>
-            <Block flex space="between" style={styles.cardDescription}>
-              <Block>
-                <Text
-                  //style={}
-                  size={14}
-                  style={styles.appointment}
-                  color={nowTheme.COLORS.SECONDARY}>
-                  {new Date(item.DateTime._seconds * 1000)
-                    .toString()
-                    .replace(':00 GMT+0200 (SAST)', '')}
-                </Text>
-                <Text
-                  style={{fontFamily: 'montserrat-regular'}}
-                  size={14}
-                  style={titleStyles}
-                  color={nowTheme.COLORS.SECONDARY}>
-                  {item.SpecialistsName}
-                </Text>
-                <Text
-                  style={{fontFamily: 'montserrat-regular'}}
-                  size={14}
-                  style={titleStyles}
-                  color={nowTheme.COLORS.SECONDARY}>
-                  {item.PracticeName}
-                </Text>
-                <Text
-                  style={{fontFamily: 'montserrat-regular'}}
-                  size={14}
-                  style={titleStyles}
-                  color={nowTheme.COLORS.SECONDARY}>
-                  Appointment {item.VisitationStatus}
-                </Text>
-              </Block>
-            </Block>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback>
-            <Block flex space="between" style={styles.cardDescription}>
-              <Block middle>
-                <Image source={Images.ProfilePicture} style={styles.avatar} />
-              </Block>
-            </Block>
-          </TouchableWithoutFeedback>
-        </Block>
-        <Block
-          row
-          middle
-          style={{
-            marginTop: theme.SIZES.BASE * 2.5,
-            marginBottom: theme.SIZES.BASE * 1,
-          }}>
-          <Block row={horizontal} style={{marginTop: -25}}>
-            <Block flex space="between" style={styles.cardDescription}>
-              <Block middle style={{marginTop: -15}}>
-                <Text
-                  size={14}
-                  style={styles.appointment}
-                  color={nowTheme.COLORS.SECONDARY}>
-                  Booked for Tiks
-                </Text>
-              </Block>
-            </Block>
-            <Block flex space="between" style={styles.cardDescription}>
-              <Block middle>
-                {Date.now() < new Date(item.DateTime._seconds * 1000) ? (
-                  <Button
-                    shadowless
-                    style={styles.button}
-                    color={nowTheme.COLORS.PRIMARY}
-                    onPress={() =>
-                      navigation.navigate('Login', {
-                        username: 'user1@call-test.tkaydelvin',
-                        password: '!234User1',
-                        specialistName: item.SpecialistsName,
-                      })
-                    }>
+      <>
+        {item.AppointmentType == 'Physical' ? (
+          <Block card flex style={cardContainer}>
+            <Block row={horizontal}>
+              <TouchableWithoutFeedback>
+                <Block flex space="between" style={styles.cardDescription}>
+                  <Block>
                     <Text
-                      style={{fontFamily: 'montserrat-bold', fontSize: 14}}
-                      color={theme.COLORS.WHITE}>
-                      CONNECT TO Dr...
+                      //style={}
+                      size={14}
+                      style={styles.appointment}
+                      color={nowTheme.COLORS.SECONDARY}>
+                      {new Date(item.DateTime._seconds * 1000)
+                        .toString()
+                        .replace(':00 GMT+0200', '')}
                     </Text>
-                  </Button>
-                ) : (
-                  <Button
-                    shadowless
-                    style={styles.button}
-                    color={nowTheme.COLORS.PRIMARY}
-                    //onPress={() => navigation.navigate('Login')}
-                  >
+
                     <Text
-                      style={{fontFamily: 'montserrat-bold', fontSize: 14}}
-                      color={theme.COLORS.WHITE}>
-                      BOOK AGAIN
+                      style={{fontFamily: 'montserrat-regular'}}
+                      size={14}
+                      style={titleStyles}
+                      color={nowTheme.COLORS.SECONDARY}>
+                      Gender : {item.Gender}
                     </Text>
-                  </Button>
-                )}
+                    <Text
+                      style={{fontFamily: 'montserrat-regular'}}
+                      size={14}
+                      style={titleStyles}
+                      color={nowTheme.COLORS.SECONDARY}>
+                      Status : {item.Status}
+                    </Text>
+                    <Text
+                      style={{fontFamily: 'montserrat-regular'}}
+                      size={14}
+                      style={titleStyles}
+                      color={nowTheme.COLORS.SECONDARY}>
+                      Appointment for :
+                    </Text>
+                  </Block>
+                </Block>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback>
+                <Block flex space="between" style={styles.cardDescription}>
+                  <Block middle>
+                    <Image
+                      source={{uri: item.profileURL}}
+                      style={styles.avatar}
+                    />
+                  </Block>
+                </Block>
+              </TouchableWithoutFeedback>
+            </Block>
+            <Block
+              row
+              middle
+              style={{
+                marginTop: theme.SIZES.BASE * 2.5,
+                marginBottom: theme.SIZES.BASE * 1,
+              }}>
+              <Block row={horizontal} style={{marginTop: -25}}>
+                <Block flex space="between" style={styles.cardDescription}>
+                  <Block middle style={{marginTop: -15}}>
+                    <Text
+                      size={14}
+                      style={styles.appointment}
+                      color={nowTheme.COLORS.SECONDARY}>
+                      {item.Name}
+                    </Text>
+                  </Block>
+                </Block>
+                <Block flex space="between" style={styles.cardDescription}>
+                  <Block middle>
+                    {Date.now() < new Date(item.DateTime._seconds * 1000) &&
+                    item.Status === 'Pending' ? (
+                      <Button
+                        shadowless
+                        style={styles.button}
+                        color={nowTheme.COLORS.PRIMARY}
+                        onPress={() => {
+                          updateAppointmentRecord(
+                            Start,
+                            item,
+                            appointmentRecords,
+                          );
+                        }}>
+                        <Text
+                          style={{fontFamily: 'montserrat-bold', fontSize: 14}}
+                          color={theme.COLORS.WHITE}>
+                          START APPOINTMENT
+                        </Text>
+                      </Button>
+                    ) : Date.now() > new Date(item.DateTime._seconds * 1000) &&
+                      item.Status === 'Pending' ? (
+                      <Button
+                        shadowless
+                        style={styles.button}
+                        color={nowTheme.COLORS.PRIMARY}
+                        //onPress={() => navigation.navigate('Login')}
+                      >
+                        <Text
+                          style={{fontFamily: 'montserrat-bold', fontSize: 14}}
+                          color={theme.COLORS.WHITE}>
+                          APPOINTMENT OVERDUE
+                        </Text>
+                      </Button>
+                    ) : item.Status === 'Complete' ? (
+                      <Button
+                        shadowless
+                        style={styles.button}
+                        color={nowTheme.COLORS.PRIMARY}
+                        onPress={() =>
+                          navigation.navigate('MedicalRecords', {
+                            details: {patientDetails: item, option: 'new'},
+                          })
+                        }>
+                        <Text
+                          style={{fontFamily: 'montserrat-bold', fontSize: 14}}
+                          color={theme.COLORS.WHITE}>
+                          ADD PRESCRIPTION
+                        </Text>
+                      </Button>
+                    ) : item.Status === 'In Progress' ? (
+                      <Button
+                        shadowless
+                        style={styles.button}
+                        color={nowTheme.COLORS.PRIMARY}
+                        onPress={() => {
+                          updateAppointmentRecord(
+                            End,
+                            item,
+                            appointmentRecords,
+                          );
+                        }}>
+                        <Text
+                          style={{fontFamily: 'montserrat-bold', fontSize: 14}}
+                          color={theme.COLORS.WHITE}>
+                          END APPOINTMENT
+                        </Text>
+                      </Button>
+                    ) : null}
+                  </Block>
+                </Block>
               </Block>
             </Block>
           </Block>
-        </Block>
-      </Block>
+        ) : item.AppointmentType == 'Virtual' ? (
+          <Block card flex style={cardContainer}>
+            <Block row={horizontal}>
+              <TouchableWithoutFeedback>
+                <Block flex space="between" style={styles.cardDescription}>
+                  <Block>
+                    <Text
+                      //style={}
+                      size={14}
+                      style={styles.appointment}
+                      color={nowTheme.COLORS.SECONDARY}>
+                      {new Date(item.DateTime._seconds * 1000)
+                        .toString()
+                        .replace(':00 GMT+0200', '')}
+                    </Text>
+
+                    <Text
+                      style={{fontFamily: 'montserrat-regular'}}
+                      size={14}
+                      style={titleStyles}
+                      color={nowTheme.COLORS.SECONDARY}>
+                      Gender : {item.Gender}
+                    </Text>
+                    <Text
+                      style={{fontFamily: 'montserrat-regular'}}
+                      size={14}
+                      style={titleStyles}
+                      color={nowTheme.COLORS.SECONDARY}>
+                      Status : {item.Status}
+                    </Text>
+                    <Text
+                      style={{fontFamily: 'montserrat-regular'}}
+                      size={14}
+                      style={titleStyles}
+                      color={nowTheme.COLORS.SECONDARY}>
+                      Appointment for :
+                    </Text>
+                  </Block>
+                </Block>
+              </TouchableWithoutFeedback>
+              <TouchableWithoutFeedback>
+                <Block flex space="between" style={styles.cardDescription}>
+                  <Block middle>
+                    <Image
+                      source={{uri: item.profileURL}}
+                      style={styles.avatar}
+                    />
+                  </Block>
+                </Block>
+              </TouchableWithoutFeedback>
+            </Block>
+            <Block
+              row
+              middle
+              style={{
+                marginTop: theme.SIZES.BASE * 2.5,
+                marginBottom: theme.SIZES.BASE * 1,
+              }}>
+              <Block row={horizontal} style={{marginTop: -25}}>
+                <Block flex space="between" style={styles.cardDescription}>
+                  <Block middle style={{marginTop: -15}}>
+                    <Text
+                      size={14}
+                      style={styles.appointment}
+                      color={nowTheme.COLORS.SECONDARY}>
+                      {item.Name}
+                    </Text>
+                  </Block>
+                </Block>
+                <Block flex space="between" style={styles.cardDescription}>
+                  <Block middle>
+                    {Date.now() < new Date(item.DateTime._seconds * 1000) &&
+                    item.Status === 'Pending' ? (
+                      <Button
+                        shadowless
+                        style={styles.button}
+                        color={nowTheme.COLORS.PRIMARY}
+                        onPress={() => {
+                          navigation.navigate('Login');
+                          this._appointmentConnect(item);
+                        }}>
+                        <Text
+                          style={{fontFamily: 'montserrat-bold', fontSize: 14}}
+                          color={theme.COLORS.WHITE}>
+                          CONNECT...
+                        </Text>
+                      </Button>
+                    ) : Date.now() > new Date(item.DateTime._seconds * 1000) &&
+                      item.Status === 'Pending' ? (
+                      <Button
+                        shadowless
+                        style={styles.button}
+                        color={nowTheme.COLORS.PRIMARY}
+                        //onPress={() => navigation.navigate('Login')}
+                      >
+                        <Text
+                          style={{fontFamily: 'montserrat-bold', fontSize: 14}}
+                          color={theme.COLORS.WHITE}>
+                          APPOINTMENT OVERDUE
+                        </Text>
+                      </Button>
+                    ) : item.Status === 'Complete' ? (
+                      <Button
+                        shadowless
+                        style={styles.button}
+                        color={nowTheme.COLORS.PRIMARY}
+                        onPress={() =>
+                          navigation.navigate('MedicalRecords', {
+                            details: {patientDetails: item, option: 'new'},
+                          })
+                        }>
+                        <Text
+                          style={{fontFamily: 'montserrat-bold', fontSize: 14}}
+                          color={theme.COLORS.WHITE}>
+                          ADD PRESCRIPTION
+                        </Text>
+                      </Button>
+                    ) : null}
+                  </Block>
+                </Block>
+              </Block>
+            </Block>
+          </Block>
+        ) : null}
+      </>
     );
   }
 }
 
+const mapDispatchToProps = dispatch => ({
+  appointmentConnect: connectDetails =>
+    dispatch(appointmentConnect(connectDetails)),
+  updateAppointmentRecord: (toUpdate, record, records) =>
+    dispatch(updateAppointmentRecord(toUpdate, record, records)),
+});
+const mapStateToProps = createStructuredSelector({
+  appointmentRecords: selectAppointmentRecords,
+});
 AppointmentCard.propTypes = {
   item: PropTypes.object,
   horizontal: PropTypes.bool,
@@ -250,7 +455,11 @@ const styles = StyleSheet.create({
   },
 });
 
-export default withNavigation(AppointmentCard);
+export default withNavigation(
+  connect(mapStateToProps, mapDispatchToProps)(AppointmentCard),
+);
+
+//export default withNavigation(AppointmentCard);
 
 /*              <Block flex>
                 <Text

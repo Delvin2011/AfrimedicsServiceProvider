@@ -18,6 +18,11 @@ import {
   Platform,
 } from 'react-native';
 
+import {withNavigation} from '@react-navigation/compat';
+import {connect} from 'react-redux';
+import {createStructuredSelector} from 'reselect';
+import {selectConnectionDetails} from '../redux/user/user-selectors';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import CallButton from '../components/CallButton';
@@ -29,7 +34,7 @@ import COLOR from '../styles/Color';
 import COLOR_SCHEME from '../styles/ColorScheme';
 import styles from '../styles/Styles';
 
-export default class MainScreen extends React.Component {
+class MainScreen extends React.Component {
   static navigationOptions = ({navigation}) => {
     const params = navigation.state.params || {};
 
@@ -118,7 +123,10 @@ export default class MainScreen extends React.Component {
   }
 
   render() {
-    const callTo = 'Call to ' + this.props.route.params.specialistName;
+    const {connectionDetails} = this.props;
+    const {patientDetails} = connectionDetails;
+    const {Name} = patientDetails;
+    const callTo = 'Contact ' + Name;
     return (
       <SafeAreaView style={styles.safearea}>
         <StatusBar
@@ -185,3 +193,9 @@ export default class MainScreen extends React.Component {
     );
   }
 }
+
+const mapStateToProps = createStructuredSelector({
+  connectionDetails: selectConnectionDetails, //to show or hide the cart.
+});
+
+export default withNavigation(connect(mapStateToProps, null)(MainScreen));

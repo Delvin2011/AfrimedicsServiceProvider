@@ -144,11 +144,13 @@ function MedicalRecords(props) {
 
   const uploadImage = async () => {
     setUpLoading(true);
+    const {addMedicalRecord, records, details} = props;
+    const {patientDetails} = details;
+    const patientUID = patientDetails.userID;
     const uri = image;
     const response = await fetch(uri); //fetch will be responsible for the fetching the image uri data
     const blob = await response.blob(); //responsible for uploading the image. Will create a blog of the image  to upload to firestore
     const task = storage().ref().child(childPath).put(blob);
-    const {addMedicalRecord, records, navigation} = props;
 
     const taskProgress = snapshot => {
       console.log(`transferred: ${snapshot.byteTransferred}`);
@@ -157,11 +159,19 @@ function MedicalRecords(props) {
     const taskCompleted = () => {
       task.snapshot.ref.getDownloadURL().then(snapshot => {
         const itemToAdd = {
-          downLoadURL: snapshot,
+          downLoadURL: snapshot
+            .toString()
+            .replace(
+              'https://firebasestorage.googleapis.com/',
+              'https://ik.imagekit.io/qlvke6f9z/tr:w-h-300,w-400/',
+            ),
           caption: 'Prescription',
           creation: Date.now(),
+          userID: patientUID,
+          Name: patientDetails.Name,
         };
-        addMedicalRecord(itemToAdd, records);
+
+        addMedicalRecord(itemToAdd, records, patientUID);
         setUpLoading(false);
         setRecordTypeModal(false);
       });
@@ -187,58 +197,51 @@ function MedicalRecords(props) {
       details,
       quotations,
     } = props;
+
     return (
       <Block>
         <Block style={styles.container}>
-          {tabOption.tabOption == 'physical'
-            ? records.map((item, index) => {
-                return (
-                  <MedicalRecordsCard
-                    key={index}
-                    item={item}
-                    items={records}
-                    horizontal
-                    titleStyle={styles.title}
-                    imageStyle={{height: '100%', width: '100%'}}
-                    remove
-                    physical
-                    details={details}
-                  />
-                );
-              })
-            : tabOption.tabOption == 'digital'
-            ? digitalRecords2.map((item, index) => (
-                <>
-                  {item.digitalRecords.map((record, index) => {
-                    return (
-                      <MedicalRecordsCard
-                        key={index}
-                        item={record}
-                        horizontal
-                        titleStyle={styles.title}
-                        imageStyle={{height: '100%', width: '100%'}}
-                        digital
-                        details={details}
-                      />
-                    );
-                  })}
-                </>
-              ))
-            : quotations.map((item, index) => {
-                return (
-                  <MedicalRecordsCard
-                    key={index}
-                    item={item}
-                    items={quotations}
-                    horizontal
-                    titleStyle={styles.title}
-                    imageStyle={{height: '100%', width: '100%'}}
-                    remove
-                    quotations
-                    details={details}
-                  />
-                );
-              })}
+          {tabOption
+            ? tabOption.tabOption == 'physical'
+              ? records
+                ? records.length !== 0
+                  ? records.map((item, index) => {
+                      return (
+                        <MedicalRecordsCard
+                          key={index}
+                          item={item}
+                          items={records}
+                          horizontal
+                          titleStyle={styles.title}
+                          imageStyle={{height: '100%', width: '100%'}}
+                          remove
+                          physical
+                          details={details}
+                        />
+                      );
+                    })
+                  : null
+                : null
+              : tabOption.tabOption == 'digital'
+              ? digitalRecords2.map((item, index) => (
+                  <>
+                    {item.digitalRecords.map((record, index) => {
+                      return (
+                        <MedicalRecordsCard
+                          key={index}
+                          item={record}
+                          horizontal
+                          titleStyle={styles.title}
+                          imageStyle={{height: '100%', width: '100%'}}
+                          digital
+                          details={details}
+                        />
+                      );
+                    })}
+                  </>
+                ))
+              : null
+            : null}
         </Block>
         <Modal
           animationType="slide"
@@ -531,9 +534,8 @@ const mapDispatchToProps = dispatch => ({
   fetchDigitalMedicalrecords: () => dispatch(fetchDigitalMedicalrecords()),
   fetchDigitalMedicalrecords2: () => dispatch(fetchDigitalMedicalrecords2()),
   fetchQuotationsRequest: () => dispatch(fetchQuotationsRequest()),
-
-  addMedicalRecord: (itemToAdd, records) =>
-    dispatch(addMedicalRecord(itemToAdd, records)),
+  addMedicalRecord: (itemToAdd, records, patientUID) =>
+    dispatch(addMedicalRecord(itemToAdd, records, patientUID)),
   //fetchCollectionsStartAsync: () => dispatch(fetchCollectionsStartAsync()),
 });
 

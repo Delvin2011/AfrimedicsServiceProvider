@@ -256,12 +256,12 @@ class Login extends Component {
                     <Button
                       color="success"
                       style={styles.createButton}
-                      onPress={() => signOut()}>
+                      onPress={() => navigation.navigate('App')}>
                       <Text
                         style={{fontFamily: 'montserrat-bold'}}
                         size={14}
                         color={nowTheme.COLORS.WHITE}>
-                        Logged In : Thank you!!
+                        Logged In : Proceed!!
                       </Text>
                     </Button>
                   </Block>

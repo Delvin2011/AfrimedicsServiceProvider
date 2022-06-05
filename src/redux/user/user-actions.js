@@ -36,15 +36,39 @@ export const toggleAddRecord = () => ({
   type: UserActionTypes.USER_TOGGLE_ADDRECORD, //we do not need the payload in this case.
 });
 
-export const viewDoctorsOnMap = () => ({
+/*export const viewDoctorsOnMap = () => ({
   type: UserActionTypes.USER_VIEW_MAP, //we do not need the payload in this case.
-});
+});*/
+
+export function viewDoctorsOnMap(status) {
+  return dispatch => {
+    firestore()
+      .collection('serviceProviders')
+      .doc(auth().currentUser.uid)
+      .update({available: !status})
+      .then(() => {
+        dispatch({
+          type: UserActionTypes.USER_VIEW_MAP,
+          payload: !status,
+        });
+      });
+  };
+}
 
 export const searchSpecialist = specialist => {
   return dispatch => {
     dispatch({
       type: UserActionTypes.SEARCH_SPECIALIST,
       payload: {specialist},
+    });
+  };
+};
+
+export const appointmentConnect = connectDetails => {
+  return dispatch => {
+    dispatch({
+      type: UserActionTypes.SET_APPOINTMENT_CONNECTION_DETAILS,
+      payload: connectDetails,
     });
   };
 };
@@ -123,9 +147,9 @@ export function fetchDigitalMedicalrecords2() {
 export function fetchMedicalrecords() {
   return dispatch => {
     firestore()
-      .collection('records')
+      .collection('medicalServiceAppointments')
       .doc(auth().currentUser.uid)
-      .collection('userRecords')
+      .collection('PhysicalRecords')
       .orderBy('creation', 'asc')
       .get()
       .then(snapshot => {
@@ -142,13 +166,13 @@ export function fetchMedicalrecords() {
   };
 }
 
-export function addMedicalRecord(itemToAdd, records) {
+export function addMedicalRecord(itemToAdd, records, patientUID) {
   records.push(itemToAdd);
   return dispatch => {
     firestore()
-      .collection('records')
+      .collection('medicalServiceAppointments')
       .doc(auth().currentUser.uid)
-      .collection('userRecords')
+      .collection('PhysicalRecords')
       .add(itemToAdd)
       .then(() => {
         dispatch({type: UserActionTypes.ADD_MEDICAL_RECORD, payload: records});
@@ -204,11 +228,10 @@ export function fetchQuotationsRequest() {
 export function removeMedicalRecord(itemToRemove, items) {
   const updatedItems = items.filter(item => item.id !== itemToRemove.id);
   return dispatch => {
-    //console.log('Testing delete');
     firestore()
-      .collection('records')
+      .collection('medicalServiceAppointments')
       .doc(auth().currentUser.uid)
-      .collection('userRecords')
+      .collection('PhysicalRecords')
       .doc(itemToRemove.id)
       .delete()
       .then(() => {
@@ -226,9 +249,9 @@ export function removeMedicalRecord(itemToRemove, items) {
 export function fetchMedicalAppointments() {
   return dispatch => {
     firestore()
-      .collection('appointments')
+      .collection('medicalServiceAppointments')
       .doc(auth().currentUser.uid)
-      .collection('userAppointments')
+      .collection('Appointments')
       .get()
       .then(snapshot => {
         let records = snapshot.docs.map(doc => {
@@ -239,6 +262,33 @@ export function fetchMedicalAppointments() {
         dispatch({
           type: UserActionTypes.USER_APPOINTMENTS_STATE_CHANGE,
           payload: records,
+        });
+      });
+  };
+}
+
+function update(target, src) {
+  const res = {};
+  Object.keys(target).forEach(k => (res[k] = src[k] ?? target[k]));
+  return res;
+}
+export function updateAppointmentRecord(toUpdate, record, records) {
+  const newRecords = records.filter(item => item.id !== record.id);
+  var newRecord = update(record, toUpdate);
+  if (newRecords) {
+    newRecords.push(newRecord);
+  } else newRecords = newRecord;
+  return dispatch => {
+    firestore()
+      .collection('medicalServiceAppointments')
+      .doc(auth().currentUser.uid)
+      .collection('Appointments')
+      .doc(record.id)
+      .update(toUpdate)
+      .then(() => {
+        dispatch({
+          type: UserActionTypes.USER_APPOINTMENTS_STATE_CHANGE,
+          payload: newRecords,
         });
       });
   };

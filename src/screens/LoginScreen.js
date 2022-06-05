@@ -18,6 +18,11 @@ import {
   ActivityIndicator,
 } from 'react-native';
 
+import {withNavigation} from '@react-navigation/compat';
+import {connect} from 'react-redux';
+import {createStructuredSelector} from 'reselect';
+import {selectConnectionDetails} from '../redux/user/user-selectors';
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import LoginManager from '../manager/LoginManager';
 import COLOR_SCHEME from '../styles/ColorScheme';
@@ -25,21 +30,24 @@ import COLOR from '../styles/Color';
 import styles from '../styles/Styles';
 import CallManager from '../manager/CallManager';
 
-export default class LoginScreen extends React.Component {
+class LoginScreen extends React.Component {
   constructor(props) {
     super(props);
-    this.password = this.props.route.params.password;
-    this.username = this.props.route.params.username;
+    //this.password = this.props.route.params.password;
+    //this.username = this.props.route.params.username;
     this.state = {
-      username: this.props.route.params.username,
+      username: '',
       isModalOpen: false,
       modalText: '',
-      specialistName: this.props.route.params.specialistName,
+      //patientDetails: this.props.route.params.patientDetails,
       loading: false,
     };
   }
 
   componentDidMount() {
+    const {connectionDetails} = this.props;
+    const {loginCredentials} = connectionDetails;
+    const {username, password} = loginCredentials;
     AsyncStorage.getItem('usernameValue').then(username => {
       this.setState({username: username});
     });
@@ -94,13 +102,14 @@ export default class LoginScreen extends React.Component {
   }
 
   onLoggedIn(displayName) {
+    const {connectionDetails} = this.props;
+    const {loginCredentials} = connectionDetails;
+    const {username, password} = loginCredentials;
     (async () => {
-      await AsyncStorage.setItem('usernameValue', this.username);
+      await AsyncStorage.setItem('usernameValue', username);
     })();
     this.setState({loading: false});
-    this.props.navigation.navigate('Main', {
-      specialistName: this.state.specialistName,
-    });
+    this.props.navigation.navigate('Main');
   }
 
   onConnectionFailed(reason) {
@@ -113,18 +122,25 @@ export default class LoginScreen extends React.Component {
   loginClicked() {
     //console.log(this.props.route.params.password);
     //console.log(this.props.route.params.username);
+    LoginManager.getInstance().logout();
     this.setState({loading: true});
+    const {connectionDetails} = this.props;
+    const {loginCredentials} = connectionDetails;
+    const {username, password} = loginCredentials;
     LoginManager.getInstance().loginWithPassword(
       //this.state.username + '.voximplant.com',
-      this.username + '.voximplant.com',
-      this.password,
+      username + '.voximplant.com',
+      password,
     );
   }
 
   loginWithOneTimeKeyClicked() {
+    const {connectionDetails} = this.props;
+    const {loginCredentials} = connectionDetails;
+    const {username, password} = loginCredentials;
     LoginManager.getInstance().loginWithOneTimeKey(
-      this.state.username + '.voximplant.com',
-      this.password,
+      username + '.voximplant.com',
+      password,
     );
   }
 
@@ -218,3 +234,9 @@ export default class LoginScreen extends React.Component {
     );
   }
 }
+
+const mapStateToProps = createStructuredSelector({
+  connectionDetails: selectConnectionDetails, //to show or hide the cart.
+});
+
+export default withNavigation(connect(mapStateToProps, null)(LoginScreen));

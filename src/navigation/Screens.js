@@ -3,11 +3,12 @@ import {Dimensions} from 'react-native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import CustomDrawerContent from './Menu';
-import Home from '../screens/Home';
+//import Home from '../screens/Home';
+import Home from '../screens/Home/Home';
 import Onboarding from '../screens/Onboarding';
 import AppointmentsRecords from '../screens/AppointmentsRecords';
 import Account from '../screens/Authentication/Account';
-import Register from '../screens/Authentication/RegisterScreen';
+
 import LoginScreen from '../screens/LoginScreen';
 import MainScreen from '../screens/MainScreen';
 import CallScreen from '../screens/CallScreen';
@@ -44,6 +45,10 @@ import BookDoctor from '../screens/Consultations/BookDoctor';
 import SelectLocation from '../screens/Consultations/SelectLocation';
 import Profile from '../screens/Consultations/Profile';
 //import SelectDependant from '../screens/Consultations/SelectDependant';
+
+//Authentication
+import Register from '../screens/Authentication/RegisterScreen';
+import Login from '../screens/Authentication/LoginScreen';
 
 const {width} = Dimensions.get('screen');
 
@@ -219,20 +224,12 @@ function HomeStack(props) {
               tabs={tabs.medical}
               navigation={navigation}
               scene={scene}
-              navigateTo={true}
+              //navigateTo={true}
             />
           ),
-          cardStyle: {backgroundColor: '#FFFFFF'},
+          backgroundColor: '#FFFFFF',
         }}
       />
-    </Stack.Navigator>
-  );
-}
-
-function RegisterStack(props) {
-  return (
-    <Stack.Navigator mode="card" headerMode="screen">
-      <Stack.Screen name="Register" component={Register} />
     </Stack.Navigator>
   );
 }
@@ -284,14 +281,6 @@ function AddDependantsStack(props) {
           />
         )}
       />
-    </Stack.Navigator>
-  );
-}
-
-function AccountStack(props) {
-  return (
-    <Stack.Navigator mode="card" headerMode="screen">
-      <Stack.Screen name="Account" component={Account} />
     </Stack.Navigator>
   );
 }
@@ -486,39 +475,16 @@ function SelectLocationStack(props) {
   );
 }
 
-/*function LoginStack(props) {
+function MessagingStack(props) {
   return (
-    <Stack.Navigator
-      initialRouteName="Components"
-      mode="card"
-      headerMode="screen">
+    <Stack.Navigator mode="card" headerMode="screen">
       <Stack.Screen
-        name="Login"
-        children={() => (
-          <LoginScreen
-            username={props.route.params.username}
-            password={props.route.params.password}
-            specialistName={props.route.params.specialistName}
-            navigation={props.navigation}
-          />
-        )}
-      />
-    </Stack.Navigator>
-  );
-}*/
-
-/*function SelectDependantStack(props) {
-  return (
-    <Stack.Navigator
-      initialRouteName="Components"
-      mode="card"
-      headerMode="screen">
-      <Stack.Screen
-        name="Select Dependant"
+        name="Messaging"
+        component={Messaging}
         options={{
           header: ({navigation, scene}) => (
             <Header
-              title="Select Dependant"
+              title="Messaging"
               navigation={navigation}
               scene={scene}
               back={true}
@@ -526,21 +492,54 @@ function SelectLocationStack(props) {
           ),
           backgroundColor: '#FFFFFF',
         }}
-        children={() => (
-          <SelectDependant
-            bookingDetails={props.route.params.bookingDetails}
-            navigation={props.navigation}
-          />
-        )}
       />
     </Stack.Navigator>
   );
-}*/
+}
 
-function MessagingStack(props) {
+//Authentication
+function AccountStack(props) {
   return (
     <Stack.Navigator mode="card" headerMode="screen">
-      <Stack.Screen name="Messaging" component={Messaging} />
+      <Stack.Screen name="Account" component={Account} />
+    </Stack.Navigator>
+  );
+}
+
+function LoginStack(props) {
+  return (
+    <Stack.Navigator mode="card" headerMode="screen">
+      <Stack.Screen name="Login" component={Login} />
+    </Stack.Navigator>
+  );
+}
+
+function RegisterStack(props) {
+  return (
+    <Stack.Navigator mode="card" headerMode="screen">
+      <Stack.Screen name="Register" component={Register} />
+    </Stack.Navigator>
+  );
+}
+
+function MainStack(props) {
+  return (
+    <Stack.Navigator mode="card" headerMode="screen">
+      <Stack.Screen
+        name="Main"
+        component={MainScreen}
+        options={{
+          header: ({navigation, scene}) => (
+            <Header
+              title="Main"
+              navigation={navigation}
+              scene={scene}
+              back={true}
+            />
+          ),
+          backgroundColor: '#FFFFFF',
+        }}
+      />
     </Stack.Navigator>
   );
 }
@@ -600,6 +599,8 @@ function AppStack(props) {
       <Drawer.Screen name="SelectLocation" component={SelectLocationStack} />
       <Drawer.Screen name="Profile" component={ProfileStack} />
       <Drawer.Screen name="Messaging" component={MessagingStack} />
+      <Drawer.Screen name="Main" component={MainStack} />
+
       <Drawer.Screen
         name="RequestAmbulance"
         component={RequestAmbulanceStack}
@@ -621,11 +622,6 @@ export default function OnboardingStack(props) {
         }}
       />
 
-      <Stack.Screen
-        name="Main"
-        component={MainScreen}
-        options={{headerLeft: null}}
-      />
       <Stack.Screen name="Login" component={LoginScreen} />
       <Stack.Screen
         name="Call"
@@ -639,6 +635,7 @@ export default function OnboardingStack(props) {
       />
       <Stack.Screen name="App" component={AppStack} />
       <Stack.Screen name="Register" component={RegisterStack} />
+      <Stack.Screen name="LoginAuth" component={LoginStack} />
     </Stack.Navigator>
   );
 }

@@ -1,23 +1,25 @@
 import firestore from '@react-native-firebase/firestore';
 import auth from '@react-native-firebase/auth';
 
-export const createUserProfileDocument = async (userAuth, additionalData) => {
+export const createUserProfileDocument = async (userAuth, displayName) => {
   if (!userAuth) return;
 
-  const userRef = firestore().doc(`users/${userAuth.uid}`);
+  const userRef = firestore()
+    //.collection(`serviceProviders`)
+    .doc(`serviceProviders/${userAuth.uid}`);
 
   const snapShot = await userRef.get();
   if (!snapShot.exists) {
-    const {displayName, email, photoURL} = userAuth;
+    const {email} = userAuth;
     const createdAt = new Date();
-    const profileURL = photoURL;
+    const available = false;
+    //const profileURL = photoURL;
     try {
       await userRef.set({
         displayName,
         email,
         createdAt,
-        profileURL,
-        ...additionalData,
+        available,
       });
     } catch (error) {
       console.log('error creating user', error.message);
@@ -68,7 +70,6 @@ export const convertCartSnapshotToMap = (carts, uid) => {
       cartItems,
     };
   });
-
   return transformedCart; /*.reduce((accumulator, cart) => {
     accumulator[cart.cartItems] = cart;
     return accumulator;

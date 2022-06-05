@@ -76,3 +76,8 @@ export const selectUserQuotations = createSelector(
   [selectUser], //array of input selectors
   user => user.quotations, //outputs of the input selectors
 );
+
+export const selectConnectionDetails = createSelector(
+  [selectUser], //array of input selectors
+  user => user.connectionDetails, //outputs of the input selectors
+);

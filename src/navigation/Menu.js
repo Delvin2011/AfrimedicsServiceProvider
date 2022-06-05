@@ -36,8 +36,8 @@ function CustomDrawerContent({
     'Home',
     'AppointmentRecords',
     'Account',
-    'PharmacyOrders',
-    'Dependants',
+    //'PharmacyOrders',
+    //'Dependants',
     'MedicalRecords',
   ];
   return (
@@ -79,7 +79,12 @@ function CustomDrawerContent({
               }}
             />
             {currentUser ? (
-              <TouchableOpacity style={{height: 60}} onPress={() => signOut()}>
+              <TouchableOpacity
+                style={{height: 60}}
+                onPress={() => {
+                  signOut();
+                  navigation.navigate('Onboarding');
+                }}>
                 <Block flex row style={styles.defaultStyle}>
                   <Block middle flex={0.1} style={{marginRight: 5}}>
                     <Icon

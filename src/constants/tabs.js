@@ -12,11 +12,9 @@ export default tabs = {
     {id: 'places', title: 'Places'},
   ],
   medical: [
-    {id: 'doctors', title: 'Find Doctors'},
-    {id: 'Pharmacy', title: 'Pharmaceuticals'},
-    {id: 'consultation', title: 'Video Consultations'},
-    {id: 'hospitals', title: 'Hospitals'},
-    {id: 'clinics', title: 'Clinics'},
+    {id: 'statistics', title: 'Statistics'},
+    {id: 'reviews', title: 'Reviews'},
+    {id: 'earnings', title: 'Earnings'},
   ],
   appointments: [
     {id: 'physical', title: 'Physical'},
@@ -31,7 +29,7 @@ export default tabs = {
   medicalRecords: [
     {id: 'physical', title: 'Physical'},
     {id: 'digital', title: 'Digital'},
-    {id: 'quotations', title: 'Quotations'},
+    //{id: 'quotations', title: 'Quotations'},
   ],
   pharmacy: [
     {id: 'health', title: 'Health'},

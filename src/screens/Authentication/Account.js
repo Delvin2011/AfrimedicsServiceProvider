@@ -356,7 +356,7 @@ const Account = props => {
           </Block>
         </Block>
       ) : (
-        <Login navigation={navigation} />
+        <Text>Loading...</Text>
       )}
     </>
   );

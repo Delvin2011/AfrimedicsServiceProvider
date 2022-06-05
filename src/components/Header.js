@@ -110,21 +110,21 @@ const AddRecordButton = ({isWhite, style, navigation, toggleAddRecord}) => (
   </TouchableOpacity>
 );
 
-const ViewDoctorsOnMap = ({isWhite, style, viewDoctorsOnMap}) => (
+const ViewDoctorsOnMap = ({style, viewDoctorsOnMap, viewMap}) => (
   <TouchableOpacity
     style={[styles.button, style]}
-    onPress={() => viewDoctorsOnMap()}>
-    <Ionicons
-      name="md-map-sharp"
-      color="rgba(255, 255, 255, .9)"
-      size={18}
-      style={{backgroundColor: 'transparent'}}
-    />
+    onPress={() => {
+      viewDoctorsOnMap(viewMap);
+      console.log(viewMap);
+    }}>
     <Block
       middle
       style={[
-        styles.notify,
-        {backgroundColor: nowTheme.COLORS[isWhite ? 'WHITE' : 'PRIMARY']},
+        styles.availabilityStatus,
+        {
+          backgroundColor:
+            nowTheme.COLORS[viewMap == true ? 'SUCCESS' : 'ERROR'],
+        },
       ]}
     />
   </TouchableOpacity>
@@ -151,8 +151,12 @@ const AddDependantButton = ({isWhite, style, navigation, toggleAddRecord}) => (
 );
 
 const ViewTextDoctorsOnMap = ({viewDoctorsOnMap, viewMap}) => (
-  <TouchableOpacity onPress={() => viewDoctorsOnMap()}>
-    <Text>{viewMap ? 'Close List' : 'View List'}</Text>
+  <TouchableOpacity
+    onPress={() => {
+      viewDoctorsOnMap(viewMap);
+      console.log(viewMap);
+    }}>
+    <Text>{viewMap ? 'ONLINE' : 'OFFLINE'}</Text>
   </TouchableOpacity>
 );
 
@@ -419,16 +423,19 @@ class Header extends React.Component {
     switch (title) {
       case 'Home':
         return [
-          <BellButton
-            key="chat-home"
-            navigation={navigation}
+          <ViewTextDoctorsOnMap
+            key="map-open-close"
+            viewMap={viewMap}
             isWhite={white}
+            viewDoctorsOnMap={viewDoctorsOnMap}
           />,
-          <BasketButton
-            key="basket-home"
-            navigation={navigation}
+          <ViewDoctorsOnMap
+            key="chat-search"
             isWhite={white}
+            viewDoctorsOnMap={viewDoctorsOnMap}
+            viewMap={viewMap}
           />,
+          ,
         ];
       case 'Categories':
         return [
@@ -972,7 +979,7 @@ class Header extends React.Component {
 
 const styles = StyleSheet.create({
   button: {
-    padding: 12,
+    padding: 10,
     position: 'relative',
   },
   title: {
@@ -1005,6 +1012,15 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 8,
     right: 6,
+  },
+  availabilityStatus: {
+    backgroundColor: nowTheme.COLORS.SUCCESS,
+    borderRadius: 6,
+    height: theme.SIZES.BASE / 2,
+    width: theme.SIZES.BASE / 2,
+    position: 'absolute',
+    top: 0,
+    right: 80,
   },
   phamarcyCount: {
     fontSize: 12,
@@ -1071,7 +1087,7 @@ const styles = StyleSheet.create({
 
 const mapDispatchToProps = dispatch => ({
   toggleAddRecord: () => dispatch(toggleAddRecord()),
-  viewDoctorsOnMap: () => dispatch(viewDoctorsOnMap()),
+  viewDoctorsOnMap: status => dispatch(viewDoctorsOnMap(status)),
   searchSpecialist: specialist => dispatch(searchSpecialist(specialist)),
   searchPhamarcy: phamarcy => dispatch(searchPhamarcy(phamarcy)),
   specialistLocation: location => dispatch(specialistLocation(location)),
