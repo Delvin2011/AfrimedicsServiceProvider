@@ -24,7 +24,7 @@ const userReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         currentUser: action.payload,
-        viewMap: action.payload.available,
+        viewMap: false,
       };
     case UserActionTypes.SIGN_OUT_SUCCESS:
       return {

@@ -55,7 +55,7 @@ function Home(props) {
           <Text>Loading...</Text>
         ) : (
           appointmentRecords
-            .filter(item => item.Status.toString().toLowerCase() == 'complete')
+            .filter(item => item.Status.toString().toLowerCase() == 'completed')
             .map((filteredItem, index) => {
               return (
                 <ReviewCard

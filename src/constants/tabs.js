@@ -42,4 +42,15 @@ export default tabs = {
     {id: 'offtheshelf', title: 'Off The Shelf'},
     {id: 'prescribed', title: 'Prescribed'},
   ],
+
+  account: [
+    {id: 'bio', title: 'Bio'},
+    {id: 'specialisation', title: 'Specialisation'},
+    {id: 'services', title: 'Services'},
+    {id: 'education', title: 'Education'},
+    {id: 'experience', title: 'Experience'},
+    {id: 'awards', title: 'Awards'},
+    {id: 'membership', title: 'Membership'},
+    {id: 'registration', title: 'Registration'},
+  ],
 };

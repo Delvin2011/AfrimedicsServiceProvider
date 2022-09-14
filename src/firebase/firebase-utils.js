@@ -6,7 +6,7 @@ export const createUserProfileDocument = async (userAuth, displayName) => {
 
   const userRef = firestore()
     //.collection(`serviceProviders`)
-    .doc(`serviceProviders/${userAuth.uid}`);
+    .doc(`f/${userAuth.uid}`);
 
   const snapShot = await userRef.get();
   if (!snapShot.exists) {

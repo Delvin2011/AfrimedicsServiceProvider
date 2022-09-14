@@ -96,7 +96,7 @@ class MedicalRecordsCard extends React.Component {
     const phamarcyName = this.paramsPhamarcyCheck(details);
 
     const images = [{uri: item.downLoadURL}];
-    console.log(item.downLoadURL);
+
     return (
       <Block card flex style={cardContainer}>
         {digital ? (
@@ -170,7 +170,9 @@ class MedicalRecordsCard extends React.Component {
                     onPress={() => this.setState({showImage: true})}>
                     <Image
                       resizeMode="cover"
-                      source={{uri: item.downLoadURL}}
+                      source={{
+                        uri: item.downLoadURL,
+                      }}
                       style={imageStyles}
                     />
                   </TouchableOpacity>

@@ -11,6 +11,7 @@ import {
 import {Block, Text, theme, Button} from 'galio-framework';
 import {nowTheme} from '../../constants';
 import {Images} from '../../constants';
+import ImageView from 'react-native-image-viewing';
 
 //redux
 import {connect} from 'react-redux';
@@ -18,13 +19,18 @@ import {createStructuredSelector} from 'reselect';
 import {
   appointmentConnect,
   updateAppointmentRecord,
+  addAppointmentRecords,
 } from '../../redux/user/user-actions';
 import {selectAppointmentRecords} from '../../redux/user/user-selectors';
+import Appointments from '../../constants/Appointments.json';
 const {width, height} = Dimensions.get('screen');
 const thumbMeasure = (width - 48 - 32) / 3.75;
+
+const Appointment = Appointments.icons;
 class AppointmentCard extends React.Component {
   state = {
     paymentStatus: false,
+    showImage: false,
   };
   constructor(props) {
     super(props);
@@ -41,6 +47,11 @@ class AppointmentCard extends React.Component {
     };
     appointmentConnect(connectDetails);
   };
+
+  handleShowImage(status) {
+    this.setState({showImage: !status});
+  }
+
   render() {
     const {
       navigation,
@@ -54,6 +65,7 @@ class AppointmentCard extends React.Component {
       horizontal,
       appointmentRecords,
       updateAppointmentRecord,
+      addAppointmentRecords,
     } = this.props;
 
     const imageStyles = [
@@ -76,8 +88,18 @@ class AppointmentCard extends React.Component {
       EndTime: Date.now(),
       Status: 'Complete',
     };
+
+    const images = [
+      {
+        uri: item.profileURL.replace(
+          'https://firebasestorage.googleapis.com/v0/b/',
+          'https://ik.imagekit.io/qlvke6f9z/tr:w-h-300,w-400/v0/b/',
+        ),
+      },
+    ];
+
     return (
-      <>
+      <Block>
         {item.AppointmentType == 'Physical' ? (
           <Block card flex style={cardContainer}>
             <Block row={horizontal}>
@@ -89,7 +111,7 @@ class AppointmentCard extends React.Component {
                       size={14}
                       style={styles.appointment}
                       color={nowTheme.COLORS.SECONDARY}>
-                      {new Date(item.DateTime._seconds * 1000)
+                      {new Date(item.DateTime)
                         .toString()
                         .replace(':00 GMT+0200', '')}
                     </Text>
@@ -121,10 +143,18 @@ class AppointmentCard extends React.Component {
               <TouchableWithoutFeedback>
                 <Block flex space="between" style={styles.cardDescription}>
                   <Block middle>
-                    <Image
-                      source={{uri: item.profileURL}}
-                      style={styles.avatar}
-                    />
+                    <TouchableOpacity
+                      onPress={() => this.setState({showImage: true})}>
+                      <Image
+                        source={{
+                          uri: item.profileURL.replace(
+                            'https://firebasestorage.googleapis.com/v0/b/',
+                            'https://ik.imagekit.io/qlvke6f9z/tr:w-h-300,w-400/v0/b/',
+                          ),
+                        }}
+                        style={styles.avatar}
+                      />
+                    </TouchableOpacity>
                   </Block>
                 </Block>
               </TouchableWithoutFeedback>
@@ -149,7 +179,7 @@ class AppointmentCard extends React.Component {
                 </Block>
                 <Block flex space="between" style={styles.cardDescription}>
                   <Block middle>
-                    {Date.now() < new Date(item.DateTime._seconds * 1000) &&
+                    {Date.now() < new Date(item.DateTime) &&
                     item.Status === 'Pending' ? (
                       <Button
                         shadowless
@@ -168,21 +198,23 @@ class AppointmentCard extends React.Component {
                           START APPOINTMENT
                         </Text>
                       </Button>
-                    ) : Date.now() > new Date(item.DateTime._seconds * 1000) &&
+                    ) : Date.now() > new Date(item.DateTime) &&
                       item.Status === 'Pending' ? (
                       <Button
                         shadowless
                         style={styles.button}
                         color={nowTheme.COLORS.PRIMARY}
-                        //onPress={() => navigation.navigate('Login')}
-                      >
+                        onPress={() =>
+                          addAppointmentRecords(Appointment, appointmentRecords)
+                        }>
                         <Text
                           style={{fontFamily: 'montserrat-bold', fontSize: 14}}
                           color={theme.COLORS.WHITE}>
                           APPOINTMENT OVERDUE
                         </Text>
                       </Button>
-                    ) : item.Status === 'Complete' ? (
+                    ) : Date.now() > new Date(item.DateTime) &&
+                      item.Status === 'Completed' ? (
                       <Button
                         shadowless
                         style={styles.button}
@@ -233,7 +265,7 @@ class AppointmentCard extends React.Component {
                       size={14}
                       style={styles.appointment}
                       color={nowTheme.COLORS.SECONDARY}>
-                      {new Date(item.DateTime._seconds * 1000)
+                      {new Date(item.DateTime)
                         .toString()
                         .replace(':00 GMT+0200', '')}
                     </Text>
@@ -265,10 +297,18 @@ class AppointmentCard extends React.Component {
               <TouchableWithoutFeedback>
                 <Block flex space="between" style={styles.cardDescription}>
                   <Block middle>
-                    <Image
-                      source={{uri: item.profileURL}}
-                      style={styles.avatar}
-                    />
+                    <TouchableOpacity
+                      onPress={() => this.setState({showImage: true})}>
+                      <Image
+                        source={{
+                          uri: item.profileURL.replace(
+                            'https://firebasestorage.googleapis.com/v0/b/',
+                            'https://ik.imagekit.io/qlvke6f9z/tr:w-h-300,w-400/v0/b/',
+                          ),
+                        }}
+                        style={styles.avatar}
+                      />
+                    </TouchableOpacity>
                   </Block>
                 </Block>
               </TouchableWithoutFeedback>
@@ -293,7 +333,7 @@ class AppointmentCard extends React.Component {
                 </Block>
                 <Block flex space="between" style={styles.cardDescription}>
                   <Block middle>
-                    {Date.now() < new Date(item.DateTime._seconds * 1000) &&
+                    {Date.now() < new Date(item.DateTime) &&
                     item.Status === 'Pending' ? (
                       <Button
                         shadowless
@@ -309,21 +349,23 @@ class AppointmentCard extends React.Component {
                           CONNECT...
                         </Text>
                       </Button>
-                    ) : Date.now() > new Date(item.DateTime._seconds * 1000) &&
+                    ) : Date.now() > new Date(item.DateTime) &&
                       item.Status === 'Pending' ? (
                       <Button
                         shadowless
                         style={styles.button}
                         color={nowTheme.COLORS.PRIMARY}
-                        //onPress={() => navigation.navigate('Login')}
-                      >
+                        onPress={() =>
+                          addAppointmentRecords(Appointment, appointmentRecords)
+                        }>
                         <Text
                           style={{fontFamily: 'montserrat-bold', fontSize: 14}}
                           color={theme.COLORS.WHITE}>
                           APPOINTMENT OVERDUE
                         </Text>
                       </Button>
-                    ) : item.Status === 'Complete' ? (
+                    ) : Date.now() > new Date(item.DateTime) &&
+                      item.Status === 'Completed' ? (
                       <Button
                         shadowless
                         style={styles.button}
@@ -346,7 +388,13 @@ class AppointmentCard extends React.Component {
             </Block>
           </Block>
         ) : null}
-      </>
+        <ImageView
+          images={images}
+          imageIndex={0}
+          visible={this.state.showImage}
+          onRequestClose={() => this.handleShowImage(this.state.showImage)}
+        />
+      </Block>
     );
   }
 }
@@ -356,6 +404,8 @@ const mapDispatchToProps = dispatch => ({
     dispatch(appointmentConnect(connectDetails)),
   updateAppointmentRecord: (toUpdate, record, records) =>
     dispatch(updateAppointmentRecord(toUpdate, record, records)),
+  addAppointmentRecords: (items, appointmentRecords) =>
+    dispatch(addAppointmentRecords(items, appointmentRecords)),
 });
 const mapStateToProps = createStructuredSelector({
   appointmentRecords: selectAppointmentRecords,

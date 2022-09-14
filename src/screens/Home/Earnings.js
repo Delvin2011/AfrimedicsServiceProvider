@@ -21,6 +21,12 @@ import {
   pieChartData,
   progressChartData,
 } from '../../constants/data';
+
+//redux
+import {connect} from 'react-redux';
+import {createStructuredSelector} from 'reselect';
+import {selectAppointmentRecords} from '../../redux/user/user-selectors';
+
 //import 'babel-polyfill';
 const {width, height} = Dimensions.get('screen');
 // in Expo - swipe left to see the following styling, or create your own
@@ -49,13 +55,118 @@ const data = {
   barColors: ['#91a0ba', '#62789d', '#45546e'],
 };
 
-export default class Earnings extends React.Component {
+class Earnings extends React.Component {
   renderTabBar() {
     return <StatusBar hidden />;
   }
+
+  getStartMonth(numOfMonths, date = new Date()) {
+    date.setMonth(date.getMonth() - numOfMonths);
+    return date.getMonth();
+  }
+
+  getEndMonth(date = new Date()) {
+    return date.getMonth();
+  }
+
+  createObject = (appointmentRecords, startMonth, endMonth) => {
+    var obj = {};
+    var months = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    var labels = [];
+    var legend = ['Physical', 'Virtual', 'Home Visit'];
+    var datasets = [];
+    var colours = ['#91a0ba', '#62789d', '#45546e'];
+    for (var a = 0; a < months.length; a++) {
+      if (a >= startMonth && endMonth >= a) {
+        labels.push(months[a]);
+      }
+    }
+    var data = [];
+    for (var b = 0; b < labels.length; b++) {
+      var dataArr = [];
+      var fee = 0;
+      for (var a = 0; a < legend.length; a++) {
+        var count = 0;
+        for (var c = 0; c < appointmentRecords.length; c++) {
+          var date = new Date(appointmentRecords[c].DateTime);
+          var month = date.getMonth();
+          fee =
+            appointmentRecords[c].AppointmentType == 'Physical'
+              ? 35
+              : appointmentRecords[c].AppointmentType == 'Virtual'
+              ? 25
+              : 50;
+          if (
+            legend[a] == appointmentRecords[c].AppointmentType &&
+            labels[b] == months[month] &&
+            appointmentRecords[c].Status == 'Completed'
+          ) {
+            count++;
+          }
+        }
+        dataArr.push(count * fee);
+      }
+      data.push(dataArr);
+    }
+    obj.legend = legend;
+    obj.labels = labels;
+    obj.data = data;
+    obj.barColors = colours;
+    return obj;
+  };
+
+  createDistObj = appointmentRecords => {
+    var legend = ['Physical', 'Virtual', 'Home Visit'];
+    var color = ['rgba(131, 167, 234, 1)', '#F00', 'rgb(0, 0, 255)'];
+    const pieChartData = [];
+    for (var a = 0; a < legend.length; a++) {
+      var count = 0;
+      var pieDistData = {};
+      for (var b = 0; b < appointmentRecords.length; b++) {
+        if (
+          legend[a] == appointmentRecords[b].AppointmentType &&
+          appointmentRecords[b].Status == 'Completed'
+        ) {
+          count++;
+        }
+      }
+      pieDistData.name = legend[a];
+      pieDistData.population = count;
+      pieDistData.color = color[a];
+      pieDistData.legendFontColor = '#7F7F7F';
+      pieDistData.legendFontSize = 15;
+      pieChartData.push(pieDistData);
+    }
+
+    return pieChartData;
+  };
+
   render() {
     const width = Dimensions.get('window').width;
     const height = 220;
+    const {appointmentRecords} = this.props;
+    const startMonth = this.getStartMonth(4);
+    const endMonth = this.getEndMonth();
+    const stackedBarObj = this.createObject(
+      appointmentRecords,
+      startMonth,
+      endMonth,
+    );
+    const pieDistObj = this.createDistObj(appointmentRecords);
+
     return (
       <ScrollableTabView renderTabBar={this.renderTabBar}>
         {chartConfigs.map(chartConfig => {
@@ -82,7 +193,7 @@ export default class Earnings extends React.Component {
               <Text style={labelStyle}>Appointments Earnings</Text>
               <StackedBarChart
                 style={graphStyle}
-                data={data}
+                data={stackedBarObj}
                 width={width}
                 height={220}
                 chartConfig={chartConfig}
@@ -105,3 +216,9 @@ export default class Earnings extends React.Component {
     );
   }
 }
+
+const mapStateToProps = createStructuredSelector({
+  appointmentRecords: selectAppointmentRecords,
+});
+
+export default connect(mapStateToProps, null)(Earnings);

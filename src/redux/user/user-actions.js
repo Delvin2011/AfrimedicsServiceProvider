@@ -252,6 +252,7 @@ export function fetchMedicalAppointments() {
       .collection('medicalServiceAppointments')
       .doc(auth().currentUser.uid)
       .collection('Appointments')
+      .orderBy('DateTime', 'desc')
       .get()
       .then(snapshot => {
         let records = snapshot.docs.map(doc => {
@@ -387,6 +388,23 @@ export function removeUserDependant(itemToRemove, items) {
       })
       .catch(err => {
         dispatch({type: UserActionTypes.REMOVE_DEPENDANT_FAILER, err});
+      });
+  };
+}
+
+export function addAppointmentRecords(items, appointmentRecords) {
+  console.log(items[0]);
+  return dispatch => {
+    firestore()
+      .collection('medicalServiceAppointments')
+      .doc(auth().currentUser.uid)
+      .collection('Appointments')
+      .add(items[0])
+      .then(() => {
+        dispatch({
+          type: UserActionTypes.USER_APPOINTMENTS_STATE_CHANGE,
+          payload: appointmentRecords,
+        });
       });
   };
 }

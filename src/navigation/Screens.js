@@ -501,7 +501,21 @@ function MessagingStack(props) {
 function AccountStack(props) {
   return (
     <Stack.Navigator mode="card" headerMode="screen">
-      <Stack.Screen name="Account" component={Account} />
+      <Stack.Screen
+        name="Account"
+        component={Account}
+        options={{
+          header: ({navigation, scene}) => (
+            <Header
+              title="Account"
+              tabs={tabs.account}
+              navigation={navigation}
+              scene={scene}
+            />
+          ),
+          backgroundColor: '#FFFFFF',
+        }}
+      />
     </Stack.Navigator>
   );
 }

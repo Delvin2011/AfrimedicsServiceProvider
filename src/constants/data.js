@@ -77,8 +77,9 @@ const pieChartData = [
 // Mock data object for Progress
 
 const progressChartData = {
-  data: [0.4, 0.6, 0.8],
+  data: [0.2, 0.5, 0.3],
   labels: ['Complete', 'Overdue', 'Pending'],
+  color: ['rgba(131, 167, 234, 1)', '#F00', 'rgb(0, 0, 255)'],
 };
 
 export {data, contributionData, pieChartData, progressChartData};

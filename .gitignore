@@ -62,3 +62,4 @@ buck-out/
 /ios/Pods/
 
 .env
+android/app/src/main/AndroidManifest.xml
