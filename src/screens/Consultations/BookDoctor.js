@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   StyleSheet,
   Dimensions,
@@ -7,31 +7,31 @@ import {
   Animated,
   View,
   TouchableWithoutFeedback,
-} from 'react-native';
-import {Block, theme, Text} from 'galio-framework';
+} from "react-native";
+import { Block, theme, Text } from "galio-framework";
 //import {Card} from '../../components';
-import SpecialistCard from '../../components/Cards/SpecialistCard';
+import SpecialistCard from "../../components/Cards/SpecialistCard";
 
-import {withNavigation} from '@react-navigation/compat';
-import Carousel from 'react-native-snap-carousel';
+import { withNavigation } from "@react-navigation/compat";
+import Carousel from "react-native-snap-carousel";
 import {
   scrollInterpolator,
   animatedStyles,
-} from '../../components/Carousel_Animations';
-import Specialist_Data from '../../constants/specialists';
-import MapScreen from '../../screens/Consultations/Maps';
+} from "../../components/Carousel_Animations";
+import Specialist_Data from "../../constants/specialists";
+import MapScreen from "../../screens/Consultations/Maps";
 
-import {connect} from 'react-redux';
-import {createStructuredSelector} from 'reselect';
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
 import {
   selectViewDoctorsOnMap,
   selectSeachedSpecialist,
   selectSpecialistLocation,
-} from '../../redux/user/user-selectors';
-import {searchSpecialist} from '../../redux/user/user-actions';
+} from "../../redux/user/user-selectors";
+import { searchSpecialist } from "../../redux/user/user-actions";
 //Item array for the dropdow
-const {width} = Dimensions.get('screen');
-const SLIDER_WIDTH = Dimensions.get('window').width;
+const { width } = Dimensions.get("screen");
+const SLIDER_WIDTH = Dimensions.get("window").width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7);
 const ITEM_HEIGHT = Math.round((ITEM_WIDTH * 3) / 4);
 
@@ -46,7 +46,7 @@ class BookDoctor extends React.Component {
     this._renderItem = this._renderItem.bind(this);
   }
 
-  _renderItem({item}) {
+  _renderItem({ item }) {
     return (
       <Block flex row>
         <SpecialistCard item={item} full />
@@ -54,7 +54,7 @@ class BookDoctor extends React.Component {
     );
   }
 
-  siphonListBySpecialty = code => {
+  siphonListBySpecialty = (code) => {
     var array = [];
     for (var item in this.state.data) {
       if (this.state.data.hasOwnProperty(item)) {
@@ -83,15 +83,15 @@ class BookDoctor extends React.Component {
         if (loc === specialistLists[item].Location) {
           const searchedTitle = specialistLists[item].title
             .toLowerCase()
-            .split(' ')[1];
+            .split(" ")[1];
           if (
             searchedTitle.includes(
               searchedSpecialist.toString().toLowerCase(),
             ) &&
-            searchedScreen === 'bd'
+            searchedScreen === "bd"
           ) {
             array.push(specialistLists[item]);
-          } else if (searchedSpecialist === '') {
+          } else if (searchedSpecialist === "") {
             array.push(specialistLists[item]);
           }
         }
@@ -105,17 +105,18 @@ class BookDoctor extends React.Component {
     return (
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{marginTop: 0}}>
+        contentContainerStyle={{ marginTop: 0 }}
+      >
         <Block flex>
           <Carousel
-            ref={c => (this.carousel = c)}
+            ref={(c) => (this.carousel = c)}
             data={specialistListsByCity}
             renderItem={this._renderItem}
             sliderWidth={width}
             itemWidth={ITEM_WIDTH}
             containerCustomStyle={styles.carouselContainer}
             inactiveSlideShift={0}
-            onSnapToItem={index => this.setState({index})}
+            onSnapToItem={(index) => this.setState({ index })}
             scrollInterpolator={scrollInterpolator}
             slideInterpolatedStyle={animatedStyles}
             useScrollView={true}
@@ -135,23 +136,20 @@ class BookDoctor extends React.Component {
       selectedLocation,
       searchSpecialist,
     } = this.props;
-    const {title, code} = selectedSpecialist;
+    const { title, code } = selectedSpecialist;
     //All the specialists with same specialty, e.g cardilogists.
     const specialistLists = this.siphonListBySpecialty(code);
     //searched specialist
 
-    const {name} = typeof searchedSpecialists.specialist
+    const { name } = typeof searchedSpecialists.specialist
       ? searchedSpecialists.specialist
-      : '';
-    const {screen} = typeof searchedSpecialists.specialist
+      : "";
+    const { screen } = typeof searchedSpecialists.specialist
       ? searchedSpecialists.specialist
-      : '';
+      : "";
 
-    console.log('I am here');
-    console.log(name + ' xxxxx');
-    console.log(screen + ' yyyyy');
-    const searchedSpecialist = name ? name : '';
-    const searchedScreen = screen ? screen : '';
+    const searchedSpecialist = name ? name : "";
+    const searchedScreen = screen ? screen : "";
 
     const specialistListsByCity = this.siphonFilteredListByCity(
       specialistLists,
@@ -165,21 +163,25 @@ class BookDoctor extends React.Component {
           specialistListsByCity={specialistListsByCity}
           navigation={navigation}
         />
-        {searchedSpecialists.specialist.name != '' ? (
-          <TouchableWithoutFeedback
-            onPress={() => searchSpecialist({name: '', screen: 'bd'})}>
-            <Text
-              style={{
-                fontWeight: 'bold',
-                fontStyle: 'italic',
-                textDecorationLine: 'underline',
-                marginTop: 10,
-                marginLeft: 10,
-              }}>
-              View all Specialists
-            </Text>
-          </TouchableWithoutFeedback>
-        ) : null}
+        {searchedSpecialists.specialist.name != ""
+          ? (
+            <TouchableWithoutFeedback
+              onPress={() => searchSpecialist({ name: "", screen: "bd" })}
+            >
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontStyle: "italic",
+                  textDecorationLine: "underline",
+                  marginTop: 10,
+                  marginLeft: 10,
+                }}
+              >
+                View all Specialists
+              </Text>
+            </TouchableWithoutFeedback>
+          )
+          : null}
         {viewMap ? this.renderCarousel(specialistListsByCity) : null}
       </>
     );
@@ -189,13 +191,13 @@ class BookDoctor extends React.Component {
 const styles = StyleSheet.create({
   home: {
     // width: width - theme.SIZES.BASE * 2,
-    marginLeft: '12.5%',
+    marginLeft: "12.5%",
   },
   articles: {
     width: width - theme.SIZES.BASE * 2,
     paddingVertical: theme.SIZES.BASE,
     paddingHorizontal: 2,
-    fontFamily: 'montserrat-regular',
+    fontFamily: "montserrat-regular",
   },
   category: {
     backgroundColor: theme.COLORS.WHITE,
@@ -203,14 +205,14 @@ const styles = StyleSheet.create({
     borderWidth: 0,
   },
   categoryTitle: {
-    height: '100%',
+    height: "100%",
     paddingHorizontal: theme.SIZES.BASE,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   imageBlock: {
-    overflow: 'hidden',
+    overflow: "hidden",
     borderRadius: 4,
     marginHorizontal: 10,
   },
@@ -220,24 +222,24 @@ const styles = StyleSheet.create({
   itemContainer: {
     width: ITEM_WIDTH,
     height: ITEM_HEIGHT,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'dodgerblue',
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "dodgerblue",
   },
   itemLabel: {
-    color: 'white',
+    color: "white",
     fontSize: 24,
   },
   counter: {
     marginTop: 25,
     fontSize: 30,
-    fontWeight: 'bold',
-    textAlign: 'center',
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
 
-const mapDispatchToProps = dispatch => ({
-  searchSpecialist: specialist => dispatch(searchSpecialist(specialist)),
+const mapDispatchToProps = (dispatch) => ({
+  searchSpecialist: (specialist) => dispatch(searchSpecialist(specialist)),
 });
 
 const mapStateToProps = createStructuredSelector({

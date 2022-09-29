@@ -1,13 +1,13 @@
-import React from 'react';
-import {withNavigation} from '@react-navigation/compat';
+import React from "react";
+import { withNavigation } from "@react-navigation/compat";
 import {
   ScrollView,
   StatusBar,
   Dimensions,
   Text,
   StyleSheet,
-} from 'react-native';
-import ScrollableTabView from 'react-native-scrollable-tab-view';
+} from "react-native";
+import ScrollableTabView from "react-native-scrollable-tab-view";
 
 import {
   LineChart,
@@ -15,24 +15,25 @@ import {
   PieChart,
   ProgressChart,
   ContributionGraph,
-} from 'react-native-chart-kit';
+} from "react-native-chart-kit";
 import {
   data,
   contributionData,
   pieChartData,
   progressChartData,
-} from '../../constants/data';
+} from "../../constants/data";
 //redux
-import {connect} from 'react-redux';
-import {createStructuredSelector} from 'reselect';
-import {selectAppointmentRecords} from '../../redux/user/user-selectors';
-
-// in Expo - swipe left to see the following styling, or create your own
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
+import { selectAppointmentRecords } from "../../redux/user/user-selectors";
+import {
+  selectCurrentUser,
+} from "../../redux/user/user-selectors";
 const chartConfigs = [
   {
-    backgroundColor: '#022173',
-    backgroundGradientFrom: '#022173',
-    backgroundGradientTo: '#1b3fa0',
+    backgroundColor: "#022173",
+    backgroundGradientFrom: "#022173",
+    backgroundGradientTo: "#1b3fa0",
     color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
     style: {
       borderRadius: 16,
@@ -52,13 +53,13 @@ class Statistics extends React.Component {
   }
 
   getEndMonth(date = new Date()) {
-    return date.getMonth();
+    return date.getMonth() + 1;
   }
 
-  createPieChartObj = obj => {
+  createPieChartObj = (obj) => {
     const pieChartData = [];
-    var legend = ['Physical', 'Virtual', 'Home Visits'];
-    var color = ['rgba(131, 167, 234, 1)', '#F00', 'rgb(0, 0, 255)'];
+    var legend = ["Physical", "Virtual", "Home Visits"];
+    var color = ["rgba(131, 167, 234, 1)", "#F00", "rgb(0, 0, 255)"];
 
     for (var a = 0; a < legend.length; a++) {
       var b = obj.datasets[a].data;
@@ -69,7 +70,7 @@ class Statistics extends React.Component {
       pieData.name = legend[a];
       pieData.population = sum;
       pieData.color = color[a];
-      pieData.legendFontColor = '#7F7F7F';
+      pieData.legendFontColor = "#7F7F7F";
       pieData.legendFontSize = 15;
       pieChartData.push(pieData);
     }
@@ -80,28 +81,27 @@ class Statistics extends React.Component {
   createObject = (appointmentRecords, startMonth, endMonth) => {
     var obj = {};
     var months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
     ];
     var labels = [];
-    var legend = ['Physical', 'Virtual', 'Home Visit'];
+    var legend = ["Physical", "Virtual", "Home Visit"];
     var datasets = [];
     for (var a = 0; a < months.length; a++) {
       if (a >= startMonth && endMonth >= a) {
         labels.push(months[a]);
       }
     }
-
     for (var a = 0; a < legend.length; a++) {
       var data = [];
       var dataObj = {};
@@ -110,6 +110,7 @@ class Statistics extends React.Component {
         for (var c = 0; c < appointmentRecords.length; c++) {
           var date = new Date(appointmentRecords[c].DateTime);
           var month = date.getMonth();
+
           if (
             legend[a] == appointmentRecords[c].AppointmentType &&
             labels[b] == months[month]
@@ -126,7 +127,6 @@ class Statistics extends React.Component {
       }
       dataObj.data = data;
       datasets[a] = dataObj;
-      //datasets[a].color = data;
     }
 
     obj.legend = legend;
@@ -135,31 +135,32 @@ class Statistics extends React.Component {
     return obj;
   };
 
-  createDistObj = appointmentRecords => {
-    var legend = ['Completed', 'Overdue', 'Pending'];
-    var color = ['rgba(131, 167, 234, 1)', '#F00', 'rgb(0, 0, 255)'];
+  createDistObj = (appointmentRecords) => {
+    var legend = ["Completed", "Overdue", "Pending"];
+    var color = ["rgba(131, 167, 234, 1)", "#F00", "rgb(0, 0, 255)"];
     const pieChartData = [];
     for (var a = 0; a < legend.length; a++) {
       var count = 0;
       var pieDistData = {};
       for (var b = 0; b < appointmentRecords.length; b++) {
-        var appointmentDate = new Date(appointmentRecords[b].DateTime);
+        var appointmentDate = appointmentRecords[b].DateTime; //new Date(appointmentRecords[b].DateTime);
+
         if (
-          legend[a] == 'Completed' &&
-          appointmentRecords[b].Status == 'Completed'
+          legend[a] == "Completed" &&
+          appointmentRecords[b].VisitationStatus == "Completed"
         ) {
           count++;
         }
         if (
-          legend[a] == 'Overdue' &&
-          appointmentRecords[b].Status == 'Pending' &&
+          legend[a] == "Overdue" &&
+          appointmentRecords[b].VisitationStatus == "Pending" &&
           Date.now() > appointmentDate
         ) {
           count++;
         }
         if (
-          legend[a] == 'Pending' &&
-          appointmentRecords[b].Status == 'Pending' &&
+          legend[a] == "Pending" &&
+          appointmentRecords[b].VisitationStatus == "Pending" &&
           Date.now() < appointmentDate
         ) {
           count++;
@@ -168,7 +169,7 @@ class Statistics extends React.Component {
       pieDistData.name = legend[a];
       pieDistData.population = count;
       pieDistData.color = color[a];
-      pieDistData.legendFontColor = '#7F7F7F';
+      pieDistData.legendFontColor = "#7F7F7F";
       pieDistData.legendFontSize = 15;
       pieChartData.push(pieDistData);
     }
@@ -177,10 +178,9 @@ class Statistics extends React.Component {
   };
 
   render() {
-    const width = Dimensions.get('window').width;
+    const width = Dimensions.get("window").width;
     const height = 220;
-    const {appointmentRecords} = this.props;
-
+    const { appointmentRecords, currentUser } = this.props;
     const startMonth = this.getStartMonth(4);
     const endMonth = this.getEndMonth();
     const lineGraphObj = this.createObject(
@@ -194,62 +194,65 @@ class Statistics extends React.Component {
 
     return (
       <ScrollableTabView renderTabBar={this.renderTabBar}>
-        {appointmentRecords !== null ? (
-          chartConfigs.map(chartConfig => {
-            const labelStyle = {
-              color: chartConfig.color(),
-              marginVertical: 10,
-              textAlign: 'center',
-              fontSize: 16,
-              fontWeight: '900',
-              paddingHorizontal: 9,
-              paddingTop: 2,
-              paddingBottom: 2,
-            };
-            const graphStyle = {
-              marginVertical: 8,
-              ...chartConfig.style,
-            };
-            return (
-              <ScrollView
-                key={Math.random()}
-                style={{
-                  backgroundColor: chartConfig.backgroundColor,
-                }}>
-                <Text style={labelStyle}>Appointments</Text>
-                <LineChart
-                  data={lineGraphObj}
-                  width={width}
-                  height={height}
-                  chartConfig={chartConfig}
-                  bezier
-                  style={graphStyle}
-                />
-                <Text style={labelStyle}>Appointments Distribution</Text>
-                <PieChart
-                  data={pieChartObj}
-                  height={height}
-                  width={width}
-                  chartConfig={chartConfig}
-                  accessor="population"
-                  style={graphStyle}
-                />
-                <Text style={labelStyle}>Appointments Status</Text>
-                <PieChart
-                  data={pieDistObj}
-                  height={height}
-                  width={width}
-                  chartConfig={chartConfig}
-                  accessor="population"
-                  style={graphStyle}
-                  bezier
-                />
-              </ScrollView>
-            );
-          })
-        ) : (
-          <Text>Loading...</Text>
-        )}
+        {appointmentRecords !== null
+          ? (
+            chartConfigs.map((chartConfig) => {
+              const labelStyle = {
+                color: chartConfig.color(),
+                marginVertical: 10,
+                textAlign: "center",
+                fontSize: 16,
+                fontWeight: "900",
+                paddingHorizontal: 9,
+                paddingTop: 2,
+                paddingBottom: 2,
+              };
+              const graphStyle = {
+                marginVertical: 8,
+                ...chartConfig.style,
+              };
+              return (
+                <ScrollView
+                  key={Math.random()}
+                  style={{
+                    backgroundColor: chartConfig.backgroundColor,
+                  }}
+                >
+                  <Text style={labelStyle}>Appointments</Text>
+                  <LineChart
+                    data={lineGraphObj}
+                    width={width}
+                    height={height}
+                    chartConfig={chartConfig}
+                    bezier
+                    style={graphStyle}
+                  />
+                  <Text style={labelStyle}>Appointments Distribution</Text>
+                  <PieChart
+                    data={pieChartObj}
+                    height={height}
+                    width={width}
+                    chartConfig={chartConfig}
+                    accessor="population"
+                    style={graphStyle}
+                  />
+                  <Text style={labelStyle}>Appointments Status</Text>
+                  <PieChart
+                    data={pieDistObj}
+                    height={height}
+                    width={width}
+                    chartConfig={chartConfig}
+                    accessor="population"
+                    style={graphStyle}
+                    bezier
+                  />
+                </ScrollView>
+              );
+            })
+          )
+          : (
+            <Text>Loading...</Text>
+          )}
       </ScrollableTabView>
     );
   }
@@ -257,6 +260,7 @@ class Statistics extends React.Component {
 
 const mapStateToProps = createStructuredSelector({
   appointmentRecords: selectAppointmentRecords,
+  currentUser: selectCurrentUser,
 });
 
 export default connect(mapStateToProps, null)(Statistics);

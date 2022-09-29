@@ -1,28 +1,27 @@
-import firestore from '@react-native-firebase/firestore';
-import auth from '@react-native-firebase/auth';
+import firestore from "@react-native-firebase/firestore";
+import auth from "@react-native-firebase/auth";
 
 export const createUserProfileDocument = async (userAuth, displayName) => {
   if (!userAuth) return;
 
   const userRef = firestore()
     //.collection(`serviceProviders`)
-    .doc(`f/${userAuth.uid}`);
-
+    .doc(`serviceProviders/${userAuth.uid}`);
   const snapShot = await userRef.get();
-  if (!snapShot.exists) {
-    const {email} = userAuth;
+  if (snapShot.exists === false) {
+    const { email, displayName } = userAuth;
     const createdAt = new Date();
-    const available = false;
+    //const available = false;
     //const profileURL = photoURL;
     try {
       await userRef.set({
         displayName,
         email,
         createdAt,
-        available,
+        //available,
       });
     } catch (error) {
-      console.log('error creating user', error.message);
+      console.log("error creating user", error.message);
     }
   }
 
@@ -36,7 +35,7 @@ export const addCollectionAndDocuments = async (
   const collectionRef = firestore.collection(collectionKey);
 
   const batch = firestore.batch();
-  objectsToAdd.forEach(obj => {
+  objectsToAdd.forEach((obj) => {
     const newDocRef = collectionRef.doc();
     batch.set(newDocRef, obj);
   });
@@ -44,9 +43,9 @@ export const addCollectionAndDocuments = async (
   return await batch.commit();
 };
 
-export const convertCollectionsSnapshotToMap = collections => {
-  const transformedCollection = collections.docs.map(doc => {
-    const {title, items, imageUrl, cartItems} = doc.data();
+export const convertCollectionsSnapshotToMap = (collections) => {
+  const transformedCollection = collections.docs.map((doc) => {
+    const { title, items, imageUrl, cartItems } = doc.data();
     return {
       routeName: encodeURI(title.toLowerCase()),
       id: doc.id,
@@ -64,8 +63,8 @@ export const convertCollectionsSnapshotToMap = collections => {
 };
 
 export const convertCartSnapshotToMap = (carts, uid) => {
-  const transformedCart = carts.docs.map(doc => {
-    const {cartItems} = doc.data();
+  const transformedCart = carts.docs.map((doc) => {
+    const { cartItems } = doc.data();
     return {
       cartItems,
     };
@@ -76,15 +75,15 @@ export const convertCartSnapshotToMap = (carts, uid) => {
   }, {})*/
 };
 
-export const getUserCartRef = async userId => {
+export const getUserCartRef = async (userId) => {
   const cartsRef = firestore
-    .collection('pharmacy-carts')
-    .where('userId', '==', userId);
+    .collection("pharmacy-carts")
+    .where("userId", "==", userId);
   const snapShot = await cartsRef.get();
 
   if (snapShot.empty) {
-    const cartDocRef = firestore.collection('pharmacy-carts').doc();
-    await cartDocRef.set({userId, cartItems: []});
+    const cartDocRef = firestore.collection("pharmacy-carts").doc();
+    await cartDocRef.set({ userId, cartItems: [] });
     return cartDocRef;
   } else {
     return snapShot.docs[0].ref;

@@ -1,33 +1,35 @@
-import {UserActionTypes} from './user-types';
-import auth from '@react-native-firebase/auth';
-import firestore from '@react-native-firebase/firestore';
+import { UserActionTypes } from "./user-types";
+import auth from "@react-native-firebase/auth";
+import firestore from "@react-native-firebase/firestore";
 
-export const emailLogInStart = credentials => {
-  return dispatch => {
+import selectCurrentUser from "./user-selectors";
+
+export const emailLogInStart = (credentials) => {
+  return (dispatch) => {
     auth()
       .signInWithEmailAndPassword(credentials.email, credentials.password)
       .then(() => {
-        dispatch({type: UserActionTypes.SIGN_IN_SUCCESS});
+        dispatch({ type: UserActionTypes.SIGN_IN_SUCCESS });
       })
-      .catch(err => {
-        dispatch({type: UserActionTypes.SIGN_IN_FAILURE, err});
+      .catch((err) => {
+        dispatch({ type: UserActionTypes.SIGN_IN_FAILURE, err });
       });
   };
 };
 
-export const setCurrentUser = user => ({
+export const setCurrentUser = (user) => ({
   type: UserActionTypes.SET_CURRENT_USER,
   payload: user,
 });
 export const signOut = () => {
-  return dispatch => {
+  return (dispatch) => {
     auth()
       .signOut()
       .then(() => {
-        dispatch({type: UserActionTypes.SIGN_OUT_SUCCESS});
+        dispatch({ type: UserActionTypes.SIGN_OUT_SUCCESS });
       })
-      .catch(err => {
-        dispatch({type: UserActionTypes.SIGN_OUT_FAILURE, err});
+      .catch((err) => {
+        dispatch({ type: UserActionTypes.SIGN_OUT_FAILURE, err });
       });
   };
 };
@@ -41,11 +43,11 @@ export const toggleAddRecord = () => ({
 });*/
 
 export function viewDoctorsOnMap(status) {
-  return dispatch => {
+  return (dispatch) => {
     firestore()
-      .collection('serviceProviders')
+      .collection("serviceProviders")
       .doc(auth().currentUser.uid)
-      .update({available: !status})
+      .update({ available: !status })
       .then(() => {
         dispatch({
           type: UserActionTypes.USER_VIEW_MAP,
@@ -55,17 +57,18 @@ export function viewDoctorsOnMap(status) {
   };
 }
 
-export const searchSpecialist = specialist => {
-  return dispatch => {
+export const searchSpecialist = (specialist) => {
+  return (dispatch) => {
     dispatch({
       type: UserActionTypes.SEARCH_SPECIALIST,
-      payload: {specialist},
+      payload: { specialist },
     });
   };
 };
 
-export const appointmentConnect = connectDetails => {
-  return dispatch => {
+export const appointmentConnect = (connectDetails) => {
+  console.log(connectDetails);
+  return (dispatch) => {
     dispatch({
       type: UserActionTypes.SET_APPOINTMENT_CONNECTION_DETAILS,
       payload: connectDetails,
@@ -73,8 +76,8 @@ export const appointmentConnect = connectDetails => {
   };
 };
 
-export const specialistLocation = location => {
-  return dispatch => {
+export const specialistLocation = (location) => {
+  return (dispatch) => {
     dispatch({
       type: UserActionTypes.SPECIALIST_LOCATION,
       payload: location,
@@ -82,8 +85,8 @@ export const specialistLocation = location => {
   };
 };
 
-export const dependantSelection = dependant => {
-  return dispatch => {
+export const dependantSelection = (dependant) => {
+  return (dispatch) => {
     dispatch({
       type: UserActionTypes.DEPENDANT_SELECTION,
       payload: dependant,
@@ -91,28 +94,28 @@ export const dependantSelection = dependant => {
   };
 };
 
-export const headerTabOptionChange = tabOption => {
-  return dispatch => {
+export const headerTabOptionChange = (tabOption) => {
+  return (dispatch) => {
     dispatch({
       type: UserActionTypes.HEADER_TAB_OPTION_CHANGE,
-      payload: {tabOption},
+      payload: { tabOption },
     });
   };
 };
 
 export function fetchDigitalMedicalrecords() {
-  return dispatch => {
+  return (dispatch) => {
     firestore()
-      .collection('records')
+      .collection("records")
       .doc(auth().currentUser.uid)
-      .collection('userGigitalRecords')
-      .orderBy('Date', 'asc')
+      .collection("userGigitalRecords")
+      .orderBy("Date", "asc")
       .get()
-      .then(snapshot => {
-        let records = snapshot.docs.map(doc => {
+      .then((snapshot) => {
+        let records = snapshot.docs.map((doc) => {
           const data = doc.data();
           const id = doc.id;
-          return {id, ...data};
+          return { id, ...data };
         });
         dispatch({
           type: UserActionTypes.USER_DIGITALRECORDS_STATE_CHANGE,
@@ -123,18 +126,18 @@ export function fetchDigitalMedicalrecords() {
 }
 
 export function fetchDigitalMedicalrecords2() {
-  return dispatch => {
+  return (dispatch) => {
     firestore()
-      .collection('records')
+      .collection("records")
       .doc(auth().currentUser.uid)
-      .collection('userDigitalRecords')
+      .collection("userDigitalRecords")
       //.orderBy('Date', 'asc')
       .get()
-      .then(snapshot => {
-        let records = snapshot.docs.map(doc => {
+      .then((snapshot) => {
+        let records = snapshot.docs.map((doc) => {
           const data = doc.data();
           const id = doc.id;
-          return {id, ...data};
+          return { id, ...data };
         });
         dispatch({
           type: UserActionTypes.USER_DIGITALRECORDS_STATE_CHANGE2,
@@ -145,18 +148,18 @@ export function fetchDigitalMedicalrecords2() {
 }
 
 export function fetchMedicalrecords() {
-  return dispatch => {
+  return (dispatch) => {
     firestore()
-      .collection('medicalServiceAppointments')
+      .collection("medicalServiceAppointments")
       .doc(auth().currentUser.uid)
-      .collection('PhysicalRecords')
-      .orderBy('creation', 'asc')
+      .collection("PhysicalRecords")
+      .orderBy("creation", "asc")
       .get()
-      .then(snapshot => {
-        let records = snapshot.docs.map(doc => {
+      .then((snapshot) => {
+        let records = snapshot.docs.map((doc) => {
           const data = doc.data();
           const id = doc.id;
-          return {id, ...data};
+          return { id, ...data };
         });
         dispatch({
           type: UserActionTypes.USER_RECORDS_STATE_CHANGE,
@@ -168,28 +171,30 @@ export function fetchMedicalrecords() {
 
 export function addMedicalRecord(itemToAdd, records, patientUID) {
   records.push(itemToAdd);
-  return dispatch => {
+  return (dispatch) => {
     firestore()
-      .collection('medicalServiceAppointments')
+      .collection("medicalServiceAppointments")
       .doc(auth().currentUser.uid)
-      .collection('PhysicalRecords')
+      .collection("PhysicalRecords")
       .add(itemToAdd)
       .then(() => {
-        dispatch({type: UserActionTypes.ADD_MEDICAL_RECORD, payload: records});
+        dispatch(
+          { type: UserActionTypes.ADD_MEDICAL_RECORD, payload: records },
+        );
       })
-      .catch(err => {
-        dispatch({type: UserActionTypes.ADD_MEDICAL_RECORD_FAILER, err});
+      .catch((err) => {
+        dispatch({ type: UserActionTypes.ADD_MEDICAL_RECORD_FAILER, err });
       });
   };
 }
 
 export function addQuotationRequest(itemToAdd, quotations) {
   quotations.push(itemToAdd);
-  return dispatch => {
+  return (dispatch) => {
     firestore()
-      .collection('records')
+      .collection("records")
       .doc(auth().currentUser.uid)
-      .collection('userQuotationsRequest')
+      .collection("userQuotationsRequest")
       .add(itemToAdd)
       .then(() => {
         dispatch({
@@ -197,25 +202,25 @@ export function addQuotationRequest(itemToAdd, quotations) {
           payload: quotations,
         });
       })
-      .catch(err => {
-        dispatch({type: UserActionTypes.ADD_QUOTATION_REQUEST_FAILER, err});
+      .catch((err) => {
+        dispatch({ type: UserActionTypes.ADD_QUOTATION_REQUEST_FAILER, err });
       });
   };
 }
 
 export function fetchQuotationsRequest() {
-  return dispatch => {
+  return (dispatch) => {
     firestore()
-      .collection('records')
+      .collection("records")
       .doc(auth().currentUser.uid)
-      .collection('userQuotationsRequest')
+      .collection("userQuotationsRequest")
       //.orderBy('Date', 'asc')
       .get()
-      .then(snapshot => {
-        let quotations = snapshot.docs.map(doc => {
+      .then((snapshot) => {
+        let quotations = snapshot.docs.map((doc) => {
           const data = doc.data();
           const id = doc.id;
-          return {id, ...data};
+          return { id, ...data };
         });
         dispatch({
           type: UserActionTypes.USER_QUOTATION_REQUEST_STATE_CHANGE,
@@ -226,12 +231,12 @@ export function fetchQuotationsRequest() {
 }
 
 export function removeMedicalRecord(itemToRemove, items) {
-  const updatedItems = items.filter(item => item.id !== itemToRemove.id);
-  return dispatch => {
+  const updatedItems = items.filter((item) => item.id !== itemToRemove.id);
+  return (dispatch) => {
     firestore()
-      .collection('medicalServiceAppointments')
+      .collection("medicalServiceAppointments")
       .doc(auth().currentUser.uid)
-      .collection('PhysicalRecords')
+      .collection("PhysicalRecords")
       .doc(itemToRemove.id)
       .delete()
       .then(() => {
@@ -240,50 +245,56 @@ export function removeMedicalRecord(itemToRemove, items) {
           payload: updatedItems,
         });
       })
-      .catch(err => {
-        dispatch({type: UserActionTypes.REMOVE_MEDICAL_RECORD_FAILER, err});
+      .catch((err) => {
+        dispatch({ type: UserActionTypes.REMOVE_MEDICAL_RECORD_FAILER, err });
       });
   };
 }
 
-export function fetchMedicalAppointments() {
-  return dispatch => {
+export function fetchMedicalAppointments(practiceNumber) {
+  const code = practiceNumber.replace("-", "");
+  return (dispatch) => {
     firestore()
-      .collection('medicalServiceAppointments')
-      .doc(auth().currentUser.uid)
-      .collection('Appointments')
-      .orderBy('DateTime', 'desc')
+      .collection("medicalServiceAppointments")
+      .doc(code.toString())
+      .collection("Appointments")
+      .orderBy("DateTime", "desc")
       .get()
-      .then(snapshot => {
-        let records = snapshot.docs.map(doc => {
+      .then((snapshot) => {
+        let records = snapshot.docs.map((doc) => {
           const data = doc.data();
           const id = doc.id;
-          return {id, ...data};
+          return { id, ...data };
         });
         dispatch({
           type: UserActionTypes.USER_APPOINTMENTS_STATE_CHANGE,
           payload: records,
         });
+      })
+      .catch((err) => {
+        dispatch(
+          { type: UserActionTypes.USER_APPOINTMENTS_STATE_CHANGE_FAILER, err },
+        );
       });
   };
 }
 
 function update(target, src) {
   const res = {};
-  Object.keys(target).forEach(k => (res[k] = src[k] ?? target[k]));
+  Object.keys(target).forEach((k) => (res[k] = src[k] ?? target[k]));
   return res;
 }
 export function updateAppointmentRecord(toUpdate, record, records) {
-  const newRecords = records.filter(item => item.id !== record.id);
+  const newRecords = records.filter((item) => item.id !== record.id);
   var newRecord = update(record, toUpdate);
   if (newRecords) {
     newRecords.push(newRecord);
   } else newRecords = newRecord;
-  return dispatch => {
+  return (dispatch) => {
     firestore()
-      .collection('medicalServiceAppointments')
+      .collection("medicalServiceAppointments")
       .doc(auth().currentUser.uid)
-      .collection('Appointments')
+      .collection("Appointments")
       .doc(record.id)
       .update(toUpdate)
       .then(() => {
@@ -303,11 +314,11 @@ export function addAppointmentRecord(
     appointmentRecords.push(appointmentDetailsToAdd);
   } else appointmentRecords = appointmentDetailsToAdd;
 
-  return dispatch => {
+  return (dispatch) => {
     firestore()
-      .collection('appointments')
+      .collection("appointments")
       .doc(auth().currentUser.uid)
-      .collection('userAppointments')
+      .collection("userAppointments")
       .add(appointmentDetailsToAdd)
       .then(() => {
         dispatch({
@@ -315,31 +326,31 @@ export function addAppointmentRecord(
           payload: appointmentRecords,
         });
       })
-      .catch(err => {
-        dispatch({type: UserActionTypes.ADD_APPOINTMENT_RECORD_FAILER, err});
+      .catch((err) => {
+        dispatch({ type: UserActionTypes.ADD_APPOINTMENT_RECORD_FAILER, err });
       });
   };
 }
 
 export function fetchUserDependants() {
-  return dispatch => {
+  return (dispatch) => {
     firestore()
-      .collection('dependants')
+      .collection("dependants")
       .doc(auth().currentUser.uid)
-      .collection('userDependants')
+      .collection("userDependants")
       .get()
-      .then(snapshot => {
-        let dependants = snapshot.docs.map(doc => {
+      .then((snapshot) => {
+        let dependants = snapshot.docs.map((doc) => {
           const data = doc.data();
           const id = doc.id;
-          return {id, ...data};
+          return { id, ...data };
         });
         dispatch({
           type: UserActionTypes.USER_DEPENDANTS_STATE_CHANGE,
           payload: dependants,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         dispatch({
           type: UserActionTypes.USER_DEPENDANTS_STATE_CHANGE_FAILER,
           err,
@@ -353,11 +364,11 @@ export function addUserDependant(dependantDetailsToAdd, dependantsRecords) {
     dependantsRecords.push(dependantDetailsToAdd);
   } else dependantsRecords = dependantDetailsToAdd;
 
-  return dispatch => {
+  return (dispatch) => {
     firestore()
-      .collection('dependants')
+      .collection("dependants")
       .doc(auth().currentUser.uid)
-      .collection('userDependants')
+      .collection("userDependants")
       .add(dependantDetailsToAdd)
       .then(() => {
         dispatch({
@@ -365,19 +376,19 @@ export function addUserDependant(dependantDetailsToAdd, dependantsRecords) {
           payload: dependantsRecords,
         });
       })
-      .catch(err => {
-        dispatch({type: UserActionTypes.ADD_DEPENDANT_RECORD_FAILER, err});
+      .catch((err) => {
+        dispatch({ type: UserActionTypes.ADD_DEPENDANT_RECORD_FAILER, err });
       });
   };
 }
 
 export function removeUserDependant(itemToRemove, items) {
-  const updatedItems = items.filter(item => item.id !== itemToRemove.id);
-  return dispatch => {
+  const updatedItems = items.filter((item) => item.id !== itemToRemove.id);
+  return (dispatch) => {
     firestore()
-      .collection('dependants')
+      .collection("dependants")
       .doc(auth().currentUser.uid)
-      .collection('userDependants')
+      .collection("userDependants")
       .doc(itemToRemove.id)
       .delete()
       .then(() => {
@@ -386,19 +397,18 @@ export function removeUserDependant(itemToRemove, items) {
           payload: updatedItems,
         });
       })
-      .catch(err => {
-        dispatch({type: UserActionTypes.REMOVE_DEPENDANT_FAILER, err});
+      .catch((err) => {
+        dispatch({ type: UserActionTypes.REMOVE_DEPENDANT_FAILER, err });
       });
   };
 }
 
 export function addAppointmentRecords(items, appointmentRecords) {
-  console.log(items[0]);
-  return dispatch => {
+  return (dispatch) => {
     firestore()
-      .collection('medicalServiceAppointments')
+      .collection("medicalServiceAppointments")
       .doc(auth().currentUser.uid)
-      .collection('Appointments')
+      .collection("Appointments")
       .add(items[0])
       .then(() => {
         dispatch({

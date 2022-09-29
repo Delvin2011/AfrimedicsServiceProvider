@@ -1,4 +1,4 @@
-import {UserActionTypes} from './user-types';
+import { UserActionTypes } from "./user-types";
 
 const INITIAL_STATE = {
   currentUser: null,
@@ -8,13 +8,13 @@ const INITIAL_STATE = {
   records: null,
   digitalRecords: null,
   digitalRecords2: null,
-  specialist: '',
-  tabOption: '',
+  specialist: "",
+  tabOption: "",
   appointmentRecords: null,
   userDependants: null,
-  location: 'Location?',
-  dependant: 'Dependant?',
-  quotations: '',
+  location: "Location?",
+  dependant: "Dependant?",
+  quotations: "",
   connectionDetails: null,
 };
 
@@ -120,6 +120,12 @@ const userReducer = (state = INITIAL_STATE, action) => {
       return {
         ...state,
         appointmentRecords: action.payload,
+      };
+    case UserActionTypes.USER_APPOINTMENTS_STATE_CHANGE_FAILER:
+      console.log(action.payload);
+      return {
+        ...state,
+        error: action.payload,
       };
     case UserActionTypes.ADD_APPOINTMENT_RECORD: //option can be open or closed hence toggle
       return {

@@ -1,47 +1,156 @@
-import React from 'react';
-import {withNavigation} from '@react-navigation/compat';
-import PropTypes from 'prop-types';
+import React from "react";
+import { withNavigation } from "@react-navigation/compat";
+import PropTypes from "prop-types";
 import {
   StyleSheet,
   Image,
   TouchableWithoutFeedback,
   Dimensions,
   TouchableOpacity,
-} from 'react-native';
-import {Block, Text, theme, Button} from 'galio-framework';
-import {nowTheme} from '../../constants';
-import {Images} from '../../constants';
-import ImageView from 'react-native-image-viewing';
+  ActivityIndicator,
+  Platform,
+  Modal,
+  TouchableHighlight,
+  View,
+} from "react-native";
+import { Block, Text, theme, Button } from "galio-framework";
+import { nowTheme } from "../../constants";
+import { Images } from "../../constants";
+import ImageView from "react-native-image-viewing";
 
 //redux
-import {connect} from 'react-redux';
-import {createStructuredSelector} from 'reselect';
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
 import {
   appointmentConnect,
   updateAppointmentRecord,
   addAppointmentRecords,
-} from '../../redux/user/user-actions';
-import {selectAppointmentRecords} from '../../redux/user/user-selectors';
-import Appointments from '../../constants/Appointments.json';
-const {width, height} = Dimensions.get('screen');
+} from "../../redux/user/user-actions";
+import { selectAppointmentRecords } from "../../redux/user/user-selectors";
+import Appointments from "../../constants/Appointments.json";
+
+import CallButton from "../../components/CallButton";
+import COLOR from "../../styles/Color";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import LoginManager from "../../manager/LoginManager";
+import COLOR_SCHEME from "../../styles/ColorScheme";
+import styless from "../../styles/Styles";
+import CallManager from "../../manager/CallManager";
+
+const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3.75;
 
 const Appointment = Appointments.icons;
+
 class AppointmentCard extends React.Component {
   state = {
     paymentStatus: false,
     showImage: false,
+    username: "",
+    isModalOpen: false,
+    modalText: "",
+    loading: false,
   };
   constructor(props) {
     super(props);
   }
 
-  _appointmentConnect = item => {
-    const {appointmentConnect} = this.props;
+  componentDidMount() {
+    AsyncStorage.getItem("usernameValue").then((username) => {
+      this.setState({ username: username });
+    });
+    LoginManager.getInstance().on(
+      "onConnectionFailed",
+      (reason) => this.onConnectionFailed(reason),
+    );
+    LoginManager.getInstance().on(
+      "onLoggedIn",
+      (displayName) => this.onLoggedIn(displayName),
+    );
+    LoginManager.getInstance().on(
+      "onLoginFailed",
+      (errorCode) => this.onLoginFailed(errorCode),
+    );
+
+    // Workaround to navigate to the IncomingCallScreen if a push notification was received in 'killed' state
+    if (Platform.OS === "android") {
+      if (CallManager.getInstance().showIncomingCallScreen) {
+        this.props.navigation.navigate("IncomingCall", {
+          callId: CallManager.getInstance().call.callId,
+          isVideo: null,
+          from: CallManager.getInstance().call.getEndpoints()[0].displayName,
+        });
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    // fix Warning: Can't perform a React state update on an unmounted component
+    this.setState = (state, callback) => {
+      return;
+    };
+  }
+
+  onLoginFailed(errorCode) {
+    switch (errorCode) {
+      case 401:
+        this.setState({ isModalOpen: true, modalText: "Invalid password" });
+        break;
+      case 403:
+        this.setState({ isModalOpen: true, modalText: "Account frozen" });
+        break;
+      case 404:
+        this.setState({ isModalOpen: true, modalText: "Invalid username" });
+        break;
+      case 701:
+        this.setState({ isModalOpen: true, modalText: "Token expired" });
+        break;
+      default:
+      case 500:
+        this.setState({ isModalOpen: true, modalText: "Internal error" });
+    }
+    this.setState({ loading: false });
+  }
+
+  onLoggedIn() {
+    const username = "user2@call-test.tkaydelvin";
+    (async () => {
+      await AsyncStorage.setItem("usernameValue", username);
+    })();
+
+    this.setState({ loading: false });
+    this.props.navigation.navigate("Main");
+  }
+
+  onConnectionFailed(reason) {
+    this.setState({
+      isModalOpen: true,
+      modalText: "Failed to connect, check internet settings",
+    });
+  }
+
+  loginClicked() {
+    this.setState({ loading: true });
+    console.log(this.state.username);
+    const username = "user2@call-test.tkaydelvin";
+    const password = "!234User2";
+    if (this.state.username === username) {
+      this.setState({ loading: false });
+      this.props.navigation.navigate("Main");
+    } else {
+      LoginManager.getInstance().loginWithPassword(
+        username + ".voximplant.com",
+        password,
+      );
+    }
+  }
+
+  _appointmentConnect = () => {
+    const { appointmentConnect, item } = this.props;
     const connectDetails = {
       loginCredentials: {
-        username: 'user2@call-test.tkaydelvin',
-        password: '!234User2',
+        username: "user2@call-test.tkaydelvin",
+        password: "!234User2",
       },
       patientDetails: item,
     };
@@ -49,8 +158,12 @@ class AppointmentCard extends React.Component {
   };
 
   handleShowImage(status) {
-    this.setState({showImage: !status});
+    this.setState({ showImage: !status });
   }
+
+  right = (str, chr) => {
+    return str.slice(str.length - chr, str.length);
+  };
 
   render() {
     const {
@@ -82,325 +195,399 @@ class AppointmentCard extends React.Component {
 
     const Start = {
       StartTime: Date.now(),
-      Status: 'In Progress',
+      Status: "In Progress",
     };
     const End = {
       EndTime: Date.now(),
-      Status: 'Complete',
+      Status: "Complete",
     };
 
     const images = [
       {
-        uri: item.profileURL.replace(
-          'https://firebasestorage.googleapis.com/v0/b/',
-          'https://ik.imagekit.io/qlvke6f9z/tr:w-h-300,w-400/v0/b/',
+        uri: item.ServiceProviderImageUrl.replace(
+          "https://firebasestorage.googleapis.com/v0/b/",
+          "https://ik.imagekit.io/qlvke6f9z/tr:w-h-300,w-400/v0/b/",
         ),
       },
     ];
 
+    const toCut = this.right(
+      new Date(item.DateTime)
+        .toString(),
+      12,
+    );
+
     return (
       <Block>
-        {item.AppointmentType == 'Physical' ? (
-          <Block card flex style={cardContainer}>
-            <Block row={horizontal}>
-              <TouchableWithoutFeedback>
-                <Block flex space="between" style={styles.cardDescription}>
-                  <Block>
-                    <Text
-                      //style={}
-                      size={14}
-                      style={styles.appointment}
-                      color={nowTheme.COLORS.SECONDARY}>
-                      {new Date(item.DateTime)
-                        .toString()
-                        .replace(':00 GMT+0200', '')}
-                    </Text>
+        {item.AppointmentType == "Physical"
+          ? (
+            <Block card flex style={cardContainer}>
+              <Block row={horizontal}>
+                <TouchableWithoutFeedback>
+                  <Block flex space="between" style={styles.cardDescription}>
+                    <Block>
+                      <Text
+                        //style={}
+                        size={14}
+                        style={styles.appointment}
+                        color={nowTheme.COLORS.SECONDARY}
+                      >
+                        {new Date(item.DateTime)
+                          .toString()
+                          .replace(toCut, "")}
+                      </Text>
 
-                    <Text
-                      style={{fontFamily: 'montserrat-regular'}}
-                      size={14}
-                      style={titleStyles}
-                      color={nowTheme.COLORS.SECONDARY}>
-                      Gender : {item.Gender}
-                    </Text>
-                    <Text
-                      style={{fontFamily: 'montserrat-regular'}}
-                      size={14}
-                      style={titleStyles}
-                      color={nowTheme.COLORS.SECONDARY}>
-                      Status : {item.Status}
-                    </Text>
-                    <Text
-                      style={{fontFamily: 'montserrat-regular'}}
-                      size={14}
-                      style={titleStyles}
-                      color={nowTheme.COLORS.SECONDARY}>
-                      Appointment for :
-                    </Text>
+                      <Text
+                        style={{ fontFamily: "montserrat-regular" }}
+                        size={14}
+                        style={titleStyles}
+                        color={nowTheme.COLORS.SECONDARY}
+                      >
+                        <Text style={styles.appointment}>Status :</Text>
+                        {" " + item.VisitationStatus}
+                      </Text>
+                      <Text
+                        style={{ fontFamily: "montserrat-regular" }}
+                        size={14}
+                        style={titleStyles}
+                        color={nowTheme.COLORS.SECONDARY}
+                      >
+                        <Text style={styles.appointment}>Patient :</Text>
+                        {" " + item.Name}
+                      </Text>
+                    </Block>
                   </Block>
-                </Block>
-              </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback>
-                <Block flex space="between" style={styles.cardDescription}>
-                  <Block middle>
-                    <TouchableOpacity
-                      onPress={() => this.setState({showImage: true})}>
-                      <Image
-                        source={{
-                          uri: item.profileURL.replace(
-                            'https://firebasestorage.googleapis.com/v0/b/',
-                            'https://ik.imagekit.io/qlvke6f9z/tr:w-h-300,w-400/v0/b/',
-                          ),
-                        }}
-                        style={styles.avatar}
-                      />
-                    </TouchableOpacity>
+                </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback>
+                  <Block flex space="between" style={styles.cardDescription}>
+                    <Block middle>
+                      <TouchableOpacity
+                        onPress={() => this.setState({ showImage: true })}
+                      >
+                        <Image
+                          source={{
+                            uri: item.ServiceProviderImageUrl.replace(
+                              "https://firebasestorage.googleapis.com/v0/b/",
+                              "https://ik.imagekit.io/qlvke6f9z/tr:w-h-300,w-400/v0/b/",
+                            ),
+                          }}
+                          style={styles.avatar}
+                        />
+                      </TouchableOpacity>
+                    </Block>
                   </Block>
-                </Block>
-              </TouchableWithoutFeedback>
-            </Block>
-            <Block
-              row
-              middle
-              style={{
-                marginTop: theme.SIZES.BASE * 2.5,
-                marginBottom: theme.SIZES.BASE * 1,
-              }}>
-              <Block row={horizontal} style={{marginTop: -25}}>
-                <Block flex space="between" style={styles.cardDescription}>
-                  <Block middle style={{marginTop: -15}}>
-                    <Text
-                      size={14}
-                      style={styles.appointment}
-                      color={nowTheme.COLORS.SECONDARY}>
-                      {item.Name}
-                    </Text>
-                  </Block>
-                </Block>
-                <Block flex space="between" style={styles.cardDescription}>
-                  <Block middle>
-                    {Date.now() < new Date(item.DateTime) &&
-                    item.Status === 'Pending' ? (
-                      <Button
-                        shadowless
-                        style={styles.button}
-                        color={nowTheme.COLORS.PRIMARY}
-                        onPress={() => {
-                          updateAppointmentRecord(
-                            Start,
-                            item,
-                            appointmentRecords,
-                          );
-                        }}>
-                        <Text
-                          style={{fontFamily: 'montserrat-bold', fontSize: 14}}
-                          color={theme.COLORS.WHITE}>
-                          START APPOINTMENT
-                        </Text>
-                      </Button>
-                    ) : Date.now() > new Date(item.DateTime) &&
-                      item.Status === 'Pending' ? (
-                      <Button
-                        shadowless
-                        style={styles.button}
-                        color={nowTheme.COLORS.PRIMARY}
-                        onPress={() =>
-                          addAppointmentRecords(Appointment, appointmentRecords)
-                        }>
-                        <Text
-                          style={{fontFamily: 'montserrat-bold', fontSize: 14}}
-                          color={theme.COLORS.WHITE}>
-                          APPOINTMENT OVERDUE
-                        </Text>
-                      </Button>
-                    ) : Date.now() > new Date(item.DateTime) &&
-                      item.Status === 'Completed' ? (
-                      <Button
-                        shadowless
-                        style={styles.button}
-                        color={nowTheme.COLORS.PRIMARY}
-                        onPress={() =>
-                          navigation.navigate('MedicalRecords', {
-                            details: {patientDetails: item, option: 'new'},
-                          })
-                        }>
-                        <Text
-                          style={{fontFamily: 'montserrat-bold', fontSize: 14}}
-                          color={theme.COLORS.WHITE}>
-                          ADD PRESCRIPTION
-                        </Text>
-                      </Button>
-                    ) : item.Status === 'In Progress' ? (
-                      <Button
-                        shadowless
-                        style={styles.button}
-                        color={nowTheme.COLORS.PRIMARY}
-                        onPress={() => {
-                          updateAppointmentRecord(
-                            End,
-                            item,
-                            appointmentRecords,
-                          );
-                        }}>
-                        <Text
-                          style={{fontFamily: 'montserrat-bold', fontSize: 14}}
-                          color={theme.COLORS.WHITE}>
-                          END APPOINTMENT
-                        </Text>
-                      </Button>
-                    ) : null}
+                </TouchableWithoutFeedback>
+              </Block>
+              <Block
+                row
+                middle
+                style={{
+                  marginTop: theme.SIZES.BASE * 2.5,
+                  marginBottom: theme.SIZES.BASE * 1,
+                }}
+              >
+                <Block row={horizontal} style={{ marginTop: -25 }}>
+                  <Block flex space="between" style={styles.cardDescription}>
+                    <Block middle>
+                      {Date.now() < new Date(item.DateTime) &&
+                        item.VisitationStatus === "Pending"
+                        ? (
+                          <Button
+                            shadowless
+                            style={styles.button}
+                            color={nowTheme.COLORS.PRIMARY}
+                            onPress={() => {
+                              updateAppointmentRecord(
+                                Start,
+                                item,
+                                appointmentRecords,
+                              );
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontFamily: "montserrat-bold",
+                                fontSize: 14,
+                              }}
+                              color={theme.COLORS.WHITE}
+                            >
+                              START APPOINTMENT
+                            </Text>
+                          </Button>
+                        )
+                        : Date.now() > new Date(item.DateTime) &&
+                          item.VisitationStatus === "Pending"
+                        ? (
+                          <Button
+                            shadowless
+                            style={styles.button}
+                            color={nowTheme.COLORS.PRIMARY}
+                            onPress={() =>
+                              addAppointmentRecords(
+                                Appointment,
+                                appointmentRecords,
+                              )}
+                          >
+                            <Text
+                              style={{
+                                fontFamily: "montserrat-bold",
+                                fontSize: 14,
+                              }}
+                              color={theme.COLORS.WHITE}
+                            >
+                              APPOINTMENT OVERDUE
+                            </Text>
+                          </Button>
+                        )
+                        : Date.now() > new Date(item.DateTime) &&
+                          item.VisitationStatus === "Completed"
+                        ? (
+                          <Button
+                            shadowless
+                            style={styles.button}
+                            color={nowTheme.COLORS.PRIMARY}
+                            onPress={() =>
+                              navigation.navigate("MedicalRecords", {
+                                details: {
+                                  patientDetails: item,
+                                  option: "new",
+                                },
+                              })}
+                          >
+                            <Text
+                              style={{
+                                fontFamily: "montserrat-bold",
+                                fontSize: 14,
+                              }}
+                              color={theme.COLORS.WHITE}
+                            >
+                              ADD PRESCRIPTION
+                            </Text>
+                          </Button>
+                        )
+                        : item.VisitationStatus === "In Progress"
+                        ? (
+                          <Button
+                            shadowless
+                            style={styles.button}
+                            color={nowTheme.COLORS.PRIMARY}
+                            onPress={() => {
+                              updateAppointmentRecord(
+                                End,
+                                item,
+                                appointmentRecords,
+                              );
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontFamily: "montserrat-bold",
+                                fontSize: 14,
+                              }}
+                              color={theme.COLORS.WHITE}
+                            >
+                              END APPOINTMENT
+                            </Text>
+                          </Button>
+                        )
+                        : null}
+                    </Block>
                   </Block>
                 </Block>
               </Block>
             </Block>
-          </Block>
-        ) : item.AppointmentType == 'Virtual' ? (
-          <Block card flex style={cardContainer}>
-            <Block row={horizontal}>
-              <TouchableWithoutFeedback>
-                <Block flex space="between" style={styles.cardDescription}>
-                  <Block>
-                    <Text
-                      //style={}
-                      size={14}
-                      style={styles.appointment}
-                      color={nowTheme.COLORS.SECONDARY}>
-                      {new Date(item.DateTime)
-                        .toString()
-                        .replace(':00 GMT+0200', '')}
-                    </Text>
-
-                    <Text
-                      style={{fontFamily: 'montserrat-regular'}}
-                      size={14}
-                      style={titleStyles}
-                      color={nowTheme.COLORS.SECONDARY}>
-                      Gender : {item.Gender}
-                    </Text>
-                    <Text
-                      style={{fontFamily: 'montserrat-regular'}}
-                      size={14}
-                      style={titleStyles}
-                      color={nowTheme.COLORS.SECONDARY}>
-                      Status : {item.Status}
-                    </Text>
-                    <Text
-                      style={{fontFamily: 'montserrat-regular'}}
-                      size={14}
-                      style={titleStyles}
-                      color={nowTheme.COLORS.SECONDARY}>
-                      Appointment for :
-                    </Text>
+          )
+          : item.AppointmentType == "Virtual"
+          ? (
+            <Block card flex style={cardContainer}>
+              <Block row={horizontal}>
+                <TouchableWithoutFeedback>
+                  <Block flex space="between" style={styles.cardDescription}>
+                    <Block>
+                      <Text
+                        //style={}
+                        size={14}
+                        style={styles.appointment}
+                        color={nowTheme.COLORS.SECONDARY}
+                      >
+                        {new Date(item.DateTime)
+                          .toString()
+                          .replace(toCut, "")}
+                      </Text>
+                      <Text
+                        style={{ fontFamily: "montserrat-regular" }}
+                        size={14}
+                        style={titleStyles}
+                        color={nowTheme.COLORS.SECONDARY}
+                      >
+                        <Text style={styles.appointment}>Status :</Text>
+                        {" " + item.VisitationStatus}
+                      </Text>
+                      <Text
+                        style={{ fontFamily: "montserrat-regular" }}
+                        size={14}
+                        style={titleStyles}
+                        color={nowTheme.COLORS.SECONDARY}
+                      >
+                        <Text style={styles.appointment}>Patient :</Text>
+                        {" " + item.Name}
+                      </Text>
+                    </Block>
                   </Block>
-                </Block>
-              </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback>
-                <Block flex space="between" style={styles.cardDescription}>
-                  <Block middle>
-                    <TouchableOpacity
-                      onPress={() => this.setState({showImage: true})}>
-                      <Image
-                        source={{
-                          uri: item.profileURL.replace(
-                            'https://firebasestorage.googleapis.com/v0/b/',
-                            'https://ik.imagekit.io/qlvke6f9z/tr:w-h-300,w-400/v0/b/',
-                          ),
-                        }}
-                        style={styles.avatar}
-                      />
-                    </TouchableOpacity>
+                </TouchableWithoutFeedback>
+                <TouchableWithoutFeedback>
+                  <Block flex space="between" style={styles.cardDescription}>
+                    <Block middle>
+                      <TouchableOpacity
+                        onPress={() => this.setState({ showImage: true })}
+                      >
+                        <Image
+                          source={{
+                            uri: item.ServiceProviderImageUrl.replace(
+                              "https://firebasestorage.googleapis.com/v0/b/",
+                              "https://ik.imagekit.io/qlvke6f9z/tr:w-h-300,w-400/v0/b/",
+                            ),
+                          }}
+                          style={styles.avatar}
+                        />
+                      </TouchableOpacity>
+                    </Block>
                   </Block>
-                </Block>
-              </TouchableWithoutFeedback>
-            </Block>
-            <Block
-              row
-              middle
-              style={{
-                marginTop: theme.SIZES.BASE * 2.5,
-                marginBottom: theme.SIZES.BASE * 1,
-              }}>
-              <Block row={horizontal} style={{marginTop: -25}}>
-                <Block flex space="between" style={styles.cardDescription}>
-                  <Block middle style={{marginTop: -15}}>
-                    <Text
-                      size={14}
-                      style={styles.appointment}
-                      color={nowTheme.COLORS.SECONDARY}>
-                      {item.Name}
-                    </Text>
-                  </Block>
-                </Block>
-                <Block flex space="between" style={styles.cardDescription}>
-                  <Block middle>
-                    {Date.now() < new Date(item.DateTime) &&
-                    item.Status === 'Pending' ? (
-                      <Button
-                        shadowless
-                        style={styles.button}
-                        color={nowTheme.COLORS.PRIMARY}
-                        onPress={() => {
-                          navigation.navigate('Login');
-                          this._appointmentConnect(item);
-                        }}>
-                        <Text
-                          style={{fontFamily: 'montserrat-bold', fontSize: 14}}
-                          color={theme.COLORS.WHITE}>
-                          CONNECT...
-                        </Text>
-                      </Button>
-                    ) : Date.now() > new Date(item.DateTime) &&
-                      item.Status === 'Pending' ? (
-                      <Button
-                        shadowless
-                        style={styles.button}
-                        color={nowTheme.COLORS.PRIMARY}
-                        onPress={() =>
-                          addAppointmentRecords(Appointment, appointmentRecords)
-                        }>
-                        <Text
-                          style={{fontFamily: 'montserrat-bold', fontSize: 14}}
-                          color={theme.COLORS.WHITE}>
-                          APPOINTMENT OVERDUE
-                        </Text>
-                      </Button>
-                    ) : Date.now() > new Date(item.DateTime) &&
-                      item.Status === 'Completed' ? (
-                      <Button
-                        shadowless
-                        style={styles.button}
-                        color={nowTheme.COLORS.PRIMARY}
-                        onPress={() =>
-                          navigation.navigate('MedicalRecords', {
-                            details: {patientDetails: item, option: 'new'},
-                          })
-                        }>
-                        <Text
-                          style={{fontFamily: 'montserrat-bold', fontSize: 14}}
-                          color={theme.COLORS.WHITE}>
-                          ADD PRESCRIPTION
-                        </Text>
-                      </Button>
-                    ) : null}
+                </TouchableWithoutFeedback>
+              </Block>
+              <Block
+                row
+                middle
+                style={{
+                  marginTop: theme.SIZES.BASE * 2.5,
+                  marginBottom: theme.SIZES.BASE * 1,
+                }}
+              >
+                <Block row={horizontal} style={{ marginTop: -25 }}>
+                  <Block flex space="between" style={styles.cardDescription}>
+                    <Block middle>
+                      {Date.now() < new Date(item.DateTime) &&
+                        item.VisitationStatus === "Pending"
+                        ? (
+                          <Block
+                            row={horizontal}
+                            style={{ marginTop: -40, marginBottom: -20 }}
+                          >
+                            <CallButton
+                              icon_name="message"
+                              color={COLOR.ACCENT}
+                              buttonPressed={() => {
+                                this.props.navigation.navigate("Messaging");
+                                this._appointmentConnect();
+                              }}
+                            />
+                            {this.state.loading
+                              ? <ActivityIndicator
+                                size="large"
+                                color="#0000ff"
+                              />
+                              : <CallButton
+                                icon_name="call"
+                                color={COLOR.ACCENT}
+                                buttonPressed={() => {
+                                  this.loginClicked();
+                                  this._appointmentConnect();
+                                }}
+                              />}
+                          </Block>
+                        )
+                        : Date.now() > new Date(item.DateTime) &&
+                          item.VisitationStatus === "Pending"
+                        ? (
+                          <Button
+                            shadowless
+                            style={styles.button}
+                            color={nowTheme.COLORS.PRIMARY}
+                            onPress={() =>
+                              addAppointmentRecords(
+                                Appointment,
+                                appointmentRecords,
+                              )}
+                          >
+                            <Text
+                              style={{
+                                fontFamily: "montserrat-bold",
+                                fontSize: 14,
+                              }}
+                              color={theme.COLORS.WHITE}
+                            >
+                              APPOINTMENT OVERDUE
+                            </Text>
+                          </Button>
+                        )
+                        : Date.now() > new Date(item.DateTime) &&
+                          item.VisitationStatus === "Completed"
+                        ? (
+                          <Button
+                            shadowless
+                            style={styles.button}
+                            color={nowTheme.COLORS.PRIMARY}
+                            onPress={() =>
+                              navigation.navigate("MedicalRecords", {
+                                details: {
+                                  patientDetails: item,
+                                  option: "new",
+                                },
+                              })}
+                          >
+                            <Text
+                              style={{
+                                fontFamily: "montserrat-bold",
+                                fontSize: 14,
+                              }}
+                              color={theme.COLORS.WHITE}
+                            >
+                              ADD PRESCRIPTION
+                            </Text>
+                          </Button>
+                        )
+                        : null}
+                    </Block>
                   </Block>
                 </Block>
               </Block>
             </Block>
-          </Block>
-        ) : null}
+          )
+          : null}
         <ImageView
           images={images}
           imageIndex={0}
           visible={this.state.showImage}
           onRequestClose={() => this.handleShowImage(this.state.showImage)}
         />
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={this.state.isModalOpen}
+        >
+          <TouchableHighlight
+            onPress={(e) => this.setState({ isModalOpen: false })}
+            style={styless.container}
+          >
+            <View style={[styless.container, styless.modalBackground]}>
+              <View
+                style={[
+                  styless.innerContainer,
+                  styless.innerContainerTransparent,
+                ]}
+              >
+                <Text>{this.state.modalText}</Text>
+              </View>
+            </View>
+          </TouchableHighlight>
+        </Modal>
       </Block>
     );
   }
 }
 
-const mapDispatchToProps = dispatch => ({
-  appointmentConnect: connectDetails =>
+const mapDispatchToProps = (dispatch) => ({
+  appointmentConnect: (connectDetails) =>
     dispatch(appointmentConnect(connectDetails)),
   updateAppointmentRecord: (toUpdate, record, records) =>
     dispatch(updateAppointmentRecord(toUpdate, record, records)),
@@ -441,14 +628,14 @@ const styles = StyleSheet.create({
   imageContainer: {
     borderRadius: 3,
     elevation: 1,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   image: {
     // borderRadius: 3,
   },
   horizontalImage: {
     height: 122,
-    width: 'auto',
+    width: "auto",
   },
   horizontalStyles: {
     borderTopRightRadius: 0,
@@ -460,17 +647,17 @@ const styles = StyleSheet.create({
   },
   fullImage: {
     height: 300,
-    width: 'auto',
+    width: "auto",
   },
   shadow: {
-    shadowColor: '#8898AA',
-    shadowOffset: {width: 0, height: 1},
+    shadowColor: "#8898AA",
+    shadowOffset: { width: 0, height: 1 },
     shadowRadius: 6,
     shadowOpacity: 0.1,
     elevation: 2,
   },
   articleButton: {
-    fontFamily: 'montserrat-bold',
+    fontFamily: "montserrat-bold",
     paddingHorizontal: 9,
     paddingVertical: 7,
   },
@@ -481,14 +668,14 @@ const styles = StyleSheet.create({
     width: width * 0.5,
   },
   button: {
-    position: 'absolute',
+    position: "absolute",
     width: width - theme.SIZES.BASE * 15,
     height: theme.SIZES.BASE * 3,
     shadowRadius: 0,
     shadowOpacity: 0,
   },
   avatarContainer: {
-    position: 'relative',
+    position: "relative",
     marginTop: -80,
   },
   avatar: {
@@ -498,7 +685,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
   },
   appointment: {
-    fontWeight: '900',
+    fontWeight: "900",
     paddingHorizontal: 9,
     paddingTop: 2,
     paddingBottom: 2,
@@ -519,4 +706,43 @@ export default withNavigation(
                   color={nowTheme.COLORS.SECONDARY}>
                   {item.AppointmentType}
                 </Text>
-              </Block>*/
+              </Block>
+              
+              
+              
+                               <Button
+                            shadowless
+                            style={styles.button}
+                            color={nowTheme.COLORS.PRIMARY}
+                            onPress={() => {
+                              navigation.navigate("Login");
+                              this._appointmentConnect(item);
+                            }}
+                          >
+                            <Text
+                              style={{
+                                fontFamily: "montserrat-bold",
+                                fontSize: 14,
+                              }}
+                              color={theme.COLORS.WHITE}
+                            >
+                              CONNECT...
+                            </Text>
+                          </Button>         
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              */

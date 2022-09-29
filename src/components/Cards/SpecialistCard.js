@@ -1,6 +1,6 @@
-import React from 'react';
-import {withNavigation} from '@react-navigation/compat';
-import PropTypes from 'prop-types';
+import React from "react";
+import { withNavigation } from "@react-navigation/compat";
+import PropTypes from "prop-types";
 import {
   StyleSheet,
   Image,
@@ -9,30 +9,30 @@ import {
   TouchableOpacity,
   Modal,
   Pressable,
-} from 'react-native';
-import {Block, Text, theme, Button} from 'galio-framework';
-import {nowTheme} from '../../constants';
-import Icon from '../Icon';
-import DateTimePicker from '../DateTimePicker';
-import Payfast from '../Payfast';
-import {connect} from 'react-redux';
-import {createStructuredSelector} from 'reselect';
+} from "react-native";
+import { Block, Text, theme, Button } from "galio-framework";
+import { nowTheme } from "../../constants";
+import Icon from "../Icon";
+import DateTimePicker from "../DateTimePicker";
+import Payfast from "../Payfast";
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
 import {
   selectAppointmentRecords,
   selectCurrentUser,
-} from '../../redux/user/user-selectors';
+} from "../../redux/user/user-selectors";
 import {
   addAppointmentRecord,
   fetchMedicalAppointments,
-} from '../../redux/user/user-actions';
-import {Images} from '../../constants';
-const {width, height} = Dimensions.get('screen');
+} from "../../redux/user/user-actions";
+import { Images } from "../../constants";
+const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3.75;
 class SpecialistCard extends React.Component {
   state = {
-    date: '',
+    date: "",
     paymentStatus: false,
-    optionBooking: '',
+    optionBooking: "",
     modalVisible: false,
   };
   constructor(props) {
@@ -42,9 +42,10 @@ class SpecialistCard extends React.Component {
   }
 
   componentDidMount() {
+    const { fetchMedicalAppointments, currentUser } = this.props;
     this.getStatus;
     this.renderPayFast;
-    this.props.fetchMedicalAppointments();
+    fetchMedicalAppointments(currentUser.practiceNumber);
   }
   componentWillUnmount() {
     this.getStatus;
@@ -53,31 +54,31 @@ class SpecialistCard extends React.Component {
 
   getDate = (dateValue, bookingOption) => {
     this.setModalVisible(true);
-    this.setState({date: dateValue, optionBooking: bookingOption});
+    this.setState({ date: dateValue, optionBooking: bookingOption });
   };
 
-  setModalVisible = modalVisible => {
-    this.setState({modalVisible: modalVisible});
+  setModalVisible = (modalVisible) => {
+    this.setState({ modalVisible: modalVisible });
   };
 
-  getStatus = status => {
-    this.setState({paymentStatus: status});
-    const {item, appointmentRecords, addAppointmentRecord, navigation} =
+  getStatus = (status) => {
+    this.setState({ paymentStatus: status });
+    const { item, appointmentRecords, addAppointmentRecord, navigation } =
       this.props;
     let appointmentDetails = {};
-    const {date, optionBooking} = this.state;
+    const { date, optionBooking } = this.state;
     if (status) {
       appointmentDetails.DateTime = date;
       appointmentDetails.AppointmentType = optionBooking;
       appointmentDetails.Geometry = item.geometry;
-      appointmentDetails.Address = '1234 Crescent Rd Wilgehuewl';
+      appointmentDetails.Address = "1234 Crescent Rd Wilgehuewl";
       appointmentDetails.SpecialistsName = item.title;
-      appointmentDetails.VisitationStatus = 'Pending';
+      appointmentDetails.VisitationStatus = "Pending";
       appointmentDetails.PracticeName = item.Practice_Name;
-      appointmentDetails.PaymentOption = 'Online';
+      appointmentDetails.PaymentOption = "Online";
 
       addAppointmentRecord(appointmentDetails, appointmentRecords);
-      navigation.navigate('AppointmentRecords');
+      navigation.navigate("AppointmentRecords");
     }
   };
 
@@ -130,52 +131,61 @@ class SpecialistCard extends React.Component {
       styles.shadow,
     ];
 
-    const virtualConsult =
-      item.Virtual_Appointment == 1 ? 'primary' : 'neutral';
-    const physicalConsult =
-      item.Physical_Appointment == 1 ? 'primary' : 'neutral';
-    const homeVisitConsult =
-      item.HomeVisit_Appointment == 1 ? 'primary' : 'neutral';
+    const virtualConsult = item.Virtual_Appointment == 1
+      ? "primary"
+      : "neutral";
+    const physicalConsult = item.Physical_Appointment == 1
+      ? "primary"
+      : "neutral";
+    const homeVisitConsult = item.HomeVisit_Appointment == 1
+      ? "primary"
+      : "neutral";
 
     return (
       <Block card flex style={cardContainer}>
         <TouchableWithoutFeedback
           onPress={() => {
-            navigation.navigate('Profile', {details: item});
-          }}>
+            navigation.navigate("Profile", { details: item });
+          }}
+        >
           <Block
             row={true}
-            style={{borderBottomColor: 'grey', borderBottomWidth: 0.35}}>
+            style={{ borderBottomColor: "grey", borderBottomWidth: 0.35 }}
+          >
             <Block middle flex style={styles.cardDescription}>
-              <Image source={{uri: item.image}} style={styles.avatar} />
+              <Image source={{ uri: item.image }} style={styles.avatar} />
             </Block>
             <Block flex style={(styles.cardDescription, styles.margin)}>
               <Text
-                style={{fontFamily: 'montserrat-regular'}}
+                style={{ fontFamily: "montserrat-regular" }}
                 size={14}
                 style={styles.cardTitleBold}
-                color={nowTheme.COLORS.SECONDARY}>
+                color={nowTheme.COLORS.SECONDARY}
+              >
                 {item.title}
               </Text>
               <Text
-                style={{fontFamily: 'montserrat-regular'}}
+                style={{ fontFamily: "montserrat-regular" }}
                 size={14}
                 style={titleStyles}
-                color={nowTheme.COLORS.SECONDARY}>
+                color={nowTheme.COLORS.SECONDARY}
+              >
                 {item.speciality}
               </Text>
               <Text
-                style={{fontFamily: 'montserrat-regular'}}
+                style={{ fontFamily: "montserrat-regular" }}
                 size={14}
                 style={titleStyles}
-                color={nowTheme.COLORS.SECONDARY}>
+                color={nowTheme.COLORS.SECONDARY}
+              >
                 {item.Years_Experience} yrs experience
               </Text>
               <Text
-                style={{fontFamily: 'montserrat-regular'}}
+                style={{ fontFamily: "montserrat-regular" }}
                 size={14}
                 style={titleStyles}
-                color={nowTheme.COLORS.SECONDARY}>
+                color={nowTheme.COLORS.SECONDARY}
+              >
                 {item.Practice_Name}
               </Text>
             </Block>
@@ -183,10 +193,11 @@ class SpecialistCard extends React.Component {
         </TouchableWithoutFeedback>
         <Block row={true}>
           <Text
-            style={{fontFamily: 'montserrat-regular'}}
+            style={{ fontFamily: "montserrat-regular" }}
             size={14}
             style={styles.cardTitleBold}
-            color={nowTheme.COLORS.SECONDARY}>
+            color={nowTheme.COLORS.SECONDARY}
+          >
             Consultations
           </Text>
         </Block>
@@ -208,31 +219,34 @@ class SpecialistCard extends React.Component {
           style={{
             marginTop: theme.SIZES.BASE * 0.5,
             marginBottom: theme.SIZES.BASE * 1,
-          }}>
-          {this.renderDateTime(item.Virtual_Appointment, 'Virtual')}
-          {this.renderDateTime(item.Physical_Appointment, 'Physical')}
-          {this.renderDateTime(item.HomeVisit_Appointment, 'Home Visit')}
+          }}
+        >
+          {this.renderDateTime(item.Virtual_Appointment, "Virtual")}
+          {this.renderDateTime(item.Physical_Appointment, "Physical")}
+          {this.renderDateTime(item.HomeVisit_Appointment, "Home Visit")}
         </Block>
         <Modal
           animationType="slide"
           transparent={true}
           visible={this.state.modalVisible}
-          onRequestClose={() => this.setModalVisible(false)}>
+          onRequestClose={() => this.setModalVisible(false)}
+        >
           <TouchableOpacity
             activeOpacity={1}
             //onPress={() => this.setModalVisible(false)}
-            style={[styles.modal]}>
+            style={[styles.modal]}
+          >
             <Pressable
               style={[styles.buttonClose]}
               onPress={() => {
                 this.setModalVisible(!this.state.modalVisible);
-              }}>
+              }}
+            >
               <Icon
                 family="NowExtra"
                 size={16}
                 name="simple-remove2x"
-                //color={nowTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
-              />
+              /> //color={nowTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
             </Pressable>
             {this.renderPayFast()}
           </TouchableOpacity>
@@ -253,6 +267,24 @@ SpecialistCard.propTypes = {
   textBodyStyle: PropTypes.any,
 };
 
+const mapDispatchToProps = (dispatch) => ({
+  fetchMedicalAppointments: (practiceNumber) =>
+    dispatch(fetchMedicalAppointments(practiceNumber)),
+  addAppointmentRecord: (appointmenToAdd, appointmentRecords) =>
+    dispatch(addAppointmentRecord(appointmenToAdd, appointmentRecords)),
+});
+
+const mapStateToProps = createStructuredSelector({
+  appointmentRecords: selectAppointmentRecords,
+  currentUser: selectCurrentUser,
+});
+
+//export default withNavigation(Header);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withNavigation(SpecialistCard));
+
 const styles = StyleSheet.create({
   card: {
     backgroundColor: theme.COLORS.WHITE,
@@ -270,7 +302,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 9,
     paddingTop: 2,
     paddingBottom: 2,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   cardDescription: {
     padding: theme.SIZES.BASE / 2,
@@ -278,14 +310,14 @@ const styles = StyleSheet.create({
   imageContainer: {
     borderRadius: 3,
     elevation: 1,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   image: {
     // borderRadius: 3,
   },
   horizontalImage: {
     height: 122,
-    width: 'auto',
+    width: "auto",
   },
   horizontalStyles: {
     borderTopRightRadius: 0,
@@ -297,17 +329,17 @@ const styles = StyleSheet.create({
   },
   fullImage: {
     height: 300,
-    width: 'auto',
+    width: "auto",
   },
   shadow: {
-    shadowColor: '#8898AA',
-    shadowOffset: {width: 0, height: 1},
+    shadowColor: "#8898AA",
+    shadowOffset: { width: 0, height: 1 },
     shadowRadius: 6,
     shadowOpacity: 0.1,
     elevation: 2,
   },
   articleButton: {
-    fontFamily: 'montserrat-bold',
+    fontFamily: "montserrat-bold",
     paddingHorizontal: 9,
     paddingVertical: 7,
   },
@@ -323,7 +355,7 @@ const styles = StyleSheet.create({
   },
   button: {
     paddingRight: 12,
-    position: 'absolute',
+    position: "absolute",
     marginLeft: 156,
     marginTop: 20,
   },
@@ -336,12 +368,12 @@ const styles = StyleSheet.create({
   },
   modalText: {
     marginBottom: 15,
-    textAlign: 'center',
+    textAlign: "center",
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 300,
     marginBottom: 300,
     marginLeft: 30,
@@ -349,16 +381,16 @@ const styles = StyleSheet.create({
   },
   modal: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 300,
     marginBottom: 320,
     marginLeft: 40,
     marginRight: 40,
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -374,7 +406,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   buttonOpen: {
-    backgroundColor: '#F194FF',
+    backgroundColor: "#F194FF",
   },
   buttonClose: {
     //paddingRight: 12,
@@ -382,9 +414,9 @@ const styles = StyleSheet.create({
     marginTop: 0,
   },
   textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
   avatar: {
     width: thumbMeasure * 1.25,
@@ -397,23 +429,6 @@ const styles = StyleSheet.create({
     marginLeft: -30,
   },
 });
-
-const mapDispatchToProps = dispatch => ({
-  fetchMedicalAppointments: () => dispatch(fetchMedicalAppointments()),
-  addAppointmentRecord: (appointmenToAdd, appointmentRecords) =>
-    dispatch(addAppointmentRecord(appointmenToAdd, appointmentRecords)),
-});
-
-const mapStateToProps = createStructuredSelector({
-  appointmentRecords: selectAppointmentRecords,
-  currentUser: selectCurrentUser,
-});
-
-//export default withNavigation(Header);
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(withNavigation(SpecialistCard));
 
 //this.state.date ? (
 /*        <TouchableWithoutFeedback>

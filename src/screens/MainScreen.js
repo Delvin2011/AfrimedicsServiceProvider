@@ -2,9 +2,9 @@
  * Copyright (c) 2011-2021, Zingaya, Inc. All rights reserved.
  */
 
-'use strict';
+"use strict";
 
-import React from 'react';
+import React from "react";
 import {
   Text,
   View,
@@ -16,26 +16,26 @@ import {
   StatusBar,
   PermissionsAndroid,
   Platform,
-} from 'react-native';
+} from "react-native";
 
-import {withNavigation} from '@react-navigation/compat';
-import {connect} from 'react-redux';
-import {createStructuredSelector} from 'reselect';
-import {selectConnectionDetails} from '../redux/user/user-selectors';
+import { withNavigation } from "@react-navigation/compat";
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
+import { selectConnectionDetails } from "../redux/user/user-selectors";
 
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-import CallButton from '../components/CallButton';
-import LoginManager from '../manager/LoginManager';
-import CallManager from '../manager/CallManager';
+import CallButton from "../components/CallButton";
+import LoginManager from "../manager/LoginManager";
+import CallManager from "../manager/CallManager";
 
-import {Voximplant} from 'react-native-voximplant';
-import COLOR from '../styles/Color';
-import COLOR_SCHEME from '../styles/ColorScheme';
-import styles from '../styles/Styles';
+import { Voximplant } from "react-native-voximplant";
+import COLOR from "../styles/Color";
+import COLOR_SCHEME from "../styles/ColorScheme";
+import styles from "../styles/Styles";
 
 class MainScreen extends React.Component {
-  static navigationOptions = ({navigation}) => {
+  static navigationOptions = ({ navigation }) => {
     const params = navigation.state.params || {};
 
     return {
@@ -49,84 +49,84 @@ class MainScreen extends React.Component {
   };
   constructor(props) {
     super(props);
-    this.number = 'user1@call-test.tkaydelvin';
-    this.callTo = 'Call to ';
+    this.number = "user1@call-test.tkaydelvin";
+    this.callTo = "Call to ";
     this.state = {
       isModalOpen: false,
-      modalText: '',
+      modalText: "",
     };
   }
 
   componentDidMount() {
     // this.props.navigation.setParams({ settingsClick: this._goToSettings, backClicked: this._goToLogin });
-    LoginManager.getInstance().on('onConnectionClosed', this._connectionClosed);
+    LoginManager.getInstance().on("onConnectionClosed", this._connectionClosed);
   }
 
   componentWillUnmount() {
     LoginManager.getInstance().off(
-      'onConnectionClosed',
+      "onConnectionClosed",
       this._connectionClosed,
     );
   }
 
   _goToSettings = () => {
-    this.props.navigation.navigate('Settings');
+    this.props.navigation.navigate("Settings");
   };
 
   _goToLogin = () => {
     LoginManager.getInstance().logout();
-    this.props.navigation.navigate('Login');
+    this.props.navigation.navigate("Login");
   };
 
   _connectionClosed = () => {
-    this.props.navigation.navigate('Home');
+    this.props.navigation.navigate("Home");
   };
 
   async makeCall(isVideoCall) {
     console.log(
-      'MainScreen: make call: ' + this.number + ', isVideo:' + isVideoCall,
+      "MainScreen: make call: " + this.number + ", isVideo:" + isVideoCall,
     );
     try {
-      if (Platform.OS === 'android') {
+      if (Platform.OS === "android") {
         let permissions = [PermissionsAndroid.PERMISSIONS.RECORD_AUDIO];
         if (isVideoCall) {
           permissions.push(PermissionsAndroid.PERMISSIONS.CAMERA);
         }
         const granted = await PermissionsAndroid.requestMultiple(permissions);
         const recordAudioGranted =
-          granted['android.permission.RECORD_AUDIO'] === 'granted';
+          granted["android.permission.RECORD_AUDIO"] === "granted";
         const cameraGranted =
-          granted['android.permission.CAMERA'] === 'granted';
+          granted["android.permission.CAMERA"] === "granted";
         if (recordAudioGranted) {
           if (isVideoCall && !cameraGranted) {
             console.warn(
-              'MainScreen: makeCall: camera permission is not granted',
+              "MainScreen: makeCall: camera permission is not granted",
             );
             return;
           }
         } else {
           console.warn(
-            'MainScreen: makeCall: record audio permission is not granted',
+            "MainScreen: makeCall: record audio permission is not granted",
           );
           return;
         }
       }
-      this.props.navigation.navigate('Call', {
+      this.props.navigation.navigate("Call", {
         callId: null,
         isVideo: isVideoCall,
         isIncoming: false,
         callTo: this.number,
       });
     } catch (e) {
-      console.warn('MainScreen: makeCall failed: ' + e);
+      console.warn("MainScreen: makeCall failed: " + e);
     }
   }
 
   render() {
-    const {connectionDetails} = this.props;
-    const {patientDetails} = connectionDetails;
-    const {Name} = patientDetails;
-    const callTo = 'Contact ' + Name;
+    const { connectionDetails } = this.props;
+    const { patientDetails } = connectionDetails;
+    const { Name } = patientDetails;
+    const callTo = "Make Voice or Video call to  " + Name;
     return (
       <SafeAreaView style={styles.safearea}>
         <StatusBar
@@ -148,15 +148,11 @@ class MainScreen extends React.Component {
           />
           <View
             style={{
-              flexDirection: 'row',
-              justifyContent: 'space-around',
+              flexDirection: "row",
+              justifyContent: "space-around",
               height: 90,
-            }}>
-            <CallButton
-              icon_name="message"
-              color={COLOR.ACCENT}
-              buttonPressed={() => this.props.navigation.navigate('Messaging')}
-            />
+            }}
+          >
             <CallButton
               icon_name="call"
               color={COLOR.ACCENT}
@@ -173,16 +169,20 @@ class MainScreen extends React.Component {
             animationType="fade"
             transparent={true}
             visible={this.state.isModalOpen}
-            onRequestClose={() => {}}>
+            onRequestClose={() => {}}
+          >
             <TouchableHighlight
-              onPress={e => this.setState({isModalOpen: false, modalText: ''})}
-              style={styles.container}>
+              onPress={(e) =>
+                this.setState({ isModalOpen: false, modalText: "" })}
+              style={styles.container}
+            >
               <View style={[styles.container, styles.modalBackground]}>
                 <View
                   style={[
                     styles.innerContainer,
                     styles.innerContainerTransparent,
-                  ]}>
+                  ]}
+                >
                   <Text>{this.state.modalText}</Text>
                 </View>
               </View>

@@ -1,35 +1,42 @@
-import React, {useEffect} from 'react';
-import {ScrollView, StyleSheet, Dimensions, StatusBar} from 'react-native';
-import ReviewCard from '../../components/Cards/ReviewCard';
-import {Block, Text, Button as GaButton, theme} from 'galio-framework';
-import {useIsFocused} from '@react-navigation/native';
+import React, { useEffect } from "react";
+import {
+  ScrollView,
+  StyleSheet,
+  Dimensions,
+  StatusBar,
+  ActivityIndicator,
+} from "react-native";
+import ReviewCard from "../../components/Cards/ReviewCard";
+import { Block, Text, Button as GaButton, theme } from "galio-framework";
+import { useIsFocused } from "@react-navigation/native";
 // Now UI themed components
-import Statistics from './Statistics';
-import Earnings from './Earnings';
+import Statistics from "./Statistics";
+import Earnings from "./Earnings";
 
-import {connect} from 'react-redux';
-import {createStructuredSelector} from 'reselect';
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
 import {
   selectAppointmentRecords,
   selectCurrentUser,
   selectTabOptionChange,
-} from '../../redux/user/user-selectors';
-import {fetchMedicalAppointments} from '../../redux/user/user-actions';
-const {width} = Dimensions.get('screen');
+} from "../../redux/user/user-selectors";
+import { fetchMedicalAppointments } from "../../redux/user/user-actions";
+import styles from "../../styles/Styles";
+const { width } = Dimensions.get("screen");
 
 function Home(props) {
   const isFocused = useIsFocused();
-  const {navigation, appointmentRecords, tabOption} = props;
+  const { navigation, appointmentRecords, tabOption, currentUser } = props;
   useEffect(() => {
     (async () => {
-      const {fetchMedicalAppointments} = props;
-      fetchMedicalAppointments();
+      const { fetchMedicalAppointments, currentUser } = props;
+      fetchMedicalAppointments(currentUser.practiceNumber);
     })();
   }, []);
   useEffect(() => {
     (async () => {
-      const {fetchMedicalAppointments} = props;
-      fetchMedicalAppointments();
+      const { fetchMedicalAppointments, currentUser } = props;
+      fetchMedicalAppointments(currentUser.practiceNumber);
     })();
   }, [isFocused]);
 
@@ -50,24 +57,36 @@ function Home(props) {
       <ScrollView
         renderTabBar={renderTabBar}
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{paddingBottom: 30, width}}>
-        {appointmentRecords == null ? (
-          <Text>Loading...</Text>
-        ) : (
-          appointmentRecords
-            .filter(item => item.Status.toString().toLowerCase() == 'completed')
-            .map((filteredItem, index) => {
-              return (
-                <ReviewCard
-                  key={index}
-                  item={filteredItem}
-                  horizontal
-                  //titleStyle={styles.title}
-                  imageStyle={{height: '100%', width: '100%'}}
-                />
-              );
-            })
-        )}
+        contentContainerStyle={{ paddingBottom: 30, width }}
+      >
+        {appointmentRecords == null
+          ? (
+            <View
+              style={[
+                styles.activityIndicatorContainer,
+                styles.activityIndicatorHorizontal,
+              ]}
+            >
+              <ActivityIndicator size="large" />
+            </View>
+          )
+          : (
+            appointmentRecords
+              .filter((item) =>
+                item.VisitationStatus.toString().toLowerCase() == "completed"
+              )
+              .map((filteredItem, index) => {
+                return (
+                  <ReviewCard
+                    key={index}
+                    item={filteredItem}
+                    horizontal
+                    //titleStyle={styles.title}
+                    imageStyle={{ height: "100%", width: "100%" }}
+                  />
+                );
+              })
+          )}
       </ScrollView>
     );
   };
@@ -83,9 +102,9 @@ function Home(props) {
   return (
     <>
       {tabOption
-        ? tabOption.tabOption.toString().toLowerCase() == 'statistics'
+        ? tabOption.tabOption.toString().toLowerCase() == "statistics"
           ? renderStatistics()
-          : tabOption.tabOption.toString().toLowerCase() == 'reviews'
+          : tabOption.tabOption.toString().toLowerCase() == "reviews"
           ? renderReviews()
           : renderEarnings()
         : null}
@@ -93,8 +112,9 @@ function Home(props) {
   );
 }
 
-const mapDispatchToProps = dispatch => ({
-  fetchMedicalAppointments: () => dispatch(fetchMedicalAppointments()),
+const mapDispatchToProps = (dispatch) => ({
+  fetchMedicalAppointments: (practiceNumber) =>
+    dispatch(fetchMedicalAppointments(practiceNumber)),
 });
 
 const mapStateToProps = createStructuredSelector({
