@@ -12,6 +12,7 @@ import {
   Modal,
   TouchableHighlight,
   View,
+  Linking,
 } from "react-native";
 import { Block, Text, theme, Button } from "galio-framework";
 import { nowTheme } from "../../constants";
@@ -219,7 +220,8 @@ class AppointmentCard extends React.Component {
 
     return (
       <Block>
-        {item.AppointmentType == "Physical"
+        {item.AppointmentType == "Physical" ||
+          item.AppointmentType == "Home Visit"
           ? (
             <Block card flex style={cardContainer}>
               <Block row={horizontal}>
@@ -266,7 +268,7 @@ class AppointmentCard extends React.Component {
                       >
                         <Image
                           source={{
-                            uri: item.ServiceProviderImageUrl.replace(
+                            uri: item.PatientUrl.replace(
                               "https://firebasestorage.googleapis.com/v0/b/",
                               "https://ik.imagekit.io/qlvke6f9z/tr:w-h-300,w-400/v0/b/",
                             ),
@@ -291,8 +293,8 @@ class AppointmentCard extends React.Component {
                     <Block middle>
                       {Date.now() < new Date(item.DateTime) &&
                         item.VisitationStatus === "Pending"
-                        ? (
-                          <Button
+                        ? (item.AppointmentType == "Physical"
+                          ? <Button
                             shadowless
                             style={styles.button}
                             color={nowTheme.COLORS.PRIMARY}
@@ -314,7 +316,27 @@ class AppointmentCard extends React.Component {
                               START APPOINTMENT
                             </Text>
                           </Button>
-                        )
+                          : <Button
+                            shadowless
+                            style={styles.button}
+                            color={nowTheme.COLORS.PRIMARY}
+                          >
+                            <Text
+                              style={{
+                                fontFamily: "montserrat-bold",
+                                fontSize: 14,
+                              }}
+                              color={theme.COLORS.WHITE}
+                              onPress={() => {
+                                Linking.openURL(
+                                  "https://www.google.co.za/maps/place/" +
+                                    item.Geometry.lat + "," + item.Geometry.lng,
+                                );
+                              }}
+                            >
+                              NAVIGATE
+                            </Text>
+                          </Button>)
                         : Date.now() > new Date(item.DateTime) &&
                           item.VisitationStatus === "Pending"
                         ? (
@@ -339,58 +361,58 @@ class AppointmentCard extends React.Component {
                             </Text>
                           </Button>
                         )
-                        : Date.now() > new Date(item.DateTime) &&
+                        : //Date.now() > new Date(item.DateTime) &&
                           item.VisitationStatus === "Completed"
-                        ? (
-                          <Button
-                            shadowless
-                            style={styles.button}
-                            color={nowTheme.COLORS.PRIMARY}
-                            onPress={() =>
-                              navigation.navigate("MedicalRecords", {
-                                details: {
-                                  patientDetails: item,
-                                  option: "new",
-                                },
-                              })}
-                          >
-                            <Text
-                              style={{
-                                fontFamily: "montserrat-bold",
-                                fontSize: 14,
-                              }}
-                              color={theme.COLORS.WHITE}
+                          ? (
+                            <Button
+                              shadowless
+                              style={styles.button}
+                              color={nowTheme.COLORS.PRIMARY}
+                              onPress={() =>
+                                navigation.navigate("MedicalRecords", {
+                                  details: {
+                                    patientDetails: item,
+                                    option: "new",
+                                  },
+                                })}
                             >
-                              ADD PRESCRIPTION
-                            </Text>
-                          </Button>
-                        )
-                        : item.VisitationStatus === "In Progress"
-                        ? (
-                          <Button
-                            shadowless
-                            style={styles.button}
-                            color={nowTheme.COLORS.PRIMARY}
-                            onPress={() => {
-                              updateAppointmentRecord(
-                                End,
-                                item,
-                                appointmentRecords,
-                              );
-                            }}
-                          >
-                            <Text
-                              style={{
-                                fontFamily: "montserrat-bold",
-                                fontSize: 14,
+                              <Text
+                                style={{
+                                  fontFamily: "montserrat-bold",
+                                  fontSize: 14,
+                                }}
+                                color={theme.COLORS.WHITE}
+                              >
+                                ADD PRESCRIPTION
+                              </Text>
+                            </Button>
+                          )
+                          : item.VisitationStatus === "In Progress"
+                          ? (
+                            <Button
+                              shadowless
+                              style={styles.button}
+                              color={nowTheme.COLORS.PRIMARY}
+                              onPress={() => {
+                                updateAppointmentRecord(
+                                  End,
+                                  item,
+                                  appointmentRecords,
+                                );
                               }}
-                              color={theme.COLORS.WHITE}
                             >
-                              END APPOINTMENT
-                            </Text>
-                          </Button>
-                        )
-                        : null}
+                              <Text
+                                style={{
+                                  fontFamily: "montserrat-bold",
+                                  fontSize: 14,
+                                }}
+                                color={theme.COLORS.WHITE}
+                              >
+                                END APPOINTMENT
+                              </Text>
+                            </Button>
+                          )
+                          : null}
                     </Block>
                   </Block>
                 </Block>
@@ -443,7 +465,7 @@ class AppointmentCard extends React.Component {
                       >
                         <Image
                           source={{
-                            uri: item.ServiceProviderImageUrl.replace(
+                            uri: item.PatientUrl.replace(
                               "https://firebasestorage.googleapis.com/v0/b/",
                               "https://ik.imagekit.io/qlvke6f9z/tr:w-h-300,w-400/v0/b/",
                             ),

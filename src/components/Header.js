@@ -234,23 +234,6 @@ const PhamarcyLocationPicker = ({
   </Picker>
 );
 
-const DependantPicker = ({
-  dependantsDetails,
-  dependantSelection,
-  selectedDependant,
-}) => (
-  <Picker
-    selectedValue={selectedDependant}
-    onValueChange={(value, index) => dependantSelection(value)}
-    mode="dropdown" // Android only
-    style={styles.picker}
-  >
-    {dependantsDetails.map((item, index) => {
-      return <Picker.Item label={item.name} value={item} key={index} />;
-    })}
-  </Picker>
-);
-
 class Header extends React.Component {
   constructor(props) {
     super(props);
@@ -373,11 +356,6 @@ class Header extends React.Component {
             navigation={navigation}
             isWhite={white}
           />,
-        ];
-      case "Account":
-        return [
-          <BellButton key="chat-profile" navigation={navigation} />,
-          <BasketButton key="basket-deals" navigation={navigation} />,
         ];
       case "Search":
         return [

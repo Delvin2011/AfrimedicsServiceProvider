@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from "react";
 import {
   StyleSheet,
   ImageBackground,
@@ -6,34 +6,34 @@ import {
   StatusBar,
   TouchableWithoutFeedback,
   Keyboard,
-} from 'react-native';
+} from "react-native";
 import {
   Block,
   Checkbox,
   Text,
   Button as GaButton,
   theme,
-} from 'galio-framework';
+} from "galio-framework";
 
-import Icon from '../../components/Icon';
-import Input from '../../components/Input';
-import Button from '../../components/Button';
-import {Images, nowTheme} from '../../constants';
+import Icon from "../../components/Icon";
+import Input from "../../components/Input";
+import Button from "../../components/Button";
+import { Images, nowTheme } from "../../constants";
 
-import {emailLogInStart, signOut} from '../../redux/user/user-actions';
-import {connect} from 'react-redux';
-import {createStructuredSelector} from 'reselect';
+import { emailLogInStart, signOut } from "../../redux/user/user-actions";
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
 import {
   selectCurrentUser,
   selectCurrentUserLoginError,
-} from '../../redux/user/user-selectors';
+} from "../../redux/user/user-selectors";
 
-import auth from '@react-native-firebase/auth';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import auth from "@react-native-firebase/auth";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get("screen");
 
-const DismissKeyboard = ({children}) => (
+const DismissKeyboard = ({ children }) => (
   <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
     {children}
   </TouchableWithoutFeedback>
@@ -44,60 +44,63 @@ class Login extends Component {
     super(props);
 
     this.state = {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
       spinner: false,
       isLoggedIn: false,
-      error: '',
+      error: "",
     };
     this.onLogin = this.onLogin.bind(this);
   }
 
   onLogin = async () => {
-    const {email, password} = this.state;
-    const {emailLogInStart} = this.props;
-    this.setState({isShowError: false, spinner: true});
+    const { email, password } = this.state;
+    const { emailLogInStart } = this.props;
+    this.setState({ isShowError: false, spinner: true });
     emailLogInStart(email, password);
     this.setState({
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     });
   };
 
   signInWithGoogleAsync = async () => {
     try {
-      const {idToken} = await GoogleSignin.signIn();
+      const { idToken } = await GoogleSignin.signIn();
       // Create a Google credential with the token
       const googleCredential = auth.GoogleAuthProvider.credential(idToken);
       // Sign-in the user with the credential
       await auth()
         .signInWithCredential(googleCredential)
-        .catch(error => {
-          console.log('Something went wrong with sign up: ', error);
+        .catch((error) => {
+          console.log("Something went wrong with sign up: ", error);
         });
     } catch (error) {
-      console.log({error});
+      console.log({ error });
     }
   };
 
   render() {
-    const {navigation, error, currentUser, signOut} = this.props;
-    const {isShowError, spinner, isLoggedIn} = this.state;
+    const { navigation, error, currentUser, signOut } = this.props;
+    const { isShowError, spinner, isLoggedIn } = this.state;
+
     return (
       <DismissKeyboard>
         <Block flex middle>
           <Block flex>
             <Block style={styles.registerContainer}>
-              <Block flex space="evenly" style={{marginTop: 20}}>
+              <Block flex space="evenly" style={{ marginTop: 20 }}>
                 <Block flex={0.4} middle style={styles.socialConnect}>
                   <Block flex={0.5} middle>
                     <Text
                       style={{
-                        fontFamily: 'montserrat-regular',
-                        textAlign: 'center',
+                        fontFamily: "montserrat-regular",
+                        textAlign: "center",
                       }}
                       color="#333"
-                      size={24}></Text>
+                      size={24}
+                    >
+                    </Text>
                   </Block>
 
                   <Block
@@ -105,7 +108,8 @@ class Login extends Component {
                     row
                     middle
                     space="between"
-                    style={{marginBottom: 20}}>
+                    style={{ marginBottom: 20 }}
+                  >
                     <GaButton
                       round
                       onlyIcon
@@ -145,36 +149,35 @@ class Login extends Component {
                     />
                   </Block>
                 </Block>
-                <Block flex={0.1} middle style={{marginBottom: 20}}>
+                <Block flex={0.1} middle style={{ marginBottom: 20 }}>
                   <Text
                     style={{
-                      fontFamily: 'montserrat-regular',
-                      textAlign: 'center',
+                      fontFamily: "montserrat-regular",
+                      textAlign: "center",
                     }}
                     muted
-                    size={16}>
+                    size={16}
+                  >
                     or be classical
                   </Text>
                 </Block>
                 <Block center flex={0.9}>
                   <Block flex space="between">
                     <Block>
-                      <Block width={width * 0.8} style={{marginBottom: 5}}>
+                      <Block width={width * 0.8} style={{ marginBottom: 5 }}>
                         <Input
                           placeholder="Email"
                           style={styles.inputs}
                           name="email"
                           value={this.state.email}
-                          iconContent={
-                            <Icon
-                              size={16}
-                              color="#ADB5BD"
-                              name="email-852x"
-                              family="NowExtra"
-                              style={styles.inputIcons}
-                            />
-                          }
-                          onChangeText={email => this.setState({email})}
+                          iconContent={<Icon
+                            size={16}
+                            color="#ADB5BD"
+                            name="email-852x"
+                            family="NowExtra"
+                            style={styles.inputIcons}
+                          />}
+                          onChangeText={(email) => this.setState({ email })}
                         />
                       </Block>
                       <Block width={width * 0.8}>
@@ -184,16 +187,15 @@ class Login extends Component {
                           password
                           viewPass
                           style={styles.inputs}
-                          iconContent={
-                            <Icon
-                              size={16}
-                              color="#ADB5BD"
-                              name="profile-circle"
-                              family="NowExtra"
-                              style={styles.inputIcons}
-                            />
-                          }
-                          onChangeText={password => this.setState({password})}
+                          iconContent={<Icon
+                            size={16}
+                            color="#ADB5BD"
+                            name="profile-circle"
+                            family="NowExtra"
+                            style={styles.inputIcons}
+                          />}
+                          onChangeText={(password) =>
+                            this.setState({ password })}
                         />
                       </Block>
                     </Block>
@@ -201,94 +203,115 @@ class Login extends Component {
                 </Block>
               </Block>
               <Block center>
-                {spinner && !currentUser ? (
-                  error ? (
-                    <Block flex={0.1} middle>
-                      {error.code == 'auth/wrong-password' ? (
-                        <Text
-                          style={{
-                            fontFamily: 'montserrat-regular',
-                            textAlign: 'center',
-                            color: '#ff0000',
-                          }}
-                          size={12}>
-                          Wrong credentials.
-                        </Text>
-                      ) : error.code == '"auth/user-not-found' ? (
-                        <Text
-                          style={{
-                            fontFamily: 'montserrat-regular',
-                            textAlign: 'center',
-                            color: '#ff0000',
-                          }}
-                          size={12}>
-                          Account not found.
-                        </Text>
-                      ) : null}
-                      <Block center>
-                        <Button
-                          color="warning"
-                          style={styles.createButton}
-                          onPress={() => this.onLogin()}>
-                          <Text
-                            style={{fontFamily: 'montserrat-bold'}}
-                            size={14}
-                            color={nowTheme.COLORS.WHITE}>
-                            Error : Re-Submit
-                          </Text>
-                        </Button>
-                      </Block>
-                    </Block>
-                  ) : (
+                {spinner && !currentUser
+                  ? (
+                    error
+                      ? (
+                        <Block flex={0.1} middle>
+                          {error.code == "auth/wrong-password"
+                            ? (
+                              <Text
+                                style={{
+                                  fontFamily: "montserrat-regular",
+                                  textAlign: "center",
+                                  color: "#ff0000",
+                                }}
+                                size={12}
+                              >
+                                Wrong credentials.
+                              </Text>
+                            )
+                            : error.code == '"auth/user-not-found'
+                            ? (
+                              <Text
+                                style={{
+                                  fontFamily: "montserrat-regular",
+                                  textAlign: "center",
+                                  color: "#ff0000",
+                                }}
+                                size={12}
+                              >
+                                Account not found.
+                              </Text>
+                            )
+                            : null}
+                          <Block center>
+                            <Button
+                              color="warning"
+                              style={styles.createButton}
+                              onPress={() => this.onLogin()}
+                            >
+                              <Text
+                                style={{ fontFamily: "montserrat-bold" }}
+                                size={14}
+                                color={nowTheme.COLORS.WHITE}
+                              >
+                                Error : Re-Submit
+                              </Text>
+                            </Button>
+                          </Block>
+                        </Block>
+                      )
+                      : (
+                        <Block center>
+                          <Button color="info" style={styles.createButton}>
+                            <Text
+                              style={{ fontFamily: "montserrat-bold" }}
+                              size={14}
+                              color={nowTheme.COLORS.WHITE}
+                            >
+                              Loading...
+                            </Text>
+                          </Button>
+                        </Block>
+                      )
+                  )
+                  : currentUser
+                  ? (
                     <Block center>
-                      <Button color="info" style={styles.createButton}>
+                      <Button
+                        color="success"
+                        style={styles.createButton}
+                        onPress={() => navigation.navigate("App")}
+                      >
                         <Text
-                          style={{fontFamily: 'montserrat-bold'}}
+                          style={{ fontFamily: "montserrat-bold" }}
                           size={14}
-                          color={nowTheme.COLORS.WHITE}>
-                          Loading...
+                          color={nowTheme.COLORS.WHITE}
+                        >
+                          Logged In : Proceed!!
                         </Text>
                       </Button>
                     </Block>
                   )
-                ) : currentUser ? (
-                  <Block center>
-                    <Button
-                      color="success"
-                      style={styles.createButton}
-                      onPress={() => navigation.navigate('App')}>
-                      <Text
-                        style={{fontFamily: 'montserrat-bold'}}
-                        size={14}
-                        color={nowTheme.COLORS.WHITE}>
-                        Logged In : Proceed!!
-                      </Text>
-                    </Button>
-                  </Block>
-                ) : (
-                  <Block center>
-                    <Button
-                      color="primary"
-                      style={styles.createButton}
-                      onPress={() => this.onLogin()}>
-                      <Text
-                        style={{fontFamily: 'montserrat-bold'}}
-                        size={14}
-                        color={nowTheme.COLORS.WHITE}>
-                        Login
-                      </Text>
-                    </Button>
-                  </Block>
-                )}
+                  : (
+                    <Block center>
+                      <Button
+                        color="primary"
+                        style={styles.createButton}
+                        onPress={() => this.onLogin()}
+                      >
+                        <Text
+                          style={{ fontFamily: "montserrat-bold" }}
+                          size={14}
+                          color={nowTheme.COLORS.WHITE}
+                        >
+                          Login
+                        </Text>
+                      </Button>
+                    </Block>
+                  )}
                 {currentUser ? null : (
                   <Button
                     color="primary"
                     style={styles.createButton}
-                    onPress={() => navigation.navigate('Register')}>
+                    onPress={() => navigation.navigate("Register")}
+                  >
                     <Text
-                      style={{fontFamily: 'montserrat-bold'}}
+                      style={{ fontFamily: "montserrat-bold" }}
                       size={14}
-                      color={nowTheme.COLORS.WHITE}>
+                      color={nowTheme.COLORS.WHITE}
+                    >
                       Register
                     </Text>
                   </Button>
@@ -317,7 +340,7 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     shadowOpacity: 0.1,
     elevation: 1,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   socialConnect: {
     backgroundColor: nowTheme.COLORS.WHITE,
@@ -327,7 +350,7 @@ const styles = StyleSheet.create({
   socialButtons: {
     width: 120,
     height: 40,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
     shadowColor: nowTheme.COLORS.BLACK,
     shadowOffset: {
       width: 0,
@@ -339,7 +362,7 @@ const styles = StyleSheet.create({
   },
   socialTextButtons: {
     color: nowTheme.COLORS.PRIMARY,
-    fontWeight: '800',
+    fontWeight: "800",
     fontSize: 14,
   },
   inputIcons: {
@@ -348,7 +371,7 @@ const styles = StyleSheet.create({
   },
   inputs: {
     borderWidth: 1,
-    borderColor: '#E3E3E3',
+    borderColor: "#E3E3E3",
     borderRadius: 21.5,
   },
   passwordCheck: {
@@ -372,14 +395,14 @@ const styles = StyleSheet.create({
     width: theme.SIZES.BASE * 3.5,
     height: theme.SIZES.BASE * 3.5,
     borderRadius: theme.SIZES.BASE * 1.75,
-    justifyContent: 'center',
+    justifyContent: "center",
     marginHorizontal: 10,
   },
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   emailLogInStart: (email, password) =>
-    dispatch(emailLogInStart({email, password})),
+    dispatch(emailLogInStart({ email, password })),
   signOut: () => dispatch(signOut()),
 });
 

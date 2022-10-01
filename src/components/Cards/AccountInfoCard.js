@@ -1,19 +1,19 @@
-import React from 'react';
-import {withNavigation} from '@react-navigation/compat';
-import PropTypes from 'prop-types';
+import React from "react";
+import { withNavigation } from "@react-navigation/compat";
+import PropTypes from "prop-types";
 import {
   StyleSheet,
   Image,
   TouchableWithoutFeedback,
   Dimensions,
   TouchableOpacity,
-} from 'react-native';
-import {Block, Text, theme, Button} from 'galio-framework';
-import {nowTheme} from '../../constants';
-import {connect} from 'react-redux';
-import {createStructuredSelector} from 'reselect';
-import {selectCurrentUser} from '../../redux/user/user-selectors';
-const {width, height} = Dimensions.get('screen');
+} from "react-native";
+import { Block, Text, theme, Button } from "galio-framework";
+import { nowTheme } from "../../constants";
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
+import { selectCurrentUser } from "../../redux/user/user-selectors";
+const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3.75;
 class AccountInfoCard extends React.Component {
   state = {};
@@ -58,39 +58,43 @@ class AccountInfoCard extends React.Component {
                     //style={}
                     size={14}
                     style={styles.appointment}
-                    color={nowTheme.COLORS.SECONDARY}>
+                    color={nowTheme.COLORS.SECONDARY}
+                  >
                     {currentUser.displayName}
                   </Text>
 
                   <Text
-                    style={{fontFamily: 'montserrat-regular'}}
+                    style={{ fontFamily: "montserrat-regular" }}
                     size={14}
                     style={titleStyles}
-                    color={nowTheme.COLORS.SECONDARY}>
-                    35959
+                    color={nowTheme.COLORS.SECONDARY}
+                  >
+                    {currentUser.practiceNumber}
                   </Text>
                   <Text
-                    style={{fontFamily: 'montserrat-regular'}}
+                    style={{ fontFamily: "montserrat-regular" }}
                     size={14}
                     style={titleStyles}
-                    color={nowTheme.COLORS.SECONDARY}>
+                    color={nowTheme.COLORS.SECONDARY}
+                  >
                     {currentUser.specialisation[0]}
                   </Text>
                   <Text
-                    style={{fontFamily: 'montserrat-regular'}}
+                    style={{ fontFamily: "montserrat-regular" }}
                     size={14}
                     style={titleStyles}
-                    color={nowTheme.COLORS.SECONDARY}>
-                    19 Yrs experience
+                    color={nowTheme.COLORS.SECONDARY}
+                  >
+                    {currentUser.yearsExperience} years experience
                   </Text>
                 </Block>
               </Block>
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback>
               <Block flex space="between" style={styles.cardDescription}>
-                <Block right>
+                <Block middle>
                   <Image
-                    source={{uri: currentUser.profileURL}}
+                    source={{ uri: currentUser.profileURL }}
                     style={styles.avatar}
                   />
                 </Block>
@@ -137,14 +141,14 @@ const styles = StyleSheet.create({
   imageContainer: {
     borderRadius: 3,
     elevation: 1,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   image: {
     // borderRadius: 3,
   },
   horizontalImage: {
     height: 122,
-    width: 'auto',
+    width: "auto",
   },
   horizontalStyles: {
     borderTopRightRadius: 0,
@@ -156,17 +160,17 @@ const styles = StyleSheet.create({
   },
   fullImage: {
     height: 300,
-    width: 'auto',
+    width: "auto",
   },
   shadow: {
-    shadowColor: '#8898AA',
-    shadowOffset: {width: 0, height: 1},
+    shadowColor: "#8898AA",
+    shadowOffset: { width: 0, height: 1 },
     shadowRadius: 6,
     shadowOpacity: 0.1,
     elevation: 2,
   },
   articleButton: {
-    fontFamily: 'montserrat-bold',
+    fontFamily: "montserrat-bold",
     paddingHorizontal: 9,
     paddingVertical: 7,
   },
@@ -177,14 +181,14 @@ const styles = StyleSheet.create({
     width: width * 0.5,
   },
   button: {
-    position: 'absolute',
+    position: "absolute",
     width: width - theme.SIZES.BASE * 15,
     height: theme.SIZES.BASE * 3,
     shadowRadius: 0,
     shadowOpacity: 0,
   },
   avatarContainer: {
-    position: 'relative',
+    position: "relative",
     marginTop: -80,
   },
   avatar: {
@@ -194,7 +198,7 @@ const styles = StyleSheet.create({
     borderWidth: 0,
   },
   appointment: {
-    fontWeight: '900',
+    fontWeight: "900",
     paddingHorizontal: 9,
     paddingTop: 2,
     paddingBottom: 2,
