@@ -20,7 +20,7 @@ You'll need the following:
 
 <p align="center">
 <br/><br/>
-<img src="https://ik.imagekit.io/qlvke6f9z/appointments_z-hYMrax6.jpg?ik-sdk-version=javascript-1.4.3&updatedAt=1664660224280" height="80%" width="80%" alt="Appointments"/>
+<img src="https://ik.imagekit.io/qlvke6f9z/appointments_z-hYMrax6.jpg?ik-sdk-version=javascript-1.4.3&updatedAt=1664660224280" height="100%" width="100%" alt="Appointments"/>
 <br />
 <br />
 
