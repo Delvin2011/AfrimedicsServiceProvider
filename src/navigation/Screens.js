@@ -1,285 +1,85 @@
-import React from 'react';
-import {Dimensions} from 'react-native';
-import {createStackNavigator} from '@react-navigation/stack';
-import {createDrawerNavigator} from '@react-navigation/drawer';
-import CustomDrawerContent from './Menu';
-//import Home from '../screens/Home';
-import Home from '../screens/Home/Home';
-import Onboarding from '../screens/Onboarding';
-import AppointmentsRecords from '../screens/AppointmentsRecords';
-import Account from '../screens/Authentication/Account';
+import React from "react";
+import { Dimensions } from "react-native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import CustomDrawerContent from "./Menu";
+import Analytics from "../screens/Home/Analytics";
+import Onboarding from "../screens/Onboarding";
+import AppointmentsRecords from "../screens/AppointmentsRecords";
+import Account from "../screens/Authentication/Account";
 
-import LoginScreen from '../screens/LoginScreen';
-import MainScreen from '../screens/MainScreen';
-import CallScreen from '../screens/CallScreen';
-//Dependants
-import Dependants from '../screens/Dependants/Dependants';
-import DependantsAdding from '../screens/Dependants/DependantsAdding';
-//import SelectDependant from '../screens/SelectDependant';
-//Pharmacy
-import PharmacyOrders from '../screens/Pharmarcy/PharmacyOrders';
-import Pharmacy from '../screens/Pharmarcy/Landing';
-import Category from '../screens/Pharmarcy/CategoryLanding';
-import PharmacyCart from '../screens/Pharmarcy/PharmacyCart';
-import NewPhamarcy from '../screens/Pharmarcy/NewPhamarcy';
+import LoginScreen from "../screens/LoginScreen";
+import MainScreen from "../screens/MainScreen";
+import CallScreen from "../screens/CallScreen";
 
 //Ambulance
-import RequestAmbulance from '../screens/Ambulance/RequestAmbulance';
+import RequestAmbulance from "../screens/Ambulance/RequestAmbulance";
 
 //Medical Records
-import MedicalRecords from '../screens/MedicalRecords';
+import MedicalRecords from "../screens/MedicalRecords";
 
 //Messaging
-import Messaging from '../screens/Messaging/Messaging';
+import Messaging from "../screens/Messaging/Messaging";
 
 //import Camera from '../screens/Camera';
-import IncomingCallScreen from '../screens/IncomingCallScreen';
-import {nowTheme} from '../constants';
-import {tabs} from '../constants';
+import IncomingCallScreen from "../screens/IncomingCallScreen";
+import { nowTheme } from "../constants";
+import { tabs } from "../constants";
 
-import Header from '../components/Header';
+import Header from "../components/Header";
 
 //Consultations
-import FindDoctor from '../screens/Consultations/FindDoctor';
-import BookDoctor from '../screens/Consultations/BookDoctor';
-import SelectLocation from '../screens/Consultations/SelectLocation';
-import Profile from '../screens/Consultations/Profile';
+import Profile from "../screens/Consultations/Profile";
 //import SelectDependant from '../screens/Consultations/SelectDependant';
 
 //Authentication
-import Register from '../screens/Authentication/RegisterScreen';
-import Login from '../screens/Authentication/LoginScreen';
+import Register from "../screens/Authentication/RegisterScreen";
+import Login from "../screens/Authentication/LoginScreen";
 
-const {width} = Dimensions.get('screen');
+const { width } = Dimensions.get("screen");
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
-
-function AppointmentRecordsStack(props) {
-  return (
-    <Stack.Navigator
-      initialRouteName="Components"
-      mode="card"
-      headerMode="screen">
-      <Stack.Screen
-        name="Appointments"
-        component={AppointmentsRecords}
-        options={{
-          header: ({navigation, scene}) => (
-            <Header
-              title="Appointments"
-              tabs={tabs.appointments}
-              navigation={navigation}
-              scene={scene}
-            />
-          ),
-          backgroundColor: '#FFFFFF',
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
-
-function PharmacyStack(props) {
-  return (
-    <Stack.Navigator mode="card" headerMode="screen">
-      <Stack.Screen
-        name="Pharmacy"
-        component={Pharmacy}
-        options={{
-          header: ({navigation, scene}) => (
-            <Header
-              title="Pharmacy"
-              navigation={navigation}
-              search
-              scene={scene}
-              back={true}
-            />
-          ),
-          cardStyle: {backgroundColor: '#FFFFFF'},
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
-
-function PharmacyOrdersStack(props) {
-  return (
-    <Stack.Navigator
-      initialRouteName="Components"
-      mode="card"
-      headerMode="screen">
-      <Stack.Screen
-        name="PharmacyOrders"
-        component={PharmacyOrders}
-        options={{
-          header: ({navigation, scene}) => (
-            <Header
-              title="Pharmacy Orders"
-              tabs={tabs.pharmacyOrders}
-              navigation={navigation}
-              scene={scene}
-            />
-          ),
-          backgroundColor: '#FFFFFF',
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
-
-function PhamarcyCategoryStack(props) {
-  return (
-    <Stack.Navigator
-      initialRouteName="Pharmacy"
-      mode="card"
-      headerMode="screen">
-      <Stack.Screen
-        name="Category"
-        options={{
-          header: ({navigation, scene}) => (
-            <Header
-              transparent
-              title="Category"
-              navigation={navigation}
-              scene={scene}
-              back={true}
-              search
-            />
-          ),
-          cardStyle: {backgroundColor: '#FFFFFF'},
-        }}
-        children={() => (
-          <Category
-            category={props.route.params.category}
-            navigation={props.navigation}
-          />
-        )}
-      />
-    </Stack.Navigator>
-  );
-}
-
-function PharmacyCartStack(props) {
-  return (
-    <Stack.Navigator
-      initialRouteName="Components"
-      mode="card"
-      headerMode="screen">
-      <Stack.Screen
-        name="Your Cart"
-        options={{
-          header: ({navigation, scene}) => (
-            <Header
-              title="Your Cart Details"
-              navigation={navigation}
-              scene={scene}
-              back={true}
-            />
-          ),
-          backgroundColor: '#FFFFFF',
-        }}
-        children={() => <PharmacyCart navigation={props.navigation} />}
-      />
-    </Stack.Navigator>
-  );
-}
-
-function NewPhamarcyStack(props) {
-  return (
-    <Stack.Navigator
-      initialRouteName="Components"
-      mode="card"
-      headerMode="screen">
-      <Stack.Screen
-        name="New Phamarcy"
-        component={NewPhamarcy}
-        options={{
-          header: ({navigation, scene}) => (
-            <Header
-              title="New Phamarcy"
-              search
-              navigation={navigation}
-              scene={scene}
-              back={true}
-            />
-          ),
-          backgroundColor: '#FFFFFF',
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
 
 function HomeStack(props) {
   return (
     <Stack.Navigator mode="card" headerMode="screen">
       <Stack.Screen
         name="Home"
-        component={Home}
+        component={AppointmentsRecords}
         options={{
-          header: ({navigation, scene}) => (
+          header: ({ navigation, scene }) => (
             <Header
               title="Home"
+              navigation={navigation}
+              scene={scene}
+              tabs={tabs.appointments}
+            /> //navigateTo={true}
+          ),
+          backgroundColor: "#FFFFFF",
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function AnalyticsStack(props) {
+  return (
+    <Stack.Navigator mode="card" headerMode="screen">
+      <Stack.Screen
+        name="Analytics"
+        component={Analytics}
+        options={{
+          header: ({ navigation, scene }) => (
+            <Header
+              title="Analytics"
               tabs={tabs.medical}
               navigation={navigation}
               scene={scene}
-              //navigateTo={true}
-            />
+            /> //navigateTo={true}
           ),
-          backgroundColor: '#FFFFFF',
+          backgroundColor: "#FFFFFF",
         }}
-      />
-    </Stack.Navigator>
-  );
-}
-
-function DependantsStack(props) {
-  return (
-    <Stack.Navigator
-      initialRouteName="Components"
-      mode="card"
-      headerMode="screen">
-      <Stack.Screen
-        name="Dependants"
-        component={Dependants}
-        options={{
-          header: ({navigation, scene}) => (
-            <Header title="Dependants" navigation={navigation} scene={scene} />
-          ),
-          backgroundColor: '#FFFFFF',
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
-
-function AddDependantsStack(props) {
-  return (
-    <Stack.Navigator
-      initialRouteName="Components"
-      mode="card"
-      headerMode="screen">
-      <Stack.Screen
-        name="Add Dependant"
-        options={{
-          header: ({navigation, scene}) => (
-            <Header
-              title="Add Dependant Details"
-              navigation={navigation}
-              scene={scene}
-              back={true}
-              //tabs={tabs.dependantsRecords}
-            />
-          ),
-          backgroundColor: '#FFFFFF',
-        }}
-        children={() => (
-          <DependantsAdding
-            dependantProfileImage={props.route}
-            navigation={props.navigation}
-          />
-        )}
       />
     </Stack.Navigator>
   );
@@ -291,7 +91,7 @@ function ProfileStack(props) {
       <Stack.Screen
         name="Profile"
         options={{
-          header: ({navigation, scene}) => (
+          header: ({ navigation, scene }) => (
             <Header
               transparent
               white
@@ -300,7 +100,7 @@ function ProfileStack(props) {
               scene={scene}
             />
           ),
-          cardStyle: {backgroundColor: '#FFFFFF'},
+          cardStyle: { backgroundColor: "#FFFFFF" },
           headerTransparent: true,
         }}
         children={() => (
@@ -327,12 +127,13 @@ function MedicalRecordsStack(props) {
     <Stack.Navigator
       initialRouteName="Components"
       mode="card"
-      headerMode="screen">
+      headerMode="screen"
+    >
       <Stack.Screen
         name="MedicalRecords"
         //component={MedicalRecords}
         options={{
-          header: ({navigation, scene}) => (
+          header: ({ navigation, scene }) => (
             <Header
               title="Medical Records"
               navigation={navigation}
@@ -340,49 +141,22 @@ function MedicalRecordsStack(props) {
               tabs={tabs.medicalRecords}
             />
           ),
-          backgroundColor: '#FFFFFF',
+          backgroundColor: "#FFFFFF",
         }}
         children={() =>
-          typeof props.route.params !== 'undefined' ? (
-            <MedicalRecords
-              details={props.route.params.details}
-              navigation={props.navigation}
-            />
-          ) : (
-            <MedicalRecords
-              //details={}
-              navigation={props.navigation}
-            />
-          )
-        }
-      />
-    </Stack.Navigator>
-  );
-}
-
-//Consultations
-
-function FindDoctorStack(props) {
-  return (
-    <Stack.Navigator
-      initialRouteName="Components"
-      mode="card"
-      headerMode="screen">
-      <Stack.Screen
-        name="Find a Doctor"
-        component={FindDoctor}
-        options={{
-          header: ({navigation, scene}) => (
-            <Header
-              title="Find a Doctor"
-              search
-              navigation={navigation}
-              scene={scene}
-              back={true}
-            />
-          ),
-          backgroundColor: '#FFFFFF',
-        }}
+          typeof props.route.params !== "undefined"
+            ? (
+              <MedicalRecords
+                details={props.route.params.details}
+                navigation={props.navigation}
+              />
+            )
+            : (
+              <MedicalRecords
+                //details={}
+                navigation={props.navigation}
+              />
+            )}
       />
     </Stack.Navigator>
   );
@@ -393,12 +167,13 @@ function RequestAmbulanceStack(props) {
     <Stack.Navigator
       initialRouteName="Components"
       mode="card"
-      headerMode="screen">
+      headerMode="screen"
+    >
       <Stack.Screen
         name="Request Ambulance"
         component={RequestAmbulance}
         options={{
-          header: ({navigation, scene}) => (
+          header: ({ navigation, scene }) => (
             <Header
               title="Request Ambulance"
               searchPickupLocation
@@ -407,69 +182,8 @@ function RequestAmbulanceStack(props) {
               scene={scene}
             />
           ),
-          backgroundColor: '#FFFFFF',
+          backgroundColor: "#FFFFFF",
         }}
-      />
-    </Stack.Navigator>
-  );
-}
-
-function BookDoctorStack(props) {
-  return (
-    <Stack.Navigator
-      initialRouteName="Components"
-      mode="card"
-      headerMode="screen">
-      <Stack.Screen
-        name="Book a Doctor"
-        options={{
-          header: ({navigation, scene}) => (
-            <Header
-              title="Book a Doctor"
-              navigation={navigation}
-              search
-              scene={scene}
-              back={true}
-            />
-          ),
-          backgroundColor: '#FFFFFF',
-        }}
-        children={() => (
-          <BookDoctor
-            selectedSpecialist={props.route.params.selectedSpecialist}
-            navigation={props.navigation}
-          />
-        )}
-      />
-    </Stack.Navigator>
-  );
-}
-//to remove
-function SelectLocationStack(props) {
-  return (
-    <Stack.Navigator
-      initialRouteName="Components"
-      mode="card"
-      headerMode="screen">
-      <Stack.Screen
-        name="Select Dr's Location"
-        options={{
-          header: ({navigation, scene}) => (
-            <Header
-              title="Select Dr's Location"
-              navigation={navigation}
-              scene={scene}
-              back={true}
-            />
-          ),
-          backgroundColor: '#FFFFFF',
-        }}
-        children={() => (
-          <SelectLocation
-            specialist={props.route.params.routeName}
-            navigation={props.navigation}
-          />
-        )}
       />
     </Stack.Navigator>
   );
@@ -482,7 +196,7 @@ function MessagingStack(props) {
         name="Messaging"
         component={Messaging}
         options={{
-          header: ({navigation, scene}) => (
+          header: ({ navigation, scene }) => (
             <Header
               title="Messaging"
               navigation={navigation}
@@ -490,7 +204,7 @@ function MessagingStack(props) {
               back={true}
             />
           ),
-          backgroundColor: '#FFFFFF',
+          backgroundColor: "#FFFFFF",
         }}
       />
     </Stack.Navigator>
@@ -505,7 +219,7 @@ function AccountStack(props) {
         name="Account"
         component={Account}
         options={{
-          header: ({navigation, scene}) => (
+          header: ({ navigation, scene }) => (
             <Header
               title="Account"
               tabs={tabs.account}
@@ -513,7 +227,7 @@ function AccountStack(props) {
               scene={scene}
             />
           ),
-          backgroundColor: '#FFFFFF',
+          backgroundColor: "#FFFFFF",
         }}
       />
     </Stack.Navigator>
@@ -543,7 +257,7 @@ function MainStack(props) {
         name="Main"
         component={MainScreen}
         options={{
-          header: ({navigation, scene}) => (
+          header: ({ navigation, scene }) => (
             <Header
               title="Main"
               navigation={navigation}
@@ -551,7 +265,7 @@ function MainStack(props) {
               back={true}
             />
           ),
-          backgroundColor: '#FFFFFF',
+          backgroundColor: "#FFFFFF",
         }}
       />
     </Stack.Navigator>
@@ -561,8 +275,8 @@ function MainStack(props) {
 function AppStack(props) {
   return (
     <Drawer.Navigator
-      style={{flex: 1}}
-      drawerContent={props => <CustomDrawerContent {...props} />}
+      style={{ flex: 1 }}
+      drawerContent={(props) => <CustomDrawerContent {...props} />}
       drawerStyle={{
         backgroundColor: nowTheme.COLORS.PRIMARY,
         width: width * 0.8,
@@ -570,50 +284,32 @@ function AppStack(props) {
       drawerContentOptions={{
         activeTintcolor: nowTheme.COLORS.WHITE,
         inactiveTintColor: nowTheme.COLORS.WHITE,
-        activeBackgroundColor: 'transparent',
+        activeBackgroundColor: "transparent",
         itemStyle: {
           width: width * 0.75,
-          backgroundColor: 'transparent',
+          backgroundColor: "transparent",
           paddingVertical: 16,
           paddingHorizonal: 12,
-          justifyContent: 'center',
-          alignContent: 'center',
-          alignItems: 'center',
-          overflow: 'hidden',
+          justifyContent: "center",
+          alignContent: "center",
+          alignItems: "center",
+          overflow: "hidden",
         },
         labelStyle: {
           fontSize: 18,
           marginLeft: 12,
-          fontWeight: 'normal',
+          fontWeight: "normal",
         },
       }}
-      initialRouteName="Home">
+      initialRouteName="Home"
+    >
       <Drawer.Screen name="Home" component={HomeStack} />
-      <Drawer.Screen
-        name="AppointmentRecords"
-        component={AppointmentRecordsStack}
-      />
       <Drawer.Screen name="Account" component={AccountStack} />
-      <Drawer.Screen name="PharmacyOrders" component={PharmacyOrdersStack} />
-      <Drawer.Screen name="Pharmacy" component={PharmacyStack} />
-      <Drawer.Screen name="NewPhamarcy" component={NewPhamarcyStack} />
-
-      <Drawer.Screen
-        name="PharmacyCategory"
-        component={PhamarcyCategoryStack}
-      />
-      <Drawer.Screen name="PharmacyCart" component={PharmacyCartStack} />
-
-      <Drawer.Screen name="Dependants" component={DependantsStack} />
-      <Drawer.Screen name="AddDependants" component={AddDependantsStack} />
       <Drawer.Screen name="MedicalRecords" component={MedicalRecordsStack} />
-
-      <Drawer.Screen name="FindDoctor" component={FindDoctorStack} />
-      <Drawer.Screen name="BookDoctor" component={BookDoctorStack} />
-      <Drawer.Screen name="SelectLocation" component={SelectLocationStack} />
       <Drawer.Screen name="Profile" component={ProfileStack} />
       <Drawer.Screen name="Messaging" component={MessagingStack} />
       <Drawer.Screen name="Main" component={MainStack} />
+      <Drawer.Screen name="Analytics" component={AnalyticsStack} />
 
       <Drawer.Screen
         name="RequestAmbulance"
@@ -622,9 +318,7 @@ function AppStack(props) {
     </Drawer.Navigator>
   );
 }
-//  <Drawer.Screen name="Login" component={LoginStack} />
-//  <Drawer.Screen name="SelectDependant" component={SelectDependantStack} />
-//<Drawer.Screen name="PhamarcyOrderRecipient" component={PhamarcyOrderRecipientStack} />
+
 export default function OnboardingStack(props) {
   return (
     <Stack.Navigator mode="card" headerMode="none">
@@ -640,12 +334,12 @@ export default function OnboardingStack(props) {
       <Stack.Screen
         name="Call"
         component={CallScreen}
-        options={{headerLeft: null}}
+        options={{ headerLeft: null }}
       />
       <Stack.Screen
         name="IncomingCall"
         component={IncomingCallScreen}
-        options={{headerLeft: null}}
+        options={{ headerLeft: null }}
       />
       <Stack.Screen name="App" component={AppStack} />
       <Stack.Screen name="Register" component={RegisterStack} />

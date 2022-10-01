@@ -1,23 +1,23 @@
-import React from 'react';
+import React from "react";
 import {
   StyleSheet,
   Dimensions,
   ImageBackground,
   ScrollView,
-} from 'react-native';
-import {Block, theme, Text} from 'galio-framework';
-import {Images} from '../constants';
-import {modules} from '../constants';
-import ModuleCard from '../components/Cards/ModuleCard';
+} from "react-native";
+import { Block, theme, Text } from "galio-framework";
+import { Images } from "../constants";
+import { modules } from "../constants";
+import ModuleCard from "../components/Cards/ModuleCard";
 
-import Carousel from 'react-native-snap-carousel';
+import Carousel from "react-native-snap-carousel";
 import {
   scrollInterpolator,
   animatedStyles,
-} from '../components/Carousel_Animations';
+} from "../components/Carousel_Animations";
 
-const {width} = Dimensions.get('screen');
-const SLIDER_WIDTH = Dimensions.get('window').width;
+const { width } = Dimensions.get("screen");
+const SLIDER_WIDTH = Dimensions.get("window").width;
 const ITEM_WIDTH = Math.round(SLIDER_WIDTH * 0.7);
 const ITEM_HEIGHT = Math.round((ITEM_WIDTH * 3) / 4);
 
@@ -38,15 +38,16 @@ class Home extends React.Component {
     return (
       <Block flex card center shadow style={styles.category}>
         <ImageBackground
-          source={Images.Products['path']}
+          source={Images.Products["path"]}
           style={[
             styles.imageBlock,
-            {width: width - theme.SIZES.BASE * 2, height: 150},
+            { width: width - theme.SIZES.BASE * 2, height: 150 },
           ]}
           imageStyle={{
             width: width - theme.SIZES.BASE * 2,
             height: 150,
-          }}>
+          }}
+        >
           <Block style={styles.categoryTitle}>
             <Text size={18} bold color={theme.COLORS.WHITE}>
               Covid Assist
@@ -57,28 +58,7 @@ class Home extends React.Component {
     );
   };
 
-  renderArticles = () => {
-    return (
-      <Block flex>
-        <Block flex row>
-          <ModuleCard
-            item={modules[0]}
-            style={{marginRight: theme.SIZES.BASE}}
-          />
-          <ModuleCard item={modules[1]} />
-        </Block>
-        <Block flex row>
-          <ModuleCard
-            item={modules[2]}
-            style={{marginRight: theme.SIZES.BASE}}
-          />
-          <ModuleCard item={modules[3]} />
-        </Block>
-      </Block>
-    );
-  };
-
-  _renderItem({item}) {
+  _renderItem({ item }) {
     return (
       <Block flex row>
         <ModuleCard item={modules[`${item}`]} />
@@ -89,14 +69,14 @@ class Home extends React.Component {
     return (
       <Block flex>
         <Carousel
-          ref={c => (this.carousel = c)}
+          ref={(c) => (this.carousel = c)}
           data={DATA}
           renderItem={this._renderItem}
           sliderWidth={width}
           itemWidth={ITEM_WIDTH}
           containerCustomStyle={styles.carouselContainer}
           inactiveSlideShift={0}
-          onSnapToItem={index => this.setState({index})}
+          onSnapToItem={(index) => this.setState({ index })}
           scrollInterpolator={scrollInterpolator}
           slideInterpolatedStyle={animatedStyles}
           useScrollView={true}
@@ -110,9 +90,9 @@ class Home extends React.Component {
       <Block flex center style={styles.home}>
         <ScrollView
           showsVerticalScrollIndicator={false}
-          contentContainerStyle={styles.articles}>
+          contentContainerStyle={styles.articles}
+        >
           {this.renderCards()}
-          {this.renderArticles()}
           {this.renderCarousel()}
         </ScrollView>
       </Block>
@@ -128,7 +108,7 @@ const styles = StyleSheet.create({
     width: width - theme.SIZES.BASE * 2,
     paddingVertical: theme.SIZES.BASE,
     paddingHorizontal: 2,
-    fontFamily: 'montserrat-regular',
+    fontFamily: "montserrat-regular",
   },
   category: {
     backgroundColor: theme.COLORS.WHITE,
@@ -136,14 +116,14 @@ const styles = StyleSheet.create({
     borderWidth: 0,
   },
   categoryTitle: {
-    height: '100%',
+    height: "100%",
     paddingHorizontal: theme.SIZES.BASE,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    alignItems: "center",
   },
   imageBlock: {
-    overflow: 'hidden',
+    overflow: "hidden",
     borderRadius: 4,
     marginHorizontal: 10,
   },

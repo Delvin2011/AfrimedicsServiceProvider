@@ -1,5 +1,5 @@
-import React from 'react';
-import {withNavigation} from '@react-navigation/compat';
+import React from "react";
+import { withNavigation } from "@react-navigation/compat";
 import {
   TouchableOpacity,
   StyleSheet,
@@ -7,7 +7,7 @@ import {
   Dimensions,
   Keyboard,
   PermissionsAndroid,
-} from 'react-native';
+} from "react-native";
 import {
   Button,
   Block,
@@ -15,16 +15,16 @@ import {
   Text,
   theme,
   Button as GaButton,
-} from 'galio-framework';
-import {Picker} from '@react-native-picker/picker';
-import Icon from './Icon';
-import Input from './Input';
-import Tabs from './Tabs';
-import nowTheme from '../constants/Theme';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+} from "galio-framework";
+import { Picker } from "@react-native-picker/picker";
+import Icon from "./Icon";
+import Input from "./Input";
+import Tabs from "./Tabs";
+import nowTheme from "../constants/Theme";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
-import {connect} from 'react-redux';
-import {createStructuredSelector} from 'reselect';
+import { connect } from "react-redux";
+import { createStructuredSelector } from "reselect";
 import {
   selectAddRecordHidden,
   selectViewDoctorsOnMap,
@@ -32,9 +32,9 @@ import {
   selectSpecialistLocation,
   selectUserDependants,
   selectDependant,
-} from '../redux/user/user-selectors';
-import {selectCartItemsCount} from '../redux/cart/cart-selectors';
-import {selectWishListItemsCount} from '../redux/wishList/wishList-selectors';
+} from "../redux/user/user-selectors";
+import { selectCartItemsCount } from "../redux/cart/cart-selectors";
+import { selectWishListItemsCount } from "../redux/wishList/wishList-selectors";
 
 import {
   toggleAddRecord,
@@ -43,188 +43,129 @@ import {
   headerTabOptionChange,
   specialistLocation,
   dependantSelection,
-} from '../redux/user/user-actions';
+} from "../redux/user/user-actions";
 
 //Phamarcy
 import {
   selectedPhamarcyLocation,
   selectSearchedPhamarcy,
-} from '../redux/pharmacy/pharmacy-selectors';
+} from "../redux/pharmacy/pharmacy-selectors";
 import {
   phamarcyLocation,
   searchPhamarcy,
-} from '../redux/pharmacy/pharmacy-actions';
+} from "../redux/pharmacy/pharmacy-actions";
 
 import {
   setPickupLocation,
   setDestinationLocation,
-} from '../redux/ambulance/ambulance-actions';
+} from "../redux/ambulance/ambulance-actions";
 
-import {GooglePlacesAutocomplete} from 'react-native-google-places-autocomplete';
-import Geolocation from 'react-native-geolocation-service';
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import Geolocation from "react-native-geolocation-service";
 
-navigator.geolocation = require('react-native-geolocation-service');
+navigator.geolocation = require("react-native-geolocation-service");
 
-const {height, width} = Dimensions.get('window');
+const { height, width } = Dimensions.get("window");
 const iPhoneX = () =>
-  Platform.OS === 'ios' &&
+  Platform.OS === "ios" &&
   (height === 812 || width === 812 || height === 896 || width === 896);
 
-const BellButton = ({isWhite, style, navigation}) => (
+const BellButton = ({ isWhite, style, navigation }) => (
   <TouchableOpacity
     style={[styles.button, style]}
-    onPress={() => navigation.navigate('Map')}>
+    onPress={() => navigation.navigate("Map")}
+  >
     <Icon
       family="NowExtra"
       size={16}
       name="bulb"
-      //color={nowTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
-    />
+    /> //color={nowTheme.COLORS[isWhite ? "WHITE" : "ICON"]}
     <Block
       middle
       style={[
         styles.notify,
-        {backgroundColor: nowTheme.COLORS[isWhite ? 'WHITE' : 'PRIMARY']},
+        { backgroundColor: nowTheme.COLORS[isWhite ? "WHITE" : "PRIMARY"] },
       ]}
     />
   </TouchableOpacity>
 );
 
-const AddRecordButton = ({isWhite, style, navigation, toggleAddRecord}) => (
+const AddRecordButton = ({ isWhite, style, navigation, toggleAddRecord }) => (
   <TouchableOpacity
     style={[styles.button, style]}
-    onPress={() => toggleAddRecord()}>
+    onPress={() => toggleAddRecord()}
+  >
     <Ionicons
       name="md-add"
       color="rgb(0,0,0)"
       size={24}
-      style={{backgroundColor: 'transparent'}}
+      style={{ backgroundColor: "transparent" }}
     />
     <Block
       middle
       style={[
         styles.notify,
-        {backgroundColor: nowTheme.COLORS[isWhite ? 'WHITE' : 'PRIMARY']},
+        { backgroundColor: nowTheme.COLORS[isWhite ? "WHITE" : "PRIMARY"] },
       ]}
     />
   </TouchableOpacity>
 );
 
-const ViewDoctorsOnMap = ({style, viewDoctorsOnMap, viewMap}) => (
+const ViewDoctorsOnMap = ({ style, viewDoctorsOnMap, viewMap }) => (
   <TouchableOpacity
     style={[styles.button, style]}
     onPress={() => {
       viewDoctorsOnMap(viewMap);
       console.log(viewMap);
-    }}>
+    }}
+  >
     <Block
       middle
       style={[
         styles.availabilityStatus,
         {
           backgroundColor:
-            nowTheme.COLORS[viewMap == true ? 'SUCCESS' : 'ERROR'],
+            nowTheme.COLORS[viewMap == true ? "SUCCESS" : "ERROR"],
         },
       ]}
     />
   </TouchableOpacity>
 );
 
-const AddDependantButton = ({isWhite, style, navigation, toggleAddRecord}) => (
-  <TouchableOpacity
-    style={[styles.button, style]}
-    onPress={() => navigation.navigate('AddDependants')}>
-    <Ionicons
-      name="md-person-add-sharp"
-      color="rgb(0,0,0)"
-      size={18}
-      style={{backgroundColor: 'transparent'}}
-    />
-    <Block
-      middle
-      style={[
-        styles.notify,
-        {backgroundColor: nowTheme.COLORS[isWhite ? 'WHITE' : 'PRIMARY']},
-      ]}
-    />
-  </TouchableOpacity>
-);
-
-const ViewTextDoctorsOnMap = ({viewDoctorsOnMap, viewMap}) => (
+const ViewTextDoctorsOnMap = ({ viewDoctorsOnMap, viewMap }) => (
   <TouchableOpacity
     onPress={() => {
       viewDoctorsOnMap(viewMap);
       console.log(viewMap);
-    }}>
-    <Text>{viewMap ? 'ONLINE' : 'OFFLINE'}</Text>
+    }}
+  >
+    <Text>{viewMap ? "ONLINE" : "OFFLINE"}</Text>
   </TouchableOpacity>
 );
 
-const BasketButton = ({isWhite, style, navigation}) => (
+const BasketButton = ({ isWhite, style, navigation }) => (
   <TouchableOpacity
     style={[styles.button, style]}
-    onPress={() => navigation.navigate('Pro')}>
+    onPress={() => navigation.navigate("Pro")}
+  >
     <Icon
       family="NowExtra"
       size={16}
       name="basket2x"
-      //color={nowTheme.COLORS[isWhite ? 'WHITE' : 'ICON']}
-    />
-  </TouchableOpacity>
-);
-
-const Cart = ({isWhite, style, navigation, cartItemsCount}) => (
-  <TouchableOpacity
-    style={[styles.button, style]}
-    onPress={() => navigation.navigate('PharmacyCart')}>
-    <Ionicons
-      name="md-cart-outline"
-      color="rgb(0,0,0)"
-      size={18}
-      style={{backgroundColor: 'transparent'}}
-    />
-    <Block
-      middle
-      style={[
-        styles.phamarcyNotify,
-        {backgroundColor: nowTheme.COLORS[isWhite ? 'WHITE' : 'PRIMARY']},
-      ]}>
-      <Text style={styles.phamarcyCount}>{cartItemsCount}</Text>
-    </Block>
-  </TouchableOpacity>
-);
-
-const Wishlist = ({isWhite, style, navigation, wishListItemsCount}) => (
-  <TouchableOpacity
-    style={[styles.button, style]}
-    onPress={() => navigation.navigate('Pro')}>
-    <Ionicons
-      name="md-heart-outline"
-      color="rgb(0,0,0)"
-      size={18}
-      style={{backgroundColor: 'transparent'}}
-    />
-    <Block
-      middle
-      style={[
-        styles.phamarcyNotify,
-        {backgroundColor: nowTheme.COLORS[isWhite ? 'WHITE' : 'PRIMARY']},
-      ]}>
-      <Text style={styles.phamarcyCount}>{wishListItemsCount}</Text>
-    </Block>
+    /> //color={nowTheme.COLORS[isWhite ? "WHITE" : "ICON"]}
   </TouchableOpacity>
 );
 
 let items = [
   {
     id: 0,
-    name: 'Location?',
-    value: 'Location?',
+    name: "Location?",
+    value: "Location?",
   },
   {
     id: 1,
-    name: 'Harare',
-    value: 'Harare',
+    name: "Harare",
+    value: "Harare",
     geometry: {
       lat: -17.823875,
       lng: 31.035886,
@@ -232,8 +173,8 @@ let items = [
   },
   {
     id: 2,
-    name: 'Masvingo',
-    value: 'Masvingo',
+    name: "Masvingo",
+    value: "Masvingo",
     geometry: {
       lat: -20.072217,
       lng: 30.829824,
@@ -241,8 +182,8 @@ let items = [
   },
   {
     id: 3,
-    name: 'Gweru',
-    value: 'Gweru',
+    name: "Gweru",
+    value: "Gweru",
     geometry: {
       lat: -19.456382,
       lng: 29.811787,
@@ -250,8 +191,8 @@ let items = [
   },
   {
     id: 4,
-    name: 'Bulawayo',
-    value: 'Bulawayo',
+    name: "Bulawayo",
+    value: "Bulawayo",
     geometry: {
       lat: -20.148393,
       lng: 28.575895,
@@ -259,8 +200,8 @@ let items = [
   },
   {
     id: 5,
-    name: 'Mutare',
-    value: 'Mutare',
+    name: "Mutare",
+    value: "Mutare",
     geometry: {
       lat: -17.885514,
       lng: 30.675703,
@@ -268,25 +209,15 @@ let items = [
   },
   {
     id: 6,
-    name: 'Chinhoyi',
-    value: 'Chinhoyi',
+    name: "Chinhoyi",
+    value: "Chinhoyi",
     geometry: {
       lat: -19.011037,
       lng: 30.897197,
     },
   },
 ];
-const LocationPicker = ({specialistLocation, selectedLocation}) => (
-  <Picker
-    selectedValue={selectedLocation}
-    onValueChange={(value, index) => specialistLocation(value)}
-    mode="dropdown" // Android only
-    style={styles.picker}>
-    {items.map((item, index) => {
-      return <Picker.Item label={item.name} value={item.value} key={index} />;
-    })}
-  </Picker>
-);
+
 const PhamarcyLocationPicker = ({
   phamarcyLocation,
   selectedPhamarcyLocation,
@@ -295,7 +226,8 @@ const PhamarcyLocationPicker = ({
     selectedValue={selectedPhamarcyLocation}
     onValueChange={(value, index) => phamarcyLocation(value)}
     mode="dropdown" // Android only
-    style={styles.picker}>
+    style={styles.picker}
+  >
     {items.map((item, index) => {
       return <Picker.Item label={item.name} value={item.value} key={index} />;
     })}
@@ -311,7 +243,8 @@ const DependantPicker = ({
     selectedValue={selectedDependant}
     onValueChange={(value, index) => dependantSelection(value)}
     mode="dropdown" // Android only
-    style={styles.picker}>
+    style={styles.picker}
+  >
     {dependantsDetails.map((item, index) => {
       return <Picker.Item label={item.name} value={item} key={index} />;
     })}
@@ -323,10 +256,10 @@ class Header extends React.Component {
     super(props);
 
     this.state = {
-      specialistSearch: '',
-      phamarcySearch: '',
-      region: 'unknown',
-      ambulanceRequest: '',
+      specialistSearch: "",
+      phamarcySearch: "",
+      region: "unknown",
+      ambulanceRequest: "",
       showDestinationSearch: true,
       currentLocationEnable: false,
     };
@@ -343,7 +276,7 @@ class Header extends React.Component {
    });
   }*/
 
-    if (Platform.OS === 'android') {
+    if (Platform.OS === "android") {
       const granted = await PermissionsAndroid.request(
         PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
       );
@@ -354,40 +287,39 @@ class Header extends React.Component {
   }
 
   handleLeftPress = () => {
-    const {back, navigation} = this.props;
+    const { back, navigation } = this.props;
     return back ? navigation.goBack() : navigation.openDrawer();
   };
 
-  handleSearchInput = searchInput => {
-    const {searchSpecialist, searchPhamarcy, title} = this.props;
+  handleSearchInput = (searchInput) => {
+    const { searchSpecialist, searchPhamarcy, title } = this.props;
     const specialist = {};
     specialist.name = searchInput;
-    specialist.screen =
-      title == 'Book a Doctor'
-        ? 'bd'
-        : 'Find a Doctor'
-        ? 'fd'
-        : 'New Phamarcy'
-        ? 'ph'
-        : '';
-    if (title == 'Book a Doctor') {
-      specialist.screen = 'bd';
+    specialist.screen = title == "Book a Doctor"
+      ? "bd"
+      : "Find a Doctor"
+      ? "fd"
+      : "New Phamarcy"
+      ? "ph"
+      : "";
+    if (title == "Book a Doctor") {
+      specialist.screen = "bd";
       searchSpecialist(specialist);
-      this.setState({specialistSearch: searchInput});
-    } else if (title == 'New Phamarcy') {
-      specialist.screen = 'ph';
+      this.setState({ specialistSearch: searchInput });
+    } else if (title == "New Phamarcy") {
+      specialist.screen = "ph";
       searchPhamarcy(specialist);
-      this.setState({phamarcySearch: searchInput});
+      this.setState({ phamarcySearch: searchInput });
     }
     //else
   };
 
   showOff = () => {
-    this.setState({showDestinationSearch: false});
+    this.setState({ showDestinationSearch: false });
   };
 
   show = () => {
-    this.setState({showDestinationSearch: true});
+    this.setState({ showDestinationSearch: true });
   };
 
   renderRight = () => {
@@ -398,18 +330,10 @@ class Header extends React.Component {
       toggleAddRecord,
       viewDoctorsOnMap,
       viewMap,
-      cartItemsCount,
-      wishListItemsCount,
-      searchSpecialist,
-      selectedLocation,
-      specialistLocation,
-      dependantsDetails,
-      dependantSelection,
-      selectedDependant,
       phamarcyLocation,
       selectedPhamarcyLocation,
     } = this.props;
-    if (title === 'Title') {
+    if (title === "Title") {
       return [
         <BellButton key="chat-title" navigation={navigation} isWhite={white} />,
         <BasketButton
@@ -421,7 +345,7 @@ class Header extends React.Component {
     }
 
     switch (title) {
-      case 'Home':
+      case "Home":
         return [
           <ViewTextDoctorsOnMap
             key="map-open-close"
@@ -437,33 +361,7 @@ class Header extends React.Component {
           />,
           ,
         ];
-      case 'Categories':
-        return [
-          <BellButton
-            key="chat-categories"
-            navigation={navigation}
-            isWhite={white}
-          />,
-          <BasketButton
-            key="basket-categories"
-            navigation={navigation}
-            isWhite={white}
-          />,
-        ];
-      case 'Category':
-        return [
-          <BellButton
-            key="chat-deals"
-            navigation={navigation}
-            isWhite={white}
-          />,
-          <BasketButton
-            key="basket-deals"
-            navigation={navigation}
-            isWhite={white}
-          />,
-        ];
-      case 'Profile':
+      case "Profile":
         return [
           <BellButton
             key="chat-profile"
@@ -476,25 +374,12 @@ class Header extends React.Component {
             isWhite={white}
           />,
         ];
-      case 'Account':
+      case "Account":
         return [
           <BellButton key="chat-profile" navigation={navigation} />,
           <BasketButton key="basket-deals" navigation={navigation} />,
         ];
-      case 'Product':
-        return [
-          <BellButton
-            key="chat-profile"
-            navigation={navigation}
-            isWhite={white}
-          />,
-          <BasketButton
-            key="basket-product"
-            navigation={navigation}
-            isWhite={white}
-          />,
-        ];
-      case 'Search':
+      case "Search":
         return [
           <BellButton
             key="chat-search"
@@ -507,31 +392,7 @@ class Header extends React.Component {
             isWhite={white}
           />,
         ];
-      case 'Book a Doctor':
-        return [
-          <ViewTextDoctorsOnMap
-            key="map-open-close"
-            viewMap={viewMap}
-            isWhite={white}
-            viewDoctorsOnMap={viewDoctorsOnMap}
-          />,
-          <ViewDoctorsOnMap
-            key="chat-search"
-            isWhite={white}
-            viewDoctorsOnMap={viewDoctorsOnMap}
-          />,
-          ,
-        ];
-      case 'Find a Doctor':
-        return [
-          <LocationPicker
-            key="map-open-close"
-            specialistLocation={specialistLocation}
-            selectedLocation={selectedLocation}
-            isWhite={white}
-          />,
-        ];
-      case 'New Phamarcy':
+      case "New Phamarcy":
         return [
           <PhamarcyLocationPicker
             key="map-open-close"
@@ -540,7 +401,7 @@ class Header extends React.Component {
             isWhite={white}
           />,
         ];
-      case 'Medical Records':
+      case "Medical Records":
         return [
           <AddRecordButton
             key="chat-search"
@@ -549,125 +410,16 @@ class Header extends React.Component {
             toggleAddRecord={toggleAddRecord}
           />,
         ];
-      case 'Dependants':
-        return [
-          <AddDependantButton
-            key="chat-search"
-            navigation={navigation}
-            isWhite={white}
-            toggleAddRecord={toggleAddRecord}
-          />,
-        ];
-      case 'Pharmacy':
-        return [
-          <Cart
-            key="chat-search"
-            navigation={navigation}
-            isWhite={white}
-            cartItemsCount={cartItemsCount}
-          />,
-          <Wishlist
-            key="basket-search"
-            navigation={navigation}
-            isWhite={white}
-            wishListItemsCount={wishListItemsCount}
-          />,
-        ];
-      case 'Your Cart Details':
-        let details = [];
-        let contains = false;
-        const promptSelectDependant = {
-          name: 'Dependant?',
-          id: 0,
-        };
-        if (dependantsDetails) {
-          for (var a = 0; a < dependantsDetails.length; a++) {
-            if (Object.values(dependantsDetails[a]).includes('Dependant?')) {
-              contains = true;
-            }
-          }
-          if (contains) {
-            details = dependantsDetails;
-          } else {
-            details = dependantsDetails;
-            details.unshift(promptSelectDependant);
-          }
-        } else details.unshift(promptSelectDependant);
-
-        return [
-          <DependantPicker
-            key="cartDetails"
-            dependantsDetails={details}
-            dependantSelection={dependantSelection}
-            selectedDependant={selectedDependant}
-            isWhite={white}
-          />,
-        ];
-      case 'Request Ambulance':
-        let details2 = [];
-        let contains2 = false;
-        const promptSelectDependant2 = {
-          name: 'Dependant?',
-          id: 0,
-        };
-        if (dependantsDetails) {
-          for (var a = 0; a < dependantsDetails.length; a++) {
-            if (Object.values(dependantsDetails[a]).includes('Dependant?')) {
-              contains2 = true;
-            }
-          }
-          if (contains2) {
-            details2 = dependantsDetails;
-          } else {
-            details2 = dependantsDetails;
-            details2.unshift(promptSelectDependant2);
-          }
-        } else details2.unshift(promptSelectDependant2);
-
-        return [
-          <DependantPicker
-            key="requestAmbulance"
-            dependantsDetails={details2}
-            dependantSelection={dependantSelection}
-            selectedDependant={selectedDependant}
-            isWhite={white}
-          />,
-        ];
       default:
         break;
     }
   };
   renderSearch = () => {
-    const {navigation, title, selectedDependant} = this.props;
-    var searchOption = '';
-    var name = '';
-    var value = '';
-    if (title === 'Find a Doctor') searchOption = 'Search for specialist';
-    else if (title === 'Book a Doctor') {
-      searchOption = 'Search favourites or Dr';
-      name = 'specialistSearch';
-      value = this.state.specialistSearch;
-    } else if (title === 'Pharmacy') searchOption = 'What are you looking for?';
-    else if (title === 'New Phamarcy') {
-      searchOption = 'Search Phamarcy?';
-      name = 'phamarcySearch';
-      value = this.state.phamarcySearch;
-    } else if (title === 'Request Ambulance') {
-      if (selectedDependant.id !== 0) {
-        searchOption =
-          selectedDependant.personal.addressLine1 +
-          ' ' +
-          selectedDependant.personal.addressLine2 +
-          ' ' +
-          selectedDependant.personal.addressLine3;
-        name = 'ambulanceRequest';
-        value = this.state.ambulanceRequest;
-      } else {
-        searchOption = 'Enter pick-up location';
-        name = 'ambulanceRequest';
-        value = this.state.ambulanceRequest;
-      }
-    } else searchOption = 'What is your Location?';
+    const { navigation, title, selectedDependant } = this.props;
+    var searchOption = "";
+    var name = "";
+    var value = "";
+    searchOption = "What are you looking for?";
 
     return (
       <Input
@@ -677,16 +429,14 @@ class Header extends React.Component {
         placeholder={searchOption}
         name={name}
         value={value}
-        placeholderTextColor={'#8898AA'}
-        iconContent={
-          <Icon
-            size={16}
-            color={theme.COLORS.MUTED}
-            name="zoom-bold2x"
-            family="NowExtra"
-          />
-        }
-        onChangeText={searchInput => {
+        placeholderTextColor={"#8898AA"}
+        iconContent={<Icon
+          size={16}
+          color={theme.COLORS.MUTED}
+          name="zoom-bold2x"
+          family="NowExtra"
+        />}
+        onChangeText={(searchInput) => {
           this.handleSearchInput(searchInput);
         }}
       />
@@ -694,10 +444,10 @@ class Header extends React.Component {
   };
 
   renderPickupLocation = () => {
-    const {dependantsDetails, setPickupLocation} = this.props;
+    const { dependantsDetails, setPickupLocation } = this.props;
     var details = [];
     for (var a = 0; a < dependantsDetails.length; a++) {
-      if (Object.values(dependantsDetails[a]).includes('Dependant?')) {
+      if (Object.values(dependantsDetails[a]).includes("Dependant?")) {
         continue;
       } else {
         var obj = {
@@ -711,7 +461,7 @@ class Header extends React.Component {
     return (
       <GooglePlacesAutocomplete
         placeholder="Search pickup location"
-        onFail={error => console.error(error)}
+        onFail={(error) => console.error(error)}
         textInputProps={{
           onChangeText: this.showOff,
         }}
@@ -739,23 +489,23 @@ class Header extends React.Component {
             marginLeft: 0,
             marginRight: 0,
             height: 36,
-            color: '#5d5d5d',
+            color: "#5d5d5d",
             fontSize: 14,
             //borderRadius: 30,
           },
           predefinedPlacesDescription: {
-            color: '#1faadb',
+            color: "#1faadb",
           },
         }}
         enablePoweredByContainer={false}
         minLength={2}
         debounce={400}
-        returnKeyType={'search'}
+        returnKeyType={"search"}
         currentLocation={true}
         currentLocationLabel="Current location"
         query={{
-          key: 'AIzaSyAHWKeSs8x2QSp9E8OE88X34G1XtvpZZfk',
-          language: 'en',
+          key: "AIzaSyAHWKeSs8x2QSp9E8OE88X34G1XtvpZZfk",
+          language: "en",
         }}
         nearbyPlacesAPI="GooglePlacesSearch"
         predefinedPlaces={details}
@@ -764,11 +514,11 @@ class Header extends React.Component {
   };
 
   renderDestinationSearch = () => {
-    const {setDestinationLocation} = this.props;
+    const { setDestinationLocation } = this.props;
     return (
       <GooglePlacesAutocomplete
         placeholder="Search destination clinic/hospital"
-        onFail={error => console.error(error)}
+        onFail={(error) => console.error(error)}
         onPress={(data, details = null) => {
           setDestinationLocation({
             location: details.geometry.location,
@@ -793,21 +543,21 @@ class Header extends React.Component {
             marginLeft: 0,
             marginRight: 0,
             height: 36,
-            color: '#5d5d5d',
+            color: "#5d5d5d",
             fontSize: 14,
             //borderRadius: 30,
           },
           predefinedPlacesDescription: {
-            color: '#1faadb',
+            color: "#1faadb",
           },
         }}
         enablePoweredByContainer={false}
         minLength={2}
         debounce={400}
-        returnKeyType={'search'}
+        returnKeyType={"search"}
         query={{
-          key: 'AIzaSyAHWKeSs8x2QSp9E8OE88X34G1XtvpZZfk',
-          language: 'en',
+          key: "AIzaSyAHWKeSs8x2QSp9E8OE88X34G1XtvpZZfk",
+          language: "en",
         }}
         nearbyPlacesAPI="GooglePlacesSearch"
       />
@@ -815,47 +565,51 @@ class Header extends React.Component {
   };
 
   renderOptions = () => {
-    const {navigation, optionLeft, optionRight} = this.props;
+    const { navigation, optionLeft, optionRight } = this.props;
 
     return (
       <Block row style={styles.options}>
         <Button
           shadowless
           style={[styles.tab, styles.divider]}
-          onPress={() => navigation.navigate('Map')}>
+          onPress={() => navigation.navigate("Map")}
+        >
           <Block row middle>
             <Icon
               name="bulb"
               family="NowExtra"
               size={18}
-              style={{paddingRight: 8}}
+              style={{ paddingRight: 8 }}
               color={nowTheme.COLORS.HEADER}
             />
             <Text
-              style={{fontFamily: 'montserrat-regular'}}
+              style={{ fontFamily: "montserrat-regular" }}
               size={16}
-              style={styles.tabTitle}>
-              {optionLeft || 'Beauty'}
+              style={styles.tabTitle}
+            >
+              {optionLeft || "Beauty"}
             </Text>
           </Block>
         </Button>
         <Button
           shadowless
           style={styles.tab}
-          onPress={() => navigation.navigate('Map')}>
+          onPress={() => navigation.navigate("Map")}
+        >
           <Block row middle>
             <Icon
               size={18}
               name="bag-162x"
               family="NowExtra"
-              style={{paddingRight: 8}}
+              style={{ paddingRight: 8 }}
               color={nowTheme.COLORS.HEADER}
             />
             <Text
-              style={{fontFamily: 'montserrat-regular'}}
+              style={{ fontFamily: "montserrat-regular" }}
               size={16}
-              style={styles.tabTitle}>
-              {optionRight || 'Fashion'}
+              style={styles.tabTitle}
+            >
+              {optionRight || "Fashion"}
             </Text>
           </Block>
         </Button>
@@ -863,12 +617,12 @@ class Header extends React.Component {
     );
   };
 
-  handleTabOption = tabOption => {
-    const {headerTabOptionChange} = this.props;
+  handleTabOption = (tabOption) => {
+    const { headerTabOptionChange } = this.props;
     headerTabOptionChange(tabOption);
   };
   renderTabs = () => {
-    const {tabs, tabIndex, navigation, navigateTo} = this.props;
+    const { tabs, tabIndex, navigation, navigateTo } = this.props;
     const defaultTab = tabs && tabs[0] && tabs[0].id;
     if (!tabs) return null;
 
@@ -878,7 +632,7 @@ class Header extends React.Component {
         initialIndex={tabIndex || defaultTab}
         navigation={navigation}
         navigateTo={navigateTo}
-        onChange={id => this.handleTabOption(id)}
+        onChange={(id) => this.handleTabOption(id)}
       />
     );
   };
@@ -930,18 +684,21 @@ class Header extends React.Component {
     } = this.props;
 
     const noShadow = [
-      'Search',
-      'Categories',
-      'Deals',
-      'Pro',
-      'Profile',
+      "Search",
+      "Categories",
+      "Deals",
+      "Pro",
+      "Profile",
     ].includes(title);
     const headerStyles = [
       !noShadow ? styles.shadow : null,
-      transparent ? {backgroundColor: 'rgba(0,0,0,0)'} : null,
+      transparent ? { backgroundColor: "rgba(0,0,0,0)" } : null,
     ];
 
-    const navbarStyles = [styles.navbar, bgColor && {backgroundColor: bgColor}];
+    const navbarStyles = [
+      styles.navbar,
+      bgColor && { backgroundColor: bgColor },
+    ];
     return (
       <Block style={headerStyles}>
         <NavBar
@@ -950,24 +707,20 @@ class Header extends React.Component {
           style={navbarStyles}
           transparent={transparent}
           right={this.renderRight()}
-          rightStyle={{alignItems: 'center'}}
-          left={
-            <Ionicons
-              name={back ? 'md-chevron-back-outline' : 'md-reorder-four'}
-              //family="NowExtra"
-              size={18}
-              onPress={this.handleLeftPress}
-              color={
-                iconColor ||
-                (white ? nowTheme.COLORS.WHITE : nowTheme.COLORS.ICON)
-              }
-            />
-          }
-          leftStyle={{paddingVertical: 12, flex: 0.2}}
+          rightStyle={{ alignItems: "center" }}
+          left={<Ionicons
+            name={back ? "md-chevron-back-outline" : "md-reorder-four"}
+            //family="NowExtra"
+            size={18}
+            onPress={this.handleLeftPress}
+            color={iconColor ||
+              (white ? nowTheme.COLORS.WHITE : nowTheme.COLORS.ICON)}
+          />}
+          leftStyle={{ paddingVertical: 12, flex: 0.2 }}
           titleStyle={[
             styles.title,
-            {color: nowTheme.COLORS[white ? 'WHITE' : 'HEADER']},
-            titleColor && {color: titleColor},
+            { color: nowTheme.COLORS[white ? "WHITE" : "HEADER"] },
+            titleColor && { color: titleColor },
           ]}
           {...props}
         />
@@ -980,13 +733,13 @@ class Header extends React.Component {
 const styles = StyleSheet.create({
   button: {
     padding: 10,
-    position: 'relative',
+    position: "relative",
   },
   title: {
-    width: '100%',
+    width: "100%",
     fontSize: 16,
-    fontWeight: 'bold',
-    fontFamily: 'montserrat-regular',
+    fontWeight: "bold",
+    fontFamily: "montserrat-regular",
   },
   navbar: {
     paddingVertical: 0,
@@ -998,8 +751,8 @@ const styles = StyleSheet.create({
   },
   shadow: {
     backgroundColor: theme.COLORS.WHITE,
-    shadowColor: 'black',
-    shadowOffset: {width: 0, height: 2},
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 2 },
     shadowRadius: 6,
     shadowOpacity: 0.2,
     elevation: 3,
@@ -1009,7 +762,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     height: theme.SIZES.BASE / 2,
     width: theme.SIZES.BASE / 2,
-    position: 'absolute',
+    position: "absolute",
     top: 8,
     right: 6,
   },
@@ -1018,13 +771,13 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     height: theme.SIZES.BASE / 2,
     width: theme.SIZES.BASE / 2,
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     right: 80,
   },
   phamarcyCount: {
     fontSize: 12,
-    fontFamily: 'montserrat-regular',
+    fontFamily: "montserrat-regular",
     color: theme.COLORS.WHITE,
   },
   phamarcyNotify: {
@@ -1032,7 +785,7 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     height: theme.SIZES.BASE * 1.5,
     width: theme.SIZES.BASE * 1.5,
-    position: 'absolute',
+    position: "absolute",
     top: -3,
     right: -3,
   },
@@ -1067,36 +820,36 @@ const styles = StyleSheet.create({
   },
   tabTitle: {
     lineHeight: 19,
-    fontWeight: '400',
+    fontWeight: "400",
     color: nowTheme.COLORS.HEADER,
   },
   social: {
     width: theme.SIZES.BASE * 3.5,
     height: theme.SIZES.BASE * 3.5,
     borderRadius: theme.SIZES.BASE * 1.75,
-    justifyContent: 'center',
+    justifyContent: "center",
   },
   picker: {
     //marginVertical: 30,
     width: 150,
     padding: 10,
     borderWidth: 1,
-    borderColor: '#666',
+    borderColor: "#666",
   },
 });
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   toggleAddRecord: () => dispatch(toggleAddRecord()),
-  viewDoctorsOnMap: status => dispatch(viewDoctorsOnMap(status)),
-  searchSpecialist: specialist => dispatch(searchSpecialist(specialist)),
-  searchPhamarcy: phamarcy => dispatch(searchPhamarcy(phamarcy)),
-  specialistLocation: location => dispatch(specialistLocation(location)),
-  phamarcyLocation: location => dispatch(phamarcyLocation(location)),
-  dependantSelection: dependant => dispatch(dependantSelection(dependant)),
-  headerTabOptionChange: tabOption =>
+  viewDoctorsOnMap: (status) => dispatch(viewDoctorsOnMap(status)),
+  searchSpecialist: (specialist) => dispatch(searchSpecialist(specialist)),
+  searchPhamarcy: (phamarcy) => dispatch(searchPhamarcy(phamarcy)),
+  specialistLocation: (location) => dispatch(specialistLocation(location)),
+  phamarcyLocation: (location) => dispatch(phamarcyLocation(location)),
+  dependantSelection: (dependant) => dispatch(dependantSelection(dependant)),
+  headerTabOptionChange: (tabOption) =>
     dispatch(headerTabOptionChange(tabOption)),
-  setPickupLocation: location => dispatch(setPickupLocation(location)),
-  setDestinationLocation: location =>
+  setPickupLocation: (location) => dispatch(setPickupLocation(location)),
+  setDestinationLocation: (location) =>
     dispatch(setDestinationLocation(location)),
 });
 

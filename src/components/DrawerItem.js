@@ -1,67 +1,49 @@
-import React from 'react';
-import {StyleSheet, TouchableOpacity, Linking} from 'react-native';
-import {Block, Text, theme} from 'galio-framework';
+import React from "react";
+import { StyleSheet, TouchableOpacity, Linking } from "react-native";
+import { Block, Text, theme } from "galio-framework";
 
-import Icon from '../components/Icon';
-import nowTheme from '../constants/Theme';
-import Ionicons from 'react-native-vector-icons/Ionicons';
+import Icon from "../components/Icon";
+import nowTheme from "../constants/Theme";
+import Ionicons from "react-native-vector-icons/Ionicons";
 class DrawerItem extends React.Component {
   renderIcon = () => {
-    const {title, focused} = this.props;
+    const { title, focused } = this.props;
 
     switch (title) {
-      case 'Home':
+      case "Home":
         return (
           <Ionicons
             name="home"
             color="rgba(255, 255, 255, .9)"
             size={18}
-            style={{backgroundColor: 'transparent'}}
+            style={{ backgroundColor: "transparent" }}
           />
         );
-      case 'AppointmentRecords':
+      case "Analytics":
         return (
           <Ionicons
-            name="ios-calendar-sharp"
+            name="bar-chart-sharp"
             color="rgba(255, 255, 255, .9)"
             size={18}
-            style={{backgroundColor: 'transparent'}}
+            style={{ backgroundColor: "transparent" }}
           />
         );
-      case 'Account':
+      case "Account":
         return (
           <Ionicons
             name="person"
             color="rgba(255, 255, 255, .9)"
             size={18}
-            style={{backgroundColor: 'transparent'}}
+            style={{ backgroundColor: "transparent" }}
           />
         );
-      case 'PharmacyOrders':
-        return (
-          <Ionicons
-            name="ios-receipt-sharp"
-            color="rgba(255, 255, 255, .9)"
-            size={18}
-            style={{backgroundColor: 'transparent'}}
-          />
-        );
-      case 'Dependants':
-        return (
-          <Ionicons
-            name="ios-people-sharp"
-            color="rgba(255, 255, 255, .9)"
-            size={18}
-            style={{backgroundColor: 'transparent'}}
-          />
-        );
-      case 'MedicalRecords':
+      case "MedicalRecords":
         return (
           <Ionicons
             name="ios-medkit"
             color="rgba(255, 255, 255, .9)"
             size={18}
-            style={{backgroundColor: 'transparent'}}
+            style={{ backgroundColor: "transparent" }}
           />
         );
       default:
@@ -70,7 +52,7 @@ class DrawerItem extends React.Component {
   };
 
   render() {
-    const {focused, title, navigation} = this.props;
+    const { focused, title, navigation } = this.props;
     const containerStyles = [
       styles.defaultStyle,
       focused ? [styles.activeStyle, styles.shadow] : null,
@@ -78,28 +60,29 @@ class DrawerItem extends React.Component {
 
     return (
       <TouchableOpacity
-        style={{height: 60}}
+        style={{ height: 60 }}
         onPress={() =>
-          title == 'GETTING STARTED'
+          title == "GETTING STARTED"
             ? Linking.openURL(
-                'https://demos.creative-tim.com/now-ui-pro-react-native/docs/',
-              ).catch(err => console.error('An error occurred', err))
-            : navigation.navigate(title == 'LOGOUT' ? 'Onboarding' : title)
-        }>
+              "https://demos.creative-tim.com/now-ui-pro-react-native/docs/",
+            ).catch((err) => console.error("An error occurred", err))
+            : navigation.navigate(title == "LOGOUT" ? "Onboarding" : title)}
+      >
         <Block flex row style={containerStyles}>
-          <Block middle flex={0.1} style={{marginRight: 5}}>
+          <Block middle flex={0.1} style={{ marginRight: 5 }}>
             {this.renderIcon()}
           </Block>
           <Block row center flex={0.9}>
             <Text
               style={{
-                fontFamily: 'montserrat-regular',
-                textTransform: 'uppercase',
-                fontWeight: '300',
+                fontFamily: "montserrat-regular",
+                textTransform: "uppercase",
+                fontWeight: "300",
               }}
               size={12}
               bold={focused ? true : false}
-              color={focused ? nowTheme.COLORS.PRIMARY : 'white'}>
+              color={focused ? nowTheme.COLORS.PRIMARY : "white"}
+            >
               {title}
             </Text>
           </Block>
@@ -113,12 +96,12 @@ const styles = StyleSheet.create({
   defaultStyle: {
     paddingVertical: 15,
     paddingHorizontal: 14,
-    color: 'white',
+    color: "white",
   },
   activeStyle: {
     backgroundColor: nowTheme.COLORS.WHITE,
     borderRadius: 30,
-    color: 'white',
+    color: "white",
   },
   shadow: {
     shadowColor: theme.COLORS.BLACK,

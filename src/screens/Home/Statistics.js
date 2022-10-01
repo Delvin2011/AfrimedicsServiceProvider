@@ -78,7 +78,7 @@ class Statistics extends React.Component {
     return pieChartData;
   };
 
-  createObject = (appointmentRecords, startMonth, endMonth) => {
+  createObject = (appointmentRecords = [], startMonth, endMonth) => {
     var obj = {};
     var months = [
       "Jan",
@@ -135,7 +135,7 @@ class Statistics extends React.Component {
     return obj;
   };
 
-  createDistObj = (appointmentRecords) => {
+  createDistObj = (appointmentRecords = []) => {
     var legend = ["Completed", "Overdue", "Pending"];
     var color = ["rgba(131, 167, 234, 1)", "#F00", "rgb(0, 0, 255)"];
     const pieChartData = [];
