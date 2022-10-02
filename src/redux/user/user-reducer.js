@@ -39,6 +39,8 @@ const userReducer = (state = INITIAL_STATE, action) => {
         error: null, //to clear any errors, in the event user get erro and retries successfully
       };
     case UserActionTypes.SIGN_OUT_FAILURE:
+    case UserActionTypes.ADD_MEDICAL_RECORD_TO_PATIENT:
+    case UserActionTypes.ADD_MEDICAL_RECORD_TO_PATIENT_FAILER:
     case UserActionTypes.SIGN_IN_FAILURE:
       return {
         ...state,

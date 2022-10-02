@@ -24,6 +24,23 @@ You'll need the following:
 <br />
 <br />
 
+### Appointments Analytics
+
+<p align="center">
+<br/><br/>
+<img src="https://ik.imagekit.io/qlvke6f9z/analytics_XCBLiaSCo.png?ik-sdk-version=javascript-1.4.3&updatedAt=1664739788850" height="100%" width="100%" alt="Appointments"/>
+<br />
+<br />
+  
+  ### Medical Records
+
+<p align="center">
+<br/><br/>
+<img src="https://ik.imagekit.io/qlvke6f9z/medicalrecods_yddqRrzlT.png?ik-sdk-version=javascript-1.4.3&updatedAt=1664751050654" height="80%" width="80%" alt="MedicalRecords"/>
+<br />
+<br />
+
+
 ### Manual
 
 You can set up it manually using our [Getting started](https://voximplant.com/docs/introduction) page and tutorials

@@ -26,6 +26,7 @@ import {
   appointmentConnect,
   updateAppointmentRecord,
   addAppointmentRecords,
+  toggleAddRecord,
 } from "../../redux/user/user-actions";
 import { selectAppointmentRecords } from "../../redux/user/user-selectors";
 import Appointments from "../../constants/Appointments.json";
@@ -180,6 +181,7 @@ class AppointmentCard extends React.Component {
       appointmentRecords,
       updateAppointmentRecord,
       addAppointmentRecords,
+      toggleAddRecord,
     } = this.props;
 
     const imageStyles = [
@@ -368,13 +370,15 @@ class AppointmentCard extends React.Component {
                               shadowless
                               style={styles.button}
                               color={nowTheme.COLORS.PRIMARY}
-                              onPress={() =>
+                              onPress={() => {
+                                toggleAddRecord();
                                 navigation.navigate("MedicalRecords", {
                                   details: {
                                     patientDetails: item,
                                     option: "new",
                                   },
-                                })}
+                                });
+                              }}
                             >
                               <Text
                                 style={{
@@ -463,15 +467,17 @@ class AppointmentCard extends React.Component {
                       <TouchableOpacity
                         onPress={() => this.setState({ showImage: true })}
                       >
-                        <Image
-                          source={{
-                            uri: item.PatientUrl.replace(
-                              "https://firebasestorage.googleapis.com/v0/b/",
-                              "https://ik.imagekit.io/qlvke6f9z/tr:w-h-300,w-400/v0/b/",
-                            ),
-                          }}
-                          style={styles.avatar}
-                        />
+                        {typeof item.PatientUrl != "undefined"
+                          ? <Image
+                            source={{
+                              uri: item.PatientUrl.replace(
+                                "https://firebasestorage.googleapis.com/v0/b/",
+                                "https://ik.imagekit.io/qlvke6f9z/tr:w-h-300,w-400/v0/b/",
+                              ),
+                            }}
+                            style={styles.avatar}
+                          />
+                          : null}
                       </TouchableOpacity>
                     </Block>
                   </Block>
@@ -549,13 +555,15 @@ class AppointmentCard extends React.Component {
                             shadowless
                             style={styles.button}
                             color={nowTheme.COLORS.PRIMARY}
-                            onPress={() =>
+                            onPress={() => {
+                              toggleAddRecord();
                               navigation.navigate("MedicalRecords", {
                                 details: {
                                   patientDetails: item,
                                   option: "new",
                                 },
-                              })}
+                              });
+                            }}
                           >
                             <Text
                               style={{
@@ -609,6 +617,7 @@ class AppointmentCard extends React.Component {
 }
 
 const mapDispatchToProps = (dispatch) => ({
+  toggleAddRecord: () => dispatch(toggleAddRecord()),
   appointmentConnect: (connectDetails) =>
     dispatch(appointmentConnect(connectDetails)),
   updateAppointmentRecord: (toUpdate, record, records) =>

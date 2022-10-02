@@ -67,7 +67,6 @@ export const searchSpecialist = (specialist) => {
 };
 
 export const appointmentConnect = (connectDetails) => {
-  console.log(connectDetails);
   return (dispatch) => {
     dispatch({
       type: UserActionTypes.SET_APPOINTMENT_CONNECTION_DETAILS,
@@ -95,6 +94,7 @@ export const dependantSelection = (dependant) => {
 };
 
 export const headerTabOptionChange = (tabOption) => {
+  console.log(tabOption);
   return (dispatch) => {
     dispatch({
       type: UserActionTypes.HEADER_TAB_OPTION_CHANGE,
@@ -147,13 +147,14 @@ export function fetchDigitalMedicalrecords2() {
   };
 }
 
-export function fetchMedicalrecords() {
+export function fetchMedicalrecords(practiceNumber) {
+  const code = practiceNumber.replace("-", "");
   return (dispatch) => {
     firestore()
       .collection("medicalServiceAppointments")
-      .doc(auth().currentUser.uid)
-      .collection("PhysicalRecords")
-      .orderBy("creation", "asc")
+      .doc(code.toString())
+      .collection("Prescriptions")
+      .orderBy("Creation", "desc")
       .get()
       .then((snapshot) => {
         let records = snapshot.docs.map((doc) => {
@@ -169,13 +170,14 @@ export function fetchMedicalrecords() {
   };
 }
 
-export function addMedicalRecord(itemToAdd, records, patientUID) {
+export function addMedicalRecord(itemToAdd, records) {
   records.push(itemToAdd);
+  const practiceCode = itemToAdd.PracticeCode.replace("-", "");
   return (dispatch) => {
     firestore()
       .collection("medicalServiceAppointments")
-      .doc(auth().currentUser.uid)
-      .collection("PhysicalRecords")
+      .doc(practiceCode)
+      .collection("Prescriptions")
       .add(itemToAdd)
       .then(() => {
         dispatch(
@@ -184,6 +186,54 @@ export function addMedicalRecord(itemToAdd, records, patientUID) {
       })
       .catch((err) => {
         dispatch({ type: UserActionTypes.ADD_MEDICAL_RECORD_FAILER, err });
+      });
+  };
+}
+
+export function addMedicalRecordToPatient(itemToAdd) {
+  return (dispatch) => {
+    firestore()
+      .collection("records")
+      .doc(itemToAdd.PatientId)
+      .collection("userPrescriptions")
+      .add(itemToAdd)
+      .then(() => {
+        dispatch(
+          { type: UserActionTypes.ADD_MEDICAL_RECORD_TO_PATIENT },
+        );
+      })
+      .catch((err) => {
+        dispatch(
+          { type: UserActionTypes.ADD_MEDICAL_RECORD_TO_PATIENT_FAILER, err },
+        );
+      });
+  };
+}
+
+export function fetchMedicalAppointments(practiceNumber) {
+  const code = practiceNumber.replace("-", "");
+  return (dispatch) => {
+    firestore()
+      .collection("medicalServiceAppointments")
+      .doc(code.toString())
+      .collection("Appointments")
+      .orderBy("DateTime", "desc")
+      .get()
+      .then((snapshot) => {
+        let records = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          const id = doc.id;
+          return { id, ...data };
+        });
+        dispatch({
+          type: UserActionTypes.USER_APPOINTMENTS_STATE_CHANGE,
+          payload: records,
+        });
+      })
+      .catch((err) => {
+        dispatch(
+          { type: UserActionTypes.USER_APPOINTMENTS_STATE_CHANGE_FAILER, err },
+        );
       });
   };
 }
@@ -232,11 +282,12 @@ export function fetchQuotationsRequest() {
 
 export function removeMedicalRecord(itemToRemove, items) {
   const updatedItems = items.filter((item) => item.id !== itemToRemove.id);
+  const practiceCode = itemToRemove.PracticeCode.replace("-", "");
   return (dispatch) => {
     firestore()
       .collection("medicalServiceAppointments")
-      .doc(auth().currentUser.uid)
-      .collection("PhysicalRecords")
+      .doc(practiceCode)
+      .collection("Prescriptions")
       .doc(itemToRemove.id)
       .delete()
       .then(() => {
@@ -247,34 +298,6 @@ export function removeMedicalRecord(itemToRemove, items) {
       })
       .catch((err) => {
         dispatch({ type: UserActionTypes.REMOVE_MEDICAL_RECORD_FAILER, err });
-      });
-  };
-}
-
-export function fetchMedicalAppointments(practiceNumber) {
-  const code = practiceNumber.replace("-", "");
-  return (dispatch) => {
-    firestore()
-      .collection("medicalServiceAppointments")
-      .doc(code.toString())
-      .collection("Appointments")
-      .orderBy("DateTime", "desc")
-      .get()
-      .then((snapshot) => {
-        let records = snapshot.docs.map((doc) => {
-          const data = doc.data();
-          const id = doc.id;
-          return { id, ...data };
-        });
-        dispatch({
-          type: UserActionTypes.USER_APPOINTMENTS_STATE_CHANGE,
-          payload: records,
-        });
-      })
-      .catch((err) => {
-        dispatch(
-          { type: UserActionTypes.USER_APPOINTMENTS_STATE_CHANGE_FAILER, err },
-        );
       });
   };
 }

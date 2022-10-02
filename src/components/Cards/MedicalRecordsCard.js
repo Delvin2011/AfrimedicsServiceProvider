@@ -1,6 +1,6 @@
-import React from 'react';
-import {withNavigation} from '@react-navigation/compat';
-import PropTypes from 'prop-types';
+import React from "react";
+import { withNavigation } from "@react-navigation/compat";
+import PropTypes from "prop-types";
 import {
   StyleSheet,
   Image,
@@ -10,22 +10,22 @@ import {
   Modal,
   Pressable,
   Alert,
-} from 'react-native';
-import {Block, Text, theme, Button, Checkbox} from 'galio-framework';
-import {nowTheme} from '../../constants';
-import Icon from '../../components/Icon';
-import {connect} from 'react-redux';
+} from "react-native";
+import { Block, Text, theme, Button, Checkbox } from "galio-framework";
+import { nowTheme } from "../../constants";
+import Icon from "../../components/Icon";
+import { connect } from "react-redux";
 import {
   removeMedicalRecord,
   addQuotationRequest,
-} from '../../redux/user/user-actions';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import {createStructuredSelector} from 'reselect';
-import ImageView from 'react-native-image-viewing';
+} from "../../redux/user/user-actions";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import { createStructuredSelector } from "reselect";
+import ImageView from "react-native-image-viewing";
 
-import {selectUserQuotations} from '../../redux/user/user-selectors';
+import { selectUserQuotations } from "../../redux/user/user-selectors";
 
-const {width, height} = Dimensions.get('screen');
+const { width, height } = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3.75;
 class MedicalRecordsCard extends React.Component {
   state = {
@@ -39,18 +39,18 @@ class MedicalRecordsCard extends React.Component {
   }
 
   paramsOptionCheck(details) {
-    var checkbox = '';
-    if (typeof details !== 'undefined') {
-      if (typeof details.option !== 'undefined') {
+    var checkbox = "";
+    if (typeof details !== "undefined") {
+      if (typeof details.option !== "undefined") {
         checkbox = details.option;
       }
     }
     return checkbox;
   }
   paramsPhamarcyCheck(details) {
-    var phamarcyName = '';
-    if (typeof details !== 'undefined') {
-      if (typeof details.phamarcyDetails !== 'undefined') {
+    var phamarcyName = "";
+    if (typeof details !== "undefined") {
+      if (typeof details.phamarcyDetails !== "undefined") {
         phamarcyName = details.phamarcyDetails.name;
       }
     }
@@ -58,7 +58,7 @@ class MedicalRecordsCard extends React.Component {
   }
 
   handleShowImage(status) {
-    this.setState({showImage: !status});
+    this.setState({ showImage: !status });
   }
 
   render() {
@@ -95,190 +95,71 @@ class MedicalRecordsCard extends React.Component {
     const checkbox = this.paramsOptionCheck(details);
     const phamarcyName = this.paramsPhamarcyCheck(details);
 
-    const images = [{uri: item.downLoadURL}];
+    const images = [{ uri: item.PrescriptionUrl }];
 
     return (
       <Block card flex style={cardContainer}>
-        {digital ? (
-          <>
-            <Block row={horizontal}>
-              <TouchableWithoutFeedback>
-                <Block flex space="between" style={styles.cardDescription}>
-                  <Text
-                    style={{fontFamily: 'montserrat-regular'}}
-                    size={14}
-                    style={styles.cardTitle}
-                    color={nowTheme.COLORS.SECONDARY}>
-                    {item.Dependent}
-                  </Text>
-                  <Text
-                    style={{fontFamily: 'montserrat-regular'}}
-                    size={14}
-                    style={styles.cardCaptions}
-                    color={nowTheme.COLORS.SECONDARY}>
-                    {new Date(item.creation._seconds * 1000)
-                      .toString()
-                      .replace(':00 GMT+0200 (SAST)', '')}
-                  </Text>
-                </Block>
-              </TouchableWithoutFeedback>
-              <TouchableOpacity>
-                <Block flex space="between" style={styles.cardDescription}>
-                  <Block middle>
-                    <Image
-                      source={{uri: item.Practice_Logo_Url}}
-                      style={styles.avatar}
-                    />
-                  </Block>
-                </Block>
-              </TouchableOpacity>
-            </Block>
-            <Block row={horizontal}>
-              <TouchableWithoutFeedback>
-                <Block flex space="between" style={styles.cardDescription}>
-                  <Text
-                    style={{fontFamily: 'montserrat-regular'}}
-                    size={14}
-                    style={styles.cardCaptions}
-                    color={nowTheme.COLORS.SECONDARY}>
-                    {item.Prescription_Status}
-                  </Text>
-                </Block>
-              </TouchableWithoutFeedback>
-              <TouchableWithoutFeedback>
-                <Block
-                  flex
-                  middle
-                  space="between"
-                  style={styles.cardDescription}>
-                  <Text
-                    size={14}
-                    style={styles.cardCaptions}
-                    color={nowTheme.COLORS.SECONDARY}>
-                    {item.Practice_Doctors} - {item.Practice_Name}
-                  </Text>
-                </Block>
-              </TouchableWithoutFeedback>
-            </Block>
-          </>
-        ) : physical ? (
-          <Block row={horizontal}>
-            <TouchableWithoutFeedback>
-              <Block flex style={styles.cardDescription}>
-                <Block style={imgContainer}>
-                  <TouchableOpacity
-                    onPress={() => this.setState({showImage: true})}>
-                    <Image
-                      resizeMode="cover"
-                      source={{
-                        uri: item.downLoadURL,
-                      }}
-                      style={imageStyles}
-                    />
-                  </TouchableOpacity>
-                </Block>
-              </Block>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback>
-              <Block flex style={styles.cardDescription}>
+        <Block row={horizontal}>
+          <TouchableWithoutFeedback>
+            <Block flex style={styles.cardDescription}>
+              <Block style={imgContainer}>
                 <TouchableOpacity
-                  style={[styles.buttonRemove]}
-                  onPress={() =>
-                    this.setState({modalVisible: !this.state.modalVisible})
-                  }>
-                  <Ionicons
-                    name="md-close-outline"
-                    color="rgb(0,0,0)"
-                    size={18}
-                    style={{backgroundColor: 'transparent'}}
-                  />
-                </TouchableOpacity>
-
-                <Text
-                  //style={{fontFamily: 'montserrat-regular'}}
-                  size={14}
-                  style={styles.cardTitle}
-                  color={nowTheme.COLORS.SECONDARY}>
-                  {item.Name}
-                </Text>
-                <Text
-                  //style={{fontFamily: 'montserrat-regular'}}
-                  size={14}
-                  style={styles.cardCaptions}
-                  color={nowTheme.COLORS.SECONDARY}>
-                  {item.caption}
-                </Text>
-                <Text
-                  //style={}
-                  size={14}
-                  style={styles.cardCaptions}
-                  color={nowTheme.COLORS.SECONDARY}>
-                  {new Date(item.creation).toString().replace('GMT+0200', '')}
-                </Text>
-              </Block>
-            </TouchableWithoutFeedback>
-          </Block>
-        ) : (
-          <Block row={horizontal}>
-            <TouchableWithoutFeedback>
-              <Block flex style={styles.cardDescription}>
-                <Block style={imgContainer}>
+                  onPress={() => this.setState({ showImage: true })}
+                >
                   <Image
                     resizeMode="cover"
-                    source={{uri: item.downLoadURL}}
+                    source={{
+                      uri: item.PrescriptionUrl,
+                    }}
                     style={imageStyles}
                   />
-                </Block>
-              </Block>
-            </TouchableWithoutFeedback>
-            <TouchableWithoutFeedback>
-              <Block flex style={styles.cardDescription}>
-                <TouchableOpacity
-                  style={[styles.buttonRemove]}
-                  onPress={() =>
-                    this.setState({modalVisible: !this.state.modalVisible})
-                  }>
-                  <Ionicons
-                    name="md-close-outline"
-                    color="rgb(0,0,0)"
-                    size={18}
-                    style={{backgroundColor: 'transparent'}}
-                  />
                 </TouchableOpacity>
-                <Text
-                  //style={{fontFamily: 'montserrat-regular'}}
-                  size={14}
-                  style={styles.cardTitle}
-                  color={nowTheme.COLORS.SECONDARY}>
-                  {item.phamarcyRequest}
-                </Text>
-                <Text
-                  //style={{fontFamily: 'montserrat-regular'}}
-                  size={14}
-                  style={styles.cardCaptions}
-                  color={nowTheme.COLORS.SECONDARY}>
-                  {item.caption}
-                </Text>
-                <Text
-                  //style={}
-                  size={14}
-                  style={styles.cardCaptions}
-                  color={nowTheme.COLORS.SECONDARY}>
-                  {new Date(item.creation)
-                    .toString()
-                    .replace('GMT+0200 (SAST)', '')}
-                </Text>
-                <Text
-                  //style={{fontFamily: 'montserrat-regular'}}
-                  size={14}
-                  style={styles.cardCaptions}
-                  color={nowTheme.COLORS.SECONDARY}>
-                  Status : {item.quoteStatus}
-                </Text>
               </Block>
-            </TouchableWithoutFeedback>
-          </Block>
-        )}
+            </Block>
+          </TouchableWithoutFeedback>
+          <TouchableWithoutFeedback>
+            <Block flex style={styles.cardDescription}>
+              <TouchableOpacity
+                style={[styles.buttonRemove]}
+                onPress={() =>
+                  this.setState({ modalVisible: !this.state.modalVisible })}
+              >
+                <Ionicons
+                  name="md-close-outline"
+                  color="rgb(0,0,0)"
+                  size={18}
+                  style={{ backgroundColor: "transparent" }}
+                />
+              </TouchableOpacity>
+
+              <Text
+                //style={{fontFamily: 'montserrat-regular'}}
+                size={14}
+                style={styles.cardTitle}
+                color={nowTheme.COLORS.SECONDARY}
+              >
+                {item.PatientName}
+              </Text>
+              <Text
+                //style={{fontFamily: 'montserrat-regular'}}
+                size={14}
+                style={styles.cardCaptions}
+                color={nowTheme.COLORS.SECONDARY}
+              >
+                {item.Caption}
+              </Text>
+              <Text
+                //style={}
+                size={14}
+                style={styles.cardCaptions}
+                color={nowTheme.COLORS.SECONDARY}
+              >
+                {new Date(item.Creation).toString().replace("GMT+0200", "")}
+              </Text>
+            </Block>
+          </TouchableWithoutFeedback>
+        </Block>
+
         <ImageView
           images={images}
           imageIndex={0}
@@ -290,18 +171,21 @@ class MedicalRecordsCard extends React.Component {
           animationType="slide"
           transparent={true}
           visible={this.state.modalVisible}
-          onRequestClose={() => this.setState({modalVisible: false})}>
+          onRequestClose={() => this.setState({ modalVisible: false })}
+        >
           <TouchableOpacity
             style={styles.modalContainer}
-            onPress={() => this.setState({modalVisible: false})}>
+            onPress={() => this.setState({ modalVisible: false })}
+          >
             <TouchableOpacity style={styles.modal} activeOpacity={1}>
               <Text style={styles.modalText}>Confirm Delete?</Text>
               <Pressable
                 style={[styles.button, styles.buttonClose]}
                 onPress={() => {
                   removeMedicalRecord(item, items);
-                  this.setState({modalVisible: false});
-                }}>
+                  this.setState({ modalVisible: false });
+                }}
+              >
                 <Text style={styles.textStyle}>Proceed</Text>
               </Pressable>
             </TouchableOpacity>
@@ -344,7 +228,7 @@ const styles = StyleSheet.create({
     paddingTop: 2,
     paddingBottom: 2,
     marginTop: 20,
-    fontWeight: '900',
+    fontWeight: "900",
   },
   cardCaptions: {
     paddingHorizontal: 9,
@@ -361,14 +245,14 @@ const styles = StyleSheet.create({
   imageContainer: {
     borderRadius: 3,
     elevation: 1,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   image: {
     // borderRadius: 3,
   },
   horizontalImage: {
     height: 122,
-    width: 'auto',
+    width: "auto",
   },
   horizontalStyles: {
     borderTopRightRadius: 0,
@@ -380,17 +264,17 @@ const styles = StyleSheet.create({
   },
   fullImage: {
     height: 300,
-    width: 'auto',
+    width: "auto",
   },
   shadow: {
-    shadowColor: '#8898AA',
-    shadowOffset: {width: 0, height: 1},
+    shadowColor: "#8898AA",
+    shadowOffset: { width: 0, height: 1 },
     shadowRadius: 6,
     shadowOpacity: 0.1,
     elevation: 2,
   },
   articleButton: {
-    fontFamily: 'montserrat-bold',
+    fontFamily: "montserrat-bold",
     paddingHorizontal: 9,
     paddingVertical: 7,
   },
@@ -406,7 +290,7 @@ const styles = StyleSheet.create({
   },
   buttonRemove: {
     paddingRight: 12,
-    position: 'absolute',
+    position: "absolute",
     marginLeft: 165,
     marginTop: 10,
   },
@@ -415,10 +299,10 @@ const styles = StyleSheet.create({
     padding: 10,
     elevation: 2,
     marginBottom: 5,
-    backgroundColor: '#2196F3',
+    backgroundColor: "#2196F3",
   },
   buttonView: {
-    position: 'absolute',
+    position: "absolute",
     width: width - theme.SIZES.BASE * 15,
     height: theme.SIZES.BASE * 3,
     shadowRadius: 0,
@@ -426,20 +310,20 @@ const styles = StyleSheet.create({
   },
   modalText: {
     marginBottom: 15,
-    textAlign: 'center',
+    textAlign: "center",
   },
   modalContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginTop: 22,
   },
   modal: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     borderRadius: 20,
     padding: 35,
-    alignItems: 'center',
-    shadowColor: '#000',
+    alignItems: "center",
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
       height: 2,
@@ -449,15 +333,15 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   textStyle: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
   },
 });
 
 //export default withNavigation(MedicalRecordsCard);
 
-const mapDispatchToProps = dispatch => ({
+const mapDispatchToProps = (dispatch) => ({
   removeMedicalRecord: (itemToRemove, items) =>
     dispatch(removeMedicalRecord(itemToRemove, items)),
   addQuotationRequest: (itemToAdd, quotations) =>

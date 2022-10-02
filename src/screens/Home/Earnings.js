@@ -96,7 +96,6 @@ class Earnings extends React.Component {
       }
     }
     var data = [];
-
     for (var b = 0; b < labels.length; b++) {
       var dataArr = [];
       var fee = 0;
@@ -116,9 +115,10 @@ class Earnings extends React.Component {
             appointmentRecords[c].VisitationStatus == "Completed"
           ) {
             obj.earnings = true;
+            count++;
+            console.log(count);
           }
         }
-        console.log(count * fee);
         dataArr.push(count * fee);
       }
       data.push(dataArr);
@@ -127,7 +127,7 @@ class Earnings extends React.Component {
     obj.labels = labels;
     obj.data = data;
     obj.barColors = colours;
-
+    console.log(obj);
     return obj;
   };
 
