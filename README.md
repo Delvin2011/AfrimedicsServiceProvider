@@ -4,10 +4,6 @@ The demo app is used by medical service providers to deliver medical care to pat
 
 ## Technologies Implemented
 
-To get started, you'll need to [register](https://manage.voximplant.com/auth/sign_up) a free Voximplant developer account.
-
-You'll need the following:
-
 - React Native
 - Firebase
 - Redux
@@ -22,6 +18,20 @@ You'll need the following:
 <img src="https://ik.imagekit.io/qlvke6f9z/appointments_z-hYMrax6.jpg?ik-sdk-version=javascript-1.4.3&updatedAt=1664660224280" height="100%" width="100%" alt="Appointments"/>
 <br />
 
+### Doctor - Patient Chat Messaging
+
+<p align="center">
+<br/>
+<img src="https://ik.imagekit.io/qlvke6f9z/stream_chat_bfFjI3pKy.png?ik-sdk-version=javascript-1.4.3&updatedAt=1664801568062" height="80%" width="80%" alt="chat_messaging"/>
+<br />
+
+### Doctor - Patient (Audio & Video Calls)
+
+<p align="center">
+<br/>
+<img src="https://ik.imagekit.io/qlvke6f9z/dr_patient_comms_qBh_Wv_ug.png?ik-sdk-version=javascript-1.4.3&updatedAt=1664802488776" height="100%" width="100%" alt="voice_video_calling"/>
+<br />
+
 ### Appointments Analytics
 
 <p align="center">
@@ -34,18 +44,4 @@ You'll need the following:
 <p align="center">
 <br/>
 <img src="https://ik.imagekit.io/qlvke6f9z/medicalrecods_yddqRrzlT.png?ik-sdk-version=javascript-1.4.3&updatedAt=1664751050654" height="80%" width="80%" alt="MedicalRecords"/>
-<br />
-
-### Doctor - Patient Messaging
-
-<p align="center">
-<br/>
-<img src="https://ik.imagekit.io/qlvke6f9z/stream_chat_bfFjI3pKy.png?ik-sdk-version=javascript-1.4.3&updatedAt=1664801568062" height="80%" width="80%" alt="MedicalRecords"/>
-<br />
-
-### Doctor - Patient Messaging
-
-<p align="center">
-<br/>
-<img src="https://ik.imagekit.io/qlvke6f9z/dr_patient_comms_qBh_Wv_ug.png?ik-sdk-version=javascript-1.4.3&updatedAt=1664802488776" height="100%" width="100%" alt="MedicalRecords"/>
 <br />
