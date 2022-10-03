@@ -1,15 +1,15 @@
-import React from 'react';
-import {StyleSheet} from 'react-native';
-import PropTypes from 'prop-types';
+import React from "react";
+import { StyleSheet } from "react-native";
+import PropTypes from "prop-types";
 
-import {Input} from 'galio-framework';
+import { Input } from "galio-framework";
 
-import Icon from './Icon';
-import {nowTheme} from '../constants';
+import Icon from "./Icon";
+import { nowTheme } from "../constants";
 
 class ArInput extends React.Component {
   render() {
-    const {shadowless, success, error, primary, custom, noIcon} = this.props;
+    const { shadowless, success, error, primary, custom, noIcon } = this.props;
 
     const inputStyles = [
       styles.input,
@@ -18,7 +18,7 @@ class ArInput extends React.Component {
       error && styles.error,
       primary && styles.primary,
       custom && styles.custom,
-      {...this.props.style},
+      { ...this.props.style },
     ];
 
     return (
@@ -27,16 +27,14 @@ class ArInput extends React.Component {
         placeholderTextColor={nowTheme.COLORS.MUTED}
         style={inputStyles}
         color={nowTheme.COLORS.HEADER}
-        iconContent={
-          noIcon ? null : (
-            <Icon
-              size={14}
-              color={nowTheme.COLORS.ICON}
-              name="link"
-              family="AntDesign"
-            />
-          )
-        }
+        iconContent={noIcon ? null : (
+          <Icon
+            size={14}
+            color={nowTheme.COLORS.ICON}
+            name="link"
+            family="AntDesign"
+          />
+        )}
         {...this.props}
       />
     );
@@ -62,15 +60,15 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     borderColor: nowTheme.COLORS.BORDER,
     height: 44,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: "#FFFFFF",
   },
   custom: {
     borderRadius: 0,
     borderColor: nowTheme.COLORS.BORDER,
     height: 40,
     width: 50,
-    alignItems: 'center',
-    backgroundColor: '#FFFFFF',
+    alignItems: "center",
+    backgroundColor: "#FFFFFF",
   },
   success: {
     borderColor: nowTheme.COLORS.INPUT_SUCCESS,
@@ -83,7 +81,7 @@ const styles = StyleSheet.create({
   },
   shadow: {
     shadowColor: nowTheme.COLORS.BLACK,
-    shadowOffset: {width: 0, height: 0.5},
+    shadowOffset: { width: 0, height: 0.5 },
     shadowRadius: 1,
     shadowOpacity: 0.13,
     elevation: 2,

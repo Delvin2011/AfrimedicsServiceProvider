@@ -11,6 +11,13 @@ The demo app is used by medical service providers to deliver medical care to pat
 - Audio & Video Calls with [Voximplant](https://voximplant.com/docs/gettingstarted/features)
 - Real-Time chat messaging with [Stream Chat](https://getstream.io/chat/sdk/react-native/)
 
+### Onboarding, Authentication & Menu
+
+<p align="center">
+<br/>
+<img src="https://ik.imagekit.io/qlvke6f9z/onboarding_w01NhajN2.png?ik-sdk-version=javascript-1.4.3&updatedAt=1664824940058" height="80%" width="80%" alt="Appointments"/>
+<br />
+
 ### Medical Service Provider Appointments (Physical, Virtual & Home Visits)
 
 <p align="center">

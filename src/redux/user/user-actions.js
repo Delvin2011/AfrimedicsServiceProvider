@@ -94,7 +94,6 @@ export const dependantSelection = (dependant) => {
 };
 
 export const headerTabOptionChange = (tabOption) => {
-  console.log(tabOption);
   return (dispatch) => {
     dispatch({
       type: UserActionTypes.HEADER_TAB_OPTION_CHANGE,
