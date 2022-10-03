@@ -15,7 +15,7 @@ The demo app is used by medical service providers to deliver medical care to pat
 
 <p align="center">
 <br/>
-<img src="https://ik.imagekit.io/qlvke6f9z/onboarding_w01NhajN2.png?ik-sdk-version=javascript-1.4.3&updatedAt=1664824940058" height="100%" width="100%" alt="Appointments"/>
+<img src="https://ik.imagekit.io/qlvke6f9z/ONBOARDS_jpvd9C8x2.png?ik-sdk-version=javascript-1.4.3&updatedAt=1664829268644" height="100%" width="100%" alt="Appointments"/>
 <br />
 
 ### Medical Service Provider Appointments (Physical, Virtual & Home Visits)

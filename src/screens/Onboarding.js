@@ -42,24 +42,6 @@ class Onboarding extends React.Component {
                   }}
                 />
               </Block>
-              <Block>
-                <Block middle>
-                  <Text
-                    style={{
-                      fontFamily: "montserrat-regular",
-                      bottom: 50,
-                      position: "absolute",
-                      letterSpacing: 2,
-                      paddingHorizontal: 20,
-                      textAlign: "center",
-                    }}
-                    color="white"
-                    size={44}
-                  >
-                    AfriMedics
-                  </Text>
-                </Block>
-              </Block>
 
               <Block
                 row
